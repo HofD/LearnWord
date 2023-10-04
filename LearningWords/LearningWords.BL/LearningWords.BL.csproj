@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Data.Migrations\Common.Data.Migrations.csproj" />
+    <ProjectReference Include="..\LearningWords.BL.Models\LearningWords.BL.Models.csproj" />
+  </ItemGroup>
+
+</Project>
