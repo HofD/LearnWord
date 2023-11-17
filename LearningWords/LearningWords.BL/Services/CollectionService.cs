@@ -1,6 +1,7 @@
-﻿using LearningWords.BL.Abstractions;
+﻿using AutoMapper;
+using LearningWords.BL.Abstractions;
 using LearningWords.BL.Models.Dto;
-using Microsoft.VisualBasic;
+using LearningWords.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,27 @@ namespace LearningWords.BL.Services
 {
     public class CollectionService : ICollectionService
     {
-        public Task<CollectionDto> Create(CollectionCreateDto createDto)
+        private readonly CollectionRepository collectionRepository;
+        private readonly IMapper mapper;
+
+        public CollectionService(CollectionRepository collectionRepository, IMapper mapper) 
         {
-            throw new NotImplementedException();
+            this.collectionRepository = collectionRepository;
+            this.mapper = mapper;
+        }
+        public async Task<CollectionDto> Create(CollectionCreateDto createDto)
+        {
+            return mapper.Map<CollectionDto>(await collectionRepository.Add(createDto));
         }
 
-        public Task<CollectionDto> Get(int id)
+        public async Task<CollectionDto> Get(int id)
         {
-            throw new NotImplementedException();
+            return mapper.Map<CollectionDto>(await collectionRepository.FindById(id));
         }
 
-        public Task<IEnumerable<CollectionDto>> GetAll(string userId)
+        public async Task<IEnumerable<CollectionDto>> GetAll(string userId)
         {
-            throw new NotImplementedException();
+            return (await collectionRepository.GetByUserId(userId)).Select(x => mapper.Map<CollectionDto>(x)).ToList();
         }
 
         public Task Delete(CollectionDto collectionDto)

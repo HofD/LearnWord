@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LearningWords.Models\LearningWords.DAL.Models.csproj" />
+  </ItemGroup>
+
 </Project>

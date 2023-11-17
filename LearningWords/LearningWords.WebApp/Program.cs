@@ -1,4 +1,7 @@
 using Common.Data;
+using LearningWords.BL.MappingProfiles;
+using LearningWords.BL.Services;
+using LearningWords.DAL.Repositories;
 using LearningWords.WebApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +16,15 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 builder.Services.AddDbContext<WordsDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+builder.Services.AddTransient<CollectionRepository>();
+builder.Services.AddTransient<CollectionService>();
+
+builder.Services.AddAutoMapper(options => options.AddProfile<CollectionMappingProfile>());
 
 var app = builder.Build();
 

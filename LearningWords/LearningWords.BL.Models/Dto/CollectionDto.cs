@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LearningWords.BL.Models.Dto
+﻿namespace LearningWords.BL.Models.Dto
 {
-    public class CollectionDto
+    public class CollectionDto : DAL.Models.Collection
     {
     }
 }

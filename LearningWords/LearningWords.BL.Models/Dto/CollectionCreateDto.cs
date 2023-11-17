@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LearningWords.BL.Models.Dto
 {
-    public class CollectionCreateDto
+    public class CollectionCreateDto : CollectionDto
     {
     }
 }

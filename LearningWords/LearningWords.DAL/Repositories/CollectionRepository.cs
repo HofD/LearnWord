@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 
 namespace LearningWords.DAL.Repositories
 {
-    internal class CollectionRepository : RepositoryBase
+    public class CollectionRepository : RepositoryBase
     {
         public CollectionRepository(WordsDbContext dbContext) : base(dbContext)
         {
         }
 
-        public async Task Add(Collection collection)
+        public async Task<Collection> Add(Collection collection)
         {
             dbContext.Collections.Add(collection);
             await SaveChangesAsync();
+            return collection;
         }
 
         public async Task Delete(Collection collection)

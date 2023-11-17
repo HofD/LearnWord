@@ -1,4 +1,5 @@
 ﻿using LearningWords.WebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -15,6 +16,11 @@ namespace LearningWords.WebApp.Controllers
 
         public IActionResult Index()
         {
+            if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                return RedirectToAction("Index", "Collections");
+            }
+
             return View();
         }
 

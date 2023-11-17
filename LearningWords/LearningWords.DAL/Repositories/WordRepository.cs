@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LearningWords.DAL.Repositories
 {
-    internal class WordRepository : RepositoryBase
+    public class WordRepository : RepositoryBase
     {
         public WordRepository(WordsDbContext dbContext) : base(dbContext)
         {
