@@ -2,11 +2,6 @@
 using LearningWords.BL.Abstractions;
 using LearningWords.BL.Models.Dto;
 using LearningWords.DAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LearningWords.BL.Services
 {
@@ -28,11 +23,6 @@ namespace LearningWords.BL.Services
         public async Task<CollectionDto> Get(int id)
         {
             return mapper.Map<CollectionDto>(await collectionRepository.FindById(id));
-        }
-
-        public async Task<IEnumerable<CollectionDto>> GetAll(string userId)
-        {
-            return (await collectionRepository.GetByUserId(userId)).Select(x => mapper.Map<CollectionDto>(x)).ToList();
         }
 
         public Task Delete(CollectionDto collectionDto)

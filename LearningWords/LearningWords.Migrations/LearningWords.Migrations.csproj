@@ -7,13 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LearningWords.BL.Models\LearningWords.BL.Models.csproj" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.22" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LearningWords.DAL\LearningWords.DAL.csproj" />
-    <ProjectReference Include="..\LearningWords.Migrations\LearningWords.Migrations.csproj" />
   </ItemGroup>
 
 </Project>

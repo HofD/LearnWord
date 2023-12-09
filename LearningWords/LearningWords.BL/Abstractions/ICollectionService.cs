@@ -28,11 +28,5 @@ namespace LearningWords.BL.Abstractions
         /// <param name="id">Идентификатор коллекции.</param>
         /// <returns>Возвращает коллекцию либо null, если коллекция не существует.</returns>
         Task<CollectionDto> Get(int id);
-        /// <summary>
-        /// Получить список коллекций пользователя.
-        /// </summary>
-        /// <param name="userId">Идентификатор пользователя.</param>
-        /// <returns>Возвращает список коллекций пользователя.</returns>
-        Task<IEnumerable<CollectionDto>> GetAll(string userId);
     }
 }
