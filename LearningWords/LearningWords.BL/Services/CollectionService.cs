@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LearningWords.BL.Abstractions;
 using LearningWords.BL.Models.Dto;
+using LearningWords.DAL.Models;
 using LearningWords.DAL.Repositories;
 
 namespace LearningWords.BL.Services
@@ -17,7 +18,7 @@ namespace LearningWords.BL.Services
         }
         public async Task<CollectionDto> Create(CollectionCreateDto createDto)
         {
-            return mapper.Map<CollectionDto>(await collectionRepository.Add(createDto));
+            return mapper.Map<CollectionDto>(await collectionRepository.Add(mapper.Map<Collection>(createDto)));
         }
 
         public async Task<CollectionDto> Get(int id)
@@ -25,14 +26,14 @@ namespace LearningWords.BL.Services
             return mapper.Map<CollectionDto>(await collectionRepository.FindById(id));
         }
 
-        public Task Delete(CollectionDto collectionDto)
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            await collectionRepository.Delete(id);
         }
 
-        public Task<CollectionDto> Rename(CollectionRenameDto renameDto)
+        public async Task Rename(int id, CollectionRenameDto renameDto)
         {
-            throw new NotImplementedException();
+            await collectionRepository.Rename(id, renameDto.Name);
         }
     }
 }

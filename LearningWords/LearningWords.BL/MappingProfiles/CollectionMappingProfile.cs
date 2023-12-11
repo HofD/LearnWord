@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
-using LearningWords.BL.Models;
 using LearningWords.BL.Models.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LearningWords.DAL.Models;
 
 namespace LearningWords.BL.MappingProfiles
 {
@@ -13,7 +8,9 @@ namespace LearningWords.BL.MappingProfiles
     {
         public CollectionMappingProfile() 
         {
-            CreateMap<DAL.Models.Collection, CollectionDto>();
+            CreateMap<Collection, CollectionDto>();
+            CreateMap<CollectionCreateDto, Collection>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(o => DateTime.UtcNow));
         }
     }
 }

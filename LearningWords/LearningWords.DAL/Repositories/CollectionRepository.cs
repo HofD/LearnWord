@@ -1,5 +1,6 @@
 ﻿using LearningWords.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,9 +19,29 @@ namespace LearningWords.DAL.Repositories
             return collection;
         }
 
-        public async Task Delete(Collection collection)
+        public async Task Delete(int id)
         {
+            var collection = await FindById(id, false);
+
+            if (collection == null)
+            {
+                throw new Exception($"Collection {id} not found.");
+            }
+
             dbContext.Collections.Remove(collection);
+            await SaveChangesAsync();
+        }
+
+        public async Task Rename(int id, string name)
+        {
+            var collection = await FindById(id, false);
+
+            if (collection == null)
+            {
+                throw new Exception($"Collection {id} not found.");
+            }
+
+            collection.Name = name;
             await SaveChangesAsync();
         }
 
