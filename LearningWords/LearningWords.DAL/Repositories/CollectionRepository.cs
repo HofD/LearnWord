@@ -19,7 +19,7 @@ namespace LearningWords.DAL.Repositories
             return collection;
         }
 
-        public async Task Delete(int id)
+        public async Task Remove(int id)
         {
             var collection = await FindById(id, false);
 
@@ -63,7 +63,8 @@ namespace LearningWords.DAL.Repositories
             if (include)
             {
                 queryable = queryable
-                    .Include(x => x.Cards);
+                    .Include(x => x.Cards)
+                    .ThenInclude(x => x.Words);
             }
 
             queryable = queryable

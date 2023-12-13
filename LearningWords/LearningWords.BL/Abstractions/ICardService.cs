@@ -9,7 +9,7 @@ namespace LearningWords.BL.Abstractions
         /// </summary>
         /// <param name="createDto">Карточка, которую следует создать.</param>
         /// <returns>Возвращает созданную карточку.</returns>
-        Task<CardDto> Create(CardCreateDto createDto);
+        Task<CardDto> Add(CardCreateDto createDto);
         /// <summary>
         /// Обновляет карточку и сбрасывает статистику.
         /// </summary>

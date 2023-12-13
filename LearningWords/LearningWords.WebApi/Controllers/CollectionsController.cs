@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LearningWords.WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("collections")]
     public class CollectionsController : ControllerBase
     {
         private readonly ILogger<CollectionsController> logger;
@@ -24,15 +24,15 @@ namespace LearningWords.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task Create(CollectionCreateDto collection)
+        public async Task Add(CollectionCreateDto collection)
         {
-            await collectionService.Create(collection);
+            await collectionService.Add(collection);
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        public async Task Remove(int id)
         {
-            await collectionService.Delete(id);
+            await collectionService.Remove(id);
         }
 
         [HttpPut("{id}")]

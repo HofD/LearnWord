@@ -4,9 +4,9 @@ namespace LearningWords.BL.Abstractions
 {
     public interface ICollectionService
     {
-        Task<CollectionDto> Create(CollectionCreateDto createDto);
+        Task<CollectionDto> Add(CollectionCreateDto createDto);
         Task Rename(int id, CollectionRenameDto renameDto);
-        Task Delete(int id);
+        Task Remove(int id);
         Task<CollectionDto> Get(int id);
     }
 }

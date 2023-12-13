@@ -16,7 +16,7 @@ namespace LearningWords.BL.Services
             this.collectionRepository = collectionRepository;
             this.mapper = mapper;
         }
-        public async Task<CollectionDto> Create(CollectionCreateDto createDto)
+        public async Task<CollectionDto> Add(CollectionCreateDto createDto)
         {
             return mapper.Map<CollectionDto>(await collectionRepository.Add(mapper.Map<Collection>(createDto)));
         }
@@ -26,9 +26,9 @@ namespace LearningWords.BL.Services
             return mapper.Map<CollectionDto>(await collectionRepository.FindById(id));
         }
 
-        public async Task Delete(int id)
+        public async Task Remove(int id)
         {
-            await collectionRepository.Delete(id);
+            await collectionRepository.Remove(id);
         }
 
         public async Task Rename(int id, CollectionRenameDto renameDto)

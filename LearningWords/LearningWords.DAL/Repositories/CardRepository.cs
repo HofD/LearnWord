@@ -12,13 +12,14 @@ namespace LearningWords.DAL.Repositories
         {
         }
 
-        public async Task Add(Card card)
+        public async Task<Card> Add(Card card)
         {
             dbContext.Cards.Add(card);
             await SaveChangesAsync();
+            return await FindById(card.Id);
         }
 
-        public async Task Delete(Card card)
+        public async Task Remove(Card card)
         {
             dbContext.Cards.Remove(card);
             await SaveChangesAsync();

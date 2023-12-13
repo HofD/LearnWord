@@ -22,8 +22,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<CollectionRepository>();
 builder.Services.AddTransient<CollectionService>();
+builder.Services.AddTransient<CardRepository>();
+builder.Services.AddTransient<CardService>();
 
 builder.Services.AddAutoMapper(options => options.AddProfile<CollectionMappingProfile>());
+builder.Services.AddAutoMapper(options => options.AddProfile<CardMappingProfile>());
+builder.Services.AddAutoMapper(options => options.AddProfile<WordMappingProfile>());
 
 var app = builder.Build();
 
