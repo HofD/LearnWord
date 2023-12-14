@@ -11,7 +11,6 @@ namespace LearningWords.BL.MappingProfiles
             CreateMap<Card, CardDto>();
             CreateMap<CardCreateDto, Card>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(o => DateTime.UtcNow));
-                //.ForMember(dest => dest.Words, opt => opt.Ignore());
         }
     }
 }

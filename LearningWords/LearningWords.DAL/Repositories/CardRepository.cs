@@ -1,6 +1,6 @@
 ﻿using LearningWords.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,35 +15,28 @@ namespace LearningWords.DAL.Repositories
         public async Task<Card> Add(Card card)
         {
             dbContext.Cards.Add(card);
+
             await SaveChangesAsync();
+
             return await FindById(card.Id);
         }
 
-        public async Task Remove(Card card)
+        public async Task Remove(int id)
         {
-            dbContext.Cards.Remove(card);
-            await SaveChangesAsync();
-        }
+            var card = await FindById(id, false);
 
-        public async Task Update(Card card)
-        {
-            dbContext.Cards.Update(card);
+            if (card == null)
+            {
+                throw new Exception($"Card {id} not found.");
+            }
+
+            dbContext.Cards.Remove(card);
             await SaveChangesAsync();
         }
 
         public async Task<Card> FindById(int id, bool include = true)
         {
             return await GetQueryable(include).FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        public async Task<List<Card>> GetByCollectionId(int collectionId, bool include = false)
-        {
-            return await GetQueryable(include).Where(x => x.CollectionId == collectionId).ToListAsync();
-        }
-
-        public async Task<List<Card>> GetAll()
-        {
-            return await GetQueryable(false).ToListAsync();
         }
 
         private IQueryable<Card> GetQueryable(bool include)

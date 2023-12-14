@@ -9,6 +9,7 @@ namespace LearningWords.BL.MappingProfiles
         public WordMappingProfile() 
         {
             CreateMap<Word, WordDto>();
+            CreateMap<WordDto, Word>();
             CreateMap<WordCreateDto, Word>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(o => DateTime.UtcNow));
         }

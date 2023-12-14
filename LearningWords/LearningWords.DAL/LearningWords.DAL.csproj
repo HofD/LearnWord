@@ -14,8 +14,4 @@
     <ProjectReference Include="..\LearningWords.Models\LearningWords.DAL.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-
 </Project>

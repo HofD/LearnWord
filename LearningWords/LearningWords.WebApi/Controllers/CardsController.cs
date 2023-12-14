@@ -22,5 +22,11 @@ namespace LearningWords.WebApi.Controllers
         {
             return await cardService.Add(card);
         }
+
+        [HttpDelete("{id}")]
+        public async Task Remove(int id)
+        {
+            await cardService.Remove(id);
+        }
     }
 }
