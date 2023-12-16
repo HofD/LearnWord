@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LearningWords.Migrations.Migrations
 {
     [DbContext(typeof(WordsDbContext))]
-    [Migration("20231209060405_InitialCreate")]
+    [Migration("20231216054824_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,7 +94,7 @@ namespace LearningWords.Migrations.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CardId")
+                    b.Property<int>("CardId")
                         .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -135,9 +135,13 @@ namespace LearningWords.Migrations.Migrations
 
             modelBuilder.Entity("LearningWords.DAL.Models.Word", b =>
                 {
-                    b.HasOne("LearningWords.DAL.Models.Card", null)
+                    b.HasOne("LearningWords.DAL.Models.Card", "Card")
                         .WithMany("Words")
-                        .HasForeignKey("CardId");
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Card");
                 });
 
             modelBuilder.Entity("LearningWords.DAL.Models.Card", b =>

@@ -92,7 +92,7 @@ namespace LearningWords.Migrations.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CardId")
+                    b.Property<int>("CardId")
                         .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -133,9 +133,13 @@ namespace LearningWords.Migrations.Migrations
 
             modelBuilder.Entity("LearningWords.DAL.Models.Word", b =>
                 {
-                    b.HasOne("LearningWords.DAL.Models.Card", null)
+                    b.HasOne("LearningWords.DAL.Models.Card", "Card")
                         .WithMany("Words")
-                        .HasForeignKey("CardId");
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Card");
                 });
 
             modelBuilder.Entity("LearningWords.DAL.Models.Card", b =>
