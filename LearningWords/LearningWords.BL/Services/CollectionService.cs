@@ -31,9 +31,9 @@ namespace LearningWords.BL.Services
             await collectionRepository.Remove(id);
         }
 
-        public async Task Rename(int id, CollectionRenameDto renameDto)
+        public async Task<CollectionDto> Rename(int id, CollectionRenameDto renameDto)
         {
-            await collectionRepository.Rename(id, renameDto.Name);
+            return mapper.Map<CollectionDto>(await collectionRepository.Rename(id, renameDto.Name));
         }
     }
 }

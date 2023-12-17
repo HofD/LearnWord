@@ -3,11 +3,6 @@ using LearningWords.BL.Abstractions;
 using LearningWords.BL.Models.Dto;
 using LearningWords.DAL.Models;
 using LearningWords.DAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LearningWords.BL.Services
 {

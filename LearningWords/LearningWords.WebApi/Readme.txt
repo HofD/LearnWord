@@ -22,3 +22,6 @@ dotnet ef database update -p LearningWords.WebApi --startup-project LearningWord
 
 hofd@mail.ru
 WarhackHD!1
+
+TODO:
+1. Одна карточка на несколько коллекций?

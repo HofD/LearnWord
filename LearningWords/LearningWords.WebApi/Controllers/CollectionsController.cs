@@ -24,9 +24,9 @@ namespace LearningWords.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task Add(CollectionCreateDto collection)
+        public async Task<CollectionDto> Add(CollectionCreateDto collection)
         {
-            await collectionService.Add(collection);
+            return await collectionService.Add(collection);
         }
 
         [HttpDelete("{id}")]
@@ -36,9 +36,9 @@ namespace LearningWords.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task Rename(int id, CollectionRenameDto collectionRenameDto)
+        public async Task<CollectionDto> Rename(int id, CollectionRenameDto collectionRenameDto)
         {
-            await collectionService.Rename(id, collectionRenameDto);
+            return await collectionService.Rename(id, collectionRenameDto);
         }
     }
 }

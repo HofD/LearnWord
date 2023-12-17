@@ -32,7 +32,7 @@ namespace LearningWords.DAL.Repositories
             await SaveChangesAsync();
         }
 
-        public async Task Rename(int id, string name)
+        public async Task<Collection> Rename(int id, string name)
         {
             var collection = await FindById(id, false);
 
@@ -43,12 +43,8 @@ namespace LearningWords.DAL.Repositories
 
             collection.Name = name;
             await SaveChangesAsync();
-        }
 
-        public async Task Update(Collection collection)
-        {
-            dbContext.Collections.Update(collection);
-            await SaveChangesAsync();
+            return collection;
         }
 
         public async Task<Collection> FindById(int id, bool include = true)
