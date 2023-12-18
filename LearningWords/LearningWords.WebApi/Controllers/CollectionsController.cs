@@ -1,5 +1,5 @@
+using LearningWords.BL.Abstractions;
 using LearningWords.BL.Models.Dto;
-using LearningWords.BL.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearningWords.WebApi.Controllers
@@ -9,9 +9,9 @@ namespace LearningWords.WebApi.Controllers
     public class CollectionsController : ControllerBase
     {
         private readonly ILogger<CollectionsController> logger;
-        private readonly CollectionService collectionService;
+        private readonly ICollectionService collectionService;
 
-        public CollectionsController(ILogger<CollectionsController> logger, CollectionService collectionService)
+        public CollectionsController(ILogger<CollectionsController> logger, ICollectionService collectionService)
         {
             this.logger = logger;
             this.collectionService = collectionService;

@@ -1,4 +1,6 @@
-﻿namespace LearningWords.BL.Models.Dto
+﻿#nullable disable
+
+namespace LearningWords.BL.Models.Dto
 {
     public class WordCreateDto
     {

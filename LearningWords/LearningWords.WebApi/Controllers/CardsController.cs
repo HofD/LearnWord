@@ -1,5 +1,5 @@
-﻿using LearningWords.BL.Models.Dto;
-using LearningWords.BL.Services;
+﻿using LearningWords.BL.Abstractions;
+using LearningWords.BL.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearningWords.WebApi.Controllers
@@ -9,9 +9,9 @@ namespace LearningWords.WebApi.Controllers
     public class CardsController : ControllerBase
     {
         private readonly ILogger<CardsController> logger;
-        private readonly CardService cardService;
+        private readonly ICardService cardService;
 
-        public CardsController(ILogger<CardsController> logger, CardService cardService) 
+        public CardsController(ILogger<CardsController> logger, ICardService cardService) 
         {
             this.logger = logger;
             this.cardService = cardService;

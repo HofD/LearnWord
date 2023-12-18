@@ -1,3 +1,4 @@
+using LearningWords.BL.Abstractions;
 using LearningWords.BL.MappingProfiles;
 using LearningWords.BL.Services;
 using LearningWords.DAL;
@@ -21,9 +22,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<CollectionRepository>();
-builder.Services.AddTransient<CollectionService>();
+builder.Services.AddTransient<ICollectionService, CollectionService>();
 builder.Services.AddTransient<CardRepository>();
-builder.Services.AddTransient<CardService>();
+builder.Services.AddTransient<ICardService, CardService>();
+builder.Services.AddTransient<WordRepository>();
+builder.Services.AddTransient<IWordService, WordService>();
 
 builder.Services.AddAutoMapper(options => options.AddProfile<CollectionMappingProfile>());
 builder.Services.AddAutoMapper(options => options.AddProfile<CardMappingProfile>());

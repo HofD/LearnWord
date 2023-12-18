@@ -1,6 +1,6 @@
 ﻿using LearningWords.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,15 +12,26 @@ namespace LearningWords.DAL.Repositories
         {
         }
 
-        public async Task Add(Word word)
+        public async Task<Word> Add(Word word)
         {
             dbContext.Words.Add(word);
+
             await SaveChangesAsync();
+
+            return await FindById(word.Id);
         }
 
-        public async Task Delete(Word word)
+        public async Task Remove(int id)
         {
+            var word = await FindById(id);
+
+            if (word == null)
+            {
+                throw new Exception($"Word {id} not found.");
+            }
+
             dbContext.Words.Remove(word);
+
             await SaveChangesAsync();
         }
 
@@ -33,11 +44,6 @@ namespace LearningWords.DAL.Repositories
         public async Task<Word> FindById(int id)
         {
             return await GetQueryable().FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        public async Task<List<Word>> GetAll()
-        {
-            return await GetQueryable().ToListAsync();
         }
 
         private IQueryable<Word> GetQueryable()
