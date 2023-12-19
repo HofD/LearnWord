@@ -35,10 +35,30 @@ namespace LearningWords.DAL.Repositories
             await SaveChangesAsync();
         }
 
-        public async Task Update(Word word)
+        public async Task<Word> Update(Word updatedWord)
         {
+            var word = await FindById(updatedWord.Id);
+
+            if (word == null)
+            {
+                throw new Exception($"Word {updatedWord.Id} not found.");
+            }
+
+            if (word.CardId != updatedWord.CardId)
+            {
+                throw new Exception($"Wrong card id for word {word.Id}.");
+            }
+
+            word.Value = updatedWord.Value;
+            word.Transcription = updatedWord.Transcription;
+            word.Translation = updatedWord.Translation;
+            word.ModifiedAt = updatedWord.ModifiedAt;
+
             dbContext.Words.Update(word);
+
             await SaveChangesAsync();
+
+            return word;
         }
 
         public async Task<Word> FindById(int id)

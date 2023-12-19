@@ -6,6 +6,6 @@ namespace LearningWords.BL.Abstractions
     {
         Task<WordDto> Add(WordCreateDto word, int cardId);
         Task Remove(int id);
-        Task<WordDto> Update(WordUpdateDto word, int cardId);
+        Task<WordDto> Update(int cardId, int id, WordUpdateDto word);
     }
 }

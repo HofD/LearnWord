@@ -29,9 +29,13 @@ namespace LearningWords.BL.Services
             await wordRepository.Remove(id);
         }
 
-        public Task<WordDto> Update(WordUpdateDto word, int cardId)
+        public async Task<WordDto> Update(int cardId, int id, WordUpdateDto word)
         {
-            throw new NotImplementedException();
+            Word wordToSave = mapper.Map<Word>(word);
+            wordToSave.CardId = cardId;
+            wordToSave.Id = id;
+
+            return mapper.Map<WordDto>(await wordRepository.Update(wordToSave));
         }
     }
 }

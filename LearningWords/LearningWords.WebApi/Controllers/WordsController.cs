@@ -27,5 +27,11 @@ namespace LearningWords.WebApi.Controllers
         {
             await wordService.Remove(id);
         }
+
+        [HttpPut("cards/{cardId}/words/{id}")]
+        public async Task<WordDto> Update(int cardId, int id, WordUpdateDto word)
+        {
+            return await wordService.Update(cardId, id, word);
+        }
     }
 }
