@@ -8,30 +8,30 @@ namespace LearningWords.WebApi.Controllers
     public class WordsController : ControllerBase
     {
         private readonly ILogger<WordsController> logger;
-        private readonly IWordService wordService;
+        private readonly IWordEditService wordEditService;
 
-        public WordsController(ILogger<WordsController> logger, IWordService wordService)
+        public WordsController(ILogger<WordsController> logger, IWordEditService wordEditService)
         {
             this.logger = logger;
-            this.wordService = wordService;
+            this.wordEditService = wordEditService;
         }
 
         [HttpPost("cards/{cardId}/words")]
         public async Task<WordDto> Add(WordCreateDto word, int cardId)
         {
-            return await wordService.Add(word, cardId);
+            return await wordEditService.Add(word, cardId);
         }
 
         [HttpDelete("words/{id}")]
         public async Task Remove(int id)
         {
-            await wordService.Remove(id);
+            await wordEditService.Remove(id);
         }
 
         [HttpPut("cards/{cardId}/words/{id}")]
         public async Task<WordDto> Update(int cardId, int id, WordUpdateDto word)
         {
-            return await wordService.Update(cardId, id, word);
+            return await wordEditService.Update(cardId, id, word);
         }
     }
 }

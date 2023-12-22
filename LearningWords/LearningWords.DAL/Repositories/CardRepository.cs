@@ -39,6 +39,20 @@ namespace LearningWords.DAL.Repositories
             return await GetQueryable(include).FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<Card> ResetCard(int id)
+        {
+            var card = await FindById(id, false);
+
+            card.ModifiedAt = DateTime.UtcNow;
+            card.Learnt = false;
+            card.LearntAt = null;
+            card.ShowedAt = null;
+
+            await SaveChangesAsync();
+
+            return card;
+        }
+
         private IQueryable<Card> GetQueryable(bool include)
         {
             var queryable = dbContext.Cards.AsQueryable();

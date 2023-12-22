@@ -27,6 +27,7 @@ builder.Services.AddTransient<CardRepository>();
 builder.Services.AddTransient<ICardService, CardService>();
 builder.Services.AddTransient<WordRepository>();
 builder.Services.AddTransient<IWordService, WordService>();
+builder.Services.AddTransient<IWordEditService, WordEditService>();
 
 builder.Services.AddAutoMapper(options => options.AddProfile<CollectionMappingProfile>());
 builder.Services.AddAutoMapper(options => options.AddProfile<CardMappingProfile>());
