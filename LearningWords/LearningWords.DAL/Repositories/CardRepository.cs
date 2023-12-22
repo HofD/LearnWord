@@ -39,7 +39,7 @@ namespace LearningWords.DAL.Repositories
             return await GetQueryable(include).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<Card> ResetCard(int id)
+        public async Task<Card> Reset(int id)
         {
             var card = await FindById(id, false);
 
@@ -47,6 +47,42 @@ namespace LearningWords.DAL.Repositories
             card.Learnt = false;
             card.LearntAt = null;
             card.ShowedAt = null;
+
+            await SaveChangesAsync();
+
+            return card;
+        }
+
+        public async Task<Card> Learn(int id)
+        {
+            var card = await FindById(id);
+
+            if (card == null)
+            {
+                throw new Exception($"Card {id} not found.");
+            }
+
+            card.Learnt = true;
+            card.LearntAt = DateTime.UtcNow;
+            card.ShowedAt = DateTime.UtcNow;
+
+            await SaveChangesAsync();
+
+            return card;
+        }
+
+        public async Task<Card> Forget(int id)
+        {
+            var card = await FindById(id);
+
+            if (card == null)
+            {
+                throw new Exception($"Card {id} not found.");
+            }
+
+            card.Learnt = false;
+            card.LearntAt = null;
+            card.ShowedAt = DateTime.UtcNow;
 
             await SaveChangesAsync();
 

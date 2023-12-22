@@ -18,7 +18,7 @@ namespace LearningWords.BL.Services
         {
             var addedWord = await wordService.Add(word, cardId);
 
-            await cardService.ResetCard(cardId);
+            await cardService.Reset(cardId);
 
             return addedWord;
         }
@@ -32,7 +32,7 @@ namespace LearningWords.BL.Services
         {
             var updatedWord = await wordService.Update(cardId, id, word);
 
-            await cardService.ResetCard(cardId);
+            await cardService.Reset(cardId);
 
             return updatedWord;
         }

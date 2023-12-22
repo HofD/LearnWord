@@ -20,13 +20,21 @@ namespace LearningWords.BL.Services
         {
             return mapper.Map<CardDto>(await cardRepository.Add(mapper.Map<Card>(createDto)));
         }
+        public async Task<CardDto> Forget(int id)
+        {
+            return mapper.Map<CardDto>(await cardRepository.Forget(id));
+        }
+        public async Task<CardDto> Learn(int id)
+        {
+            return mapper.Map<CardDto>(await cardRepository.Learn(id));
+        }
         public async Task Remove(int id)
         {
             await cardRepository.Remove(id);
         }
-        public async Task<CardDto> ResetCard(int id)
+        public async Task<CardDto> Reset(int id)
         {
-            return mapper.Map<CardDto>(await cardRepository.ResetCard(id));
+            return mapper.Map<CardDto>(await cardRepository.Reset(id));
         }
     }
 }
