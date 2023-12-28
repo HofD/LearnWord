@@ -13,11 +13,11 @@
 12. Получить все карточки в коллекции. +
 
 Создание миграций:
-dotnet ef migrations add -p LearningWords.WebApp --startup-project LearningWords.WebApp -o Data\Migrations -c ApplicationDbContext InitialCreate
+dotnet ef migrations add -p IdentityService.Migrations --startup-project IdentityService.WebApi -o Migrations -c IdentityContext InitialCreate
 dotnet ef migrations add -p LearningWords.Migrations --startup-project LearningWords.WebApi -o Migrations -c WordsDbContext InitialCreate
 
 Обновление миграций:
-dotnet ef database update -p LearningWords.WebApp --startup-project LearningWords.WebApp -c ApplicationDbContext
+dotnet ef database update -p IdentityService.WebApi --startup-project IdentityService.WebApi -c IdentityContext
 dotnet ef database update -p LearningWords.WebApi --startup-project LearningWords.WebApi -c WordsDbContext
 
 hofd@mail.ru
@@ -27,3 +27,5 @@ TODO:
 1. Одна карточка на несколько коллекций?
 2. А точно надо поле DeletedAt, зачем?
 3. Скрыть WordService?
+4. Регистрация с подтверждением почты.
+5. Перезапрос токена.
