@@ -23,6 +23,12 @@ namespace LearningWords.WebApi.Controllers
             return await collectionService.Get(id);
         }
 
+        [HttpGet]
+        public async Task<CollectionListDto> GetList([FromQuery(Name = "ids")] int[] ids)
+        {
+            return await collectionService.GetList(ids.ToList());
+        }
+
         [HttpPost]
         public async Task<CollectionDto> Add(CollectionCreateDto collection)
         {

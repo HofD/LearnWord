@@ -26,6 +26,26 @@ namespace LearningWords.BL.Services
             return mapper.Map<CollectionDto>(await collectionRepository.FindById(id));
         }
 
+        public async Task<CollectionListDto> GetList(List<int> ids)
+        {
+            var result = new CollectionListDto();
+
+            var values = await collectionRepository.FindByIds(ids);
+
+            foreach ( var value in values )
+            {
+                result.Collections.Add(
+                    new CollectionListEntityDto() 
+                    { 
+                        Id = value.Id, 
+                        Name = value.Name, 
+                        CardsCount = value.Cards.Count 
+                    });
+            }
+
+            return result;
+        }
+
         public async Task Remove(int id)
         {
             await collectionRepository.Remove(id);

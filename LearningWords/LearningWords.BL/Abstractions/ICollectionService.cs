@@ -8,5 +8,6 @@ namespace LearningWords.BL.Abstractions
         Task<CollectionDto> Rename(int id, CollectionRenameDto renameDto);
         Task Remove(int id);
         Task<CollectionDto> Get(int id);
+        Task<CollectionListDto> GetList(List<int> ids);
     }
 }

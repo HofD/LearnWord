@@ -1,0 +1,13 @@
+﻿using LearningWords.BL.Models.Dto;
+
+namespace LearningWords.Collections.Identity.Abstactions
+{
+    public interface ICollectionIdentityService
+    {
+        Task<CollectionDto> Add(CollectionCreateDto createDto, string userId);
+        Task<CollectionDto?> Rename(int id, CollectionRenameDto renameDto, string userId);
+        Task Remove(int id, string userId);
+        Task<CollectionDto?> Get(int id, string userId);
+        Task<CollectionListDto> GetAll(string userId);
+    }
+}

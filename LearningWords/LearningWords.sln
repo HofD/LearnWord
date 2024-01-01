@@ -19,19 +19,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearningWords.Migrations", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IdentityService", "IdentityService", "{6794007E-09F6-4989-8F0A-7E77510E9482}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.WebApi", "IdentityService.WebApi\IdentityService.WebApi.csproj", "{0B0A837A-5CB1-4C69-A354-D740FF9EF133}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService.WebApi", "IdentityService.WebApi\IdentityService.WebApi.csproj", "{0B0A837A-5CB1-4C69-A354-D740FF9EF133}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.DAL", "IdentityService.DAL\IdentityService.DAL.csproj", "{5B112D34-BFAD-4FD2-ADD7-E6EC16359F08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService.DAL", "IdentityService.DAL\IdentityService.DAL.csproj", "{5B112D34-BFAD-4FD2-ADD7-E6EC16359F08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.DAL.Models", "IdentityService.DAL.Models\IdentityService.DAL.Models.csproj", "{308F1925-40C4-4F63-BE02-3CDAB209D5A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService.DAL.Models", "IdentityService.DAL.Models\IdentityService.DAL.Models.csproj", "{308F1925-40C4-4F63-BE02-3CDAB209D5A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.Migrations", "IdentityService.Migrations\IdentityService.Migrations.csproj", "{0DD3C0FD-14F8-4F3F-88A4-2D6A34F1B247}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService.Migrations", "IdentityService.Migrations\IdentityService.Migrations.csproj", "{0DD3C0FD-14F8-4F3F-88A4-2D6A34F1B247}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.Authorization", "IdentityService.Authorization\IdentityService.Authorization.csproj", "{AABCB67A-7C21-4DCC-BD57-6012A1693264}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService.Authorization", "IdentityService.Authorization\IdentityService.Authorization.csproj", "{AABCB67A-7C21-4DCC-BD57-6012A1693264}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{319ACA3F-A695-45D2-AF2A-384107630948}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningWords.Gateway", "LearningWords.Gateway\LearningWords.Gateway.csproj", "{985AD213-925D-4F56-ABFF-554E599AA6F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearningWords.Gateway", "LearningWords.Gateway\LearningWords.Gateway.csproj", "{985AD213-925D-4F56-ABFF-554E599AA6F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LearningWordsCollectionsIdentity", "LearningWordsCollectionsIdentity", "{1DF1612B-6FCF-441D-B8CE-F68BBD3DE1AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningWords.Collections.Identity", "LearningWords.Collections.Identity\LearningWords.Collections.Identity.csproj", "{B89E9BD1-2ED6-4FB8-ABCF-A64A2A014B1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningWords.Collections.Identity.DAL", "LearningWords.Collections.Identity.DAL\LearningWords.Collections.Identity.DAL.csproj", "{7CDDBA55-F05E-492D-BD02-E0A31C6D885E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningWords.Collections.Identity.DAL.Models", "LearningWords.Collections.Identity.DAL.Models\LearningWords.Collections.Identity.DAL.Models.csproj", "{95150544-8E19-4B3D-89CD-FD5613CD1017}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningWords.Collections.Identity.Migrations", "LearningWords.Collections.Identity.Migrations\LearningWords.Collections.Identity.Migrations.csproj", "{1AA12C43-BF0F-4A9F-B435-79F203541CE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +97,22 @@ Global
 		{985AD213-925D-4F56-ABFF-554E599AA6F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{985AD213-925D-4F56-ABFF-554E599AA6F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{985AD213-925D-4F56-ABFF-554E599AA6F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B89E9BD1-2ED6-4FB8-ABCF-A64A2A014B1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B89E9BD1-2ED6-4FB8-ABCF-A64A2A014B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B89E9BD1-2ED6-4FB8-ABCF-A64A2A014B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B89E9BD1-2ED6-4FB8-ABCF-A64A2A014B1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CDDBA55-F05E-492D-BD02-E0A31C6D885E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CDDBA55-F05E-492D-BD02-E0A31C6D885E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CDDBA55-F05E-492D-BD02-E0A31C6D885E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CDDBA55-F05E-492D-BD02-E0A31C6D885E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95150544-8E19-4B3D-89CD-FD5613CD1017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95150544-8E19-4B3D-89CD-FD5613CD1017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95150544-8E19-4B3D-89CD-FD5613CD1017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95150544-8E19-4B3D-89CD-FD5613CD1017}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AA12C43-BF0F-4A9F-B435-79F203541CE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AA12C43-BF0F-4A9F-B435-79F203541CE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AA12C43-BF0F-4A9F-B435-79F203541CE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AA12C43-BF0F-4A9F-B435-79F203541CE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +130,10 @@ Global
 		{0DD3C0FD-14F8-4F3F-88A4-2D6A34F1B247} = {6794007E-09F6-4989-8F0A-7E77510E9482}
 		{AABCB67A-7C21-4DCC-BD57-6012A1693264} = {6794007E-09F6-4989-8F0A-7E77510E9482}
 		{985AD213-925D-4F56-ABFF-554E599AA6F4} = {319ACA3F-A695-45D2-AF2A-384107630948}
+		{B89E9BD1-2ED6-4FB8-ABCF-A64A2A014B1E} = {1DF1612B-6FCF-441D-B8CE-F68BBD3DE1AE}
+		{7CDDBA55-F05E-492D-BD02-E0A31C6D885E} = {1DF1612B-6FCF-441D-B8CE-F68BBD3DE1AE}
+		{95150544-8E19-4B3D-89CD-FD5613CD1017} = {1DF1612B-6FCF-441D-B8CE-F68BBD3DE1AE}
+		{1AA12C43-BF0F-4A9F-B435-79F203541CE6} = {1DF1612B-6FCF-441D-B8CE-F68BBD3DE1AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2DAF9759-0DEA-4924-9A7C-282719A20758}

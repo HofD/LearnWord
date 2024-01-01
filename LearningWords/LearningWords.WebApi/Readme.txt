@@ -15,10 +15,12 @@
 Создание миграций:
 dotnet ef migrations add -p IdentityService.Migrations --startup-project IdentityService.WebApi -o Migrations -c IdentityContext InitialCreate
 dotnet ef migrations add -p LearningWords.Migrations --startup-project LearningWords.WebApi -o Migrations -c WordsDbContext InitialCreate
+dotnet ef migrations add -p LearningWords.Collections.Identity.Migrations --startup-project LearningWords.Collections.Identity -o Migrations -c CollectionIdentityDbContext InitialCreate
 
 Обновление миграций:
 dotnet ef database update -p IdentityService.WebApi --startup-project IdentityService.WebApi -c IdentityContext
 dotnet ef database update -p LearningWords.WebApi --startup-project LearningWords.WebApi -c WordsDbContext
+dotnet ef database update -p LearningWords.Collections.Identity --startup-project LearningWords.Collections.Identity -c CollectionIdentityDbContext
 
 hofd@mail.ru
 WarhackHD!1

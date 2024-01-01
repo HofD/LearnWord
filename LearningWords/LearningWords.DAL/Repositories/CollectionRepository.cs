@@ -1,6 +1,7 @@
 ﻿using LearningWords.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -50,6 +51,19 @@ namespace LearningWords.DAL.Repositories
         public async Task<Collection> FindById(int id, bool include = true)
         {
             return await GetQueryable(include).FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<List<Collection>> FindByIds(List<int> ids)
+        {
+            var queryable = dbContext.Collections.AsQueryable();
+
+            queryable = queryable
+                    .Include(x => x.Cards);
+
+            queryable = queryable
+                .Where(x => ids.Contains(x.Id));
+
+            return await queryable.AsNoTracking().ToListAsync();
         }
 
         private IQueryable<Collection> GetQueryable(bool include)
