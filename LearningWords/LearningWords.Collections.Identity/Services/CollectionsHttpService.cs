@@ -6,16 +6,16 @@ namespace LearningWords.Collections.Identity.Services
     public class CollectionsHttpService : ICollectionsHttpService
     {
         private readonly HttpClient httpClient = new HttpClient();
-        private readonly IConfiguration configuration;
+        private readonly string serviceBaseUrl;
 
         public CollectionsHttpService(IConfiguration configuration)
         {
-            this.configuration = configuration;
+            this.serviceBaseUrl = configuration["LwServicesRoutes:CollectionsRoute"];
         }
 
         public async Task<CollectionDto?> Add(CollectionCreateDto createDto)
         {
-            using var response = await httpClient.PostAsJsonAsync("https://localhost:44350/collections", createDto);
+            using var response = await httpClient.PostAsJsonAsync(serviceBaseUrl, createDto);
 
             if (response.IsSuccessStatusCode)
             {
@@ -29,7 +29,7 @@ namespace LearningWords.Collections.Identity.Services
 
         public async Task<CollectionDto?> Get(int id)
         {
-            using var response = await httpClient.GetAsync($"https://localhost:44350/collections/{id}");
+            using var response = await httpClient.GetAsync($"{serviceBaseUrl}/{id}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -43,7 +43,7 @@ namespace LearningWords.Collections.Identity.Services
 
         public async Task<CollectionListDto?> GetList(int[] ids)
         {
-            var request = $"https://localhost:44350/collections?";
+            var request = $"{serviceBaseUrl}?";
 
             foreach (var id in ids)
             {
@@ -64,7 +64,7 @@ namespace LearningWords.Collections.Identity.Services
 
         public async Task<bool> Remove(int id)
         {
-            var request = $"https://localhost:44350/collections/{id}";
+            var request = $"{serviceBaseUrl}/{id}";
 
             using var response = await httpClient.DeleteAsync(request);
 
@@ -73,7 +73,7 @@ namespace LearningWords.Collections.Identity.Services
 
         public async Task<CollectionDto?> Rename(int id, CollectionRenameDto renameDto)
         {
-            var request = $"https://localhost:44350/collections/{id}";
+            var request = $"{serviceBaseUrl}/{id}";
 
             using var response = await httpClient.PutAsJsonAsync(request, renameDto);
 
