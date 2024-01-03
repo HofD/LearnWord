@@ -1,0 +1,41 @@
+﻿using AutoMapper;
+using LearnWord.BL.Abstractions;
+using LearnWord.BL.Models.Dto;
+using LearnWord.DAL.Models;
+using LearnWord.DAL.Repositories;
+
+namespace LearnWord.BL.Services
+{
+    public class WordService : IWordService
+    {
+        private readonly WordRepository wordRepository;
+        private readonly IMapper mapper;
+
+        public WordService(WordRepository wordRepository, IMapper mapper) 
+        {
+            this.wordRepository = wordRepository;
+            this.mapper = mapper;
+        }
+        public async Task<WordDto> Add(WordCreateDto word, int cardId)
+        {
+            Word wordToSave = mapper.Map<Word>(word);
+            wordToSave.CardId = cardId;
+
+            return mapper.Map<WordDto>(await wordRepository.Add(wordToSave));
+        }
+
+        public async Task Remove(int id)
+        {
+            await wordRepository.Remove(id);
+        }
+
+        public async Task<WordDto> Update(int cardId, int id, WordUpdateDto word)
+        {
+            Word wordToSave = mapper.Map<Word>(word);
+            wordToSave.CardId = cardId;
+            wordToSave.Id = id;
+
+            return mapper.Map<WordDto>(await wordRepository.Update(wordToSave));
+        }
+    }
+}

@@ -1,0 +1,78 @@
+﻿using LearnWord.BL.Models.Dto;
+using LearnWord.Collections.Identity.Abstactions;
+using LearnWord.Collections.Identity.DAL.Models;
+using LearnWord.Collections.Identity.DAL.Repositories;
+
+namespace LearnWord.Collections.Identity.Services
+{
+    public class CollectionIdentityService : ICollectionIdentityService
+    {
+        private readonly ICollectionsHttpService collectionsHttpService;
+        private readonly CollectionIdentityRepository repository;
+
+        public CollectionIdentityService(ICollectionsHttpService collectionsHttpService, CollectionIdentityRepository repository) 
+        {
+            this.collectionsHttpService = collectionsHttpService;
+            this.repository = repository;
+        }
+
+        public async Task<CollectionDto> Add(CollectionCreateDto createDto, string userId)
+        {
+            var result = await collectionsHttpService.Add(createDto);
+
+            await repository.Add(new CollectionIdentity() { CollectionId = result.Id, UserId = userId });
+
+            return result;
+        }
+
+        public async Task<CollectionDto?> Get(int id, string userId)
+        {
+            var link = await repository.Get(id, userId);
+
+            if (link == null)
+            {
+                return null;
+            }
+
+            return await collectionsHttpService.Get(id);
+        }
+
+        public async Task<CollectionListDto> GetAll(string userId)
+        {
+            var list = await repository.GetAll(userId);
+
+            return await collectionsHttpService.GetList(list.Select(x => x.CollectionId).ToArray());
+        }
+
+        public async Task<bool?> Remove(int id, string userId)
+        {
+            var link = await repository.Get(id, userId);
+
+            if (link == null)
+            {
+                return null;
+            }
+
+            if (await collectionsHttpService.Remove(id))
+            {
+                await repository.Remove(id, userId);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<CollectionDto?> Rename(int id, CollectionRenameDto renameDto, string userId)
+        {
+            var link = await repository.Get(id, userId);
+
+            if (link == null)
+            {
+                return null;
+            }
+
+            return await collectionsHttpService.Rename(id, renameDto);
+        }
+    }
+}
