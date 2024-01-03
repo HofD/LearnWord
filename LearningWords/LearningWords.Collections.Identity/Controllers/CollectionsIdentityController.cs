@@ -71,9 +71,19 @@ namespace LearningWords.Collections.Identity.Controllers
                 return Unauthorized();
             }
 
-            await collectionIdentityService.Remove(id, userId);
+            var result = await collectionIdentityService.Remove(id, userId);
 
-            return Ok();
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            if (result.Value)
+            {
+                return Ok();
+            }
+
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
 
         [HttpPut("{id}")]

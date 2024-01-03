@@ -44,21 +44,23 @@ namespace LearningWords.Collections.Identity.Services
             return await collectionsHttpService.GetList(list.Select(x => x.CollectionId).ToArray());
         }
 
-        public async Task Remove(int id, string userId)
+        public async Task<bool?> Remove(int id, string userId)
         {
             var link = await repository.Get(id, userId);
 
             if (link == null)
             {
-                return;
+                return null;
             }
 
             if (await collectionsHttpService.Remove(id))
             {
                 await repository.Remove(id, userId);
+
+                return true;
             }
 
-            return;
+            return false;
         }
 
         public async Task<CollectionDto?> Rename(int id, CollectionRenameDto renameDto, string userId)
