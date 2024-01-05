@@ -31,7 +31,6 @@ LearnWord.CollectionsIdentity - 44345
 LearnWord.WebApi - 44350
 
 TODO:
-1. Одна карточка на несколько коллекций?
 2. А точно надо поле DeletedAt, зачем?
 3. Скрыть WordService?
 4. Регистрация с подтверждением почты.

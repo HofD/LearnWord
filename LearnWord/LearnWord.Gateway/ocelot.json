@@ -81,7 +81,7 @@
       "UpstreamHttpMethod": [ "PUT" ]
     },
     {
-      "DownstreamPathTemplate": "/users/register",
+      "DownstreamPathTemplate": "/account/register",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -89,11 +89,11 @@
           "Port": 44379
         }
       ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
-      "UpstreamPathTemplate": "/api/users/register",
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "Bearer",
+      //  "AllowedScopes": []
+      //},
+      "UpstreamPathTemplate": "/api/account/register",
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
@@ -106,6 +106,18 @@
         }
       ],
       "UpstreamPathTemplate": "/api/auth/login",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/account/conformation/send",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44379
+        }
+      ],
+      "UpstreamPathTemplate": "/api/account/conformation/send",
       "UpstreamHttpMethod": [ "POST" ]
     }
   ],

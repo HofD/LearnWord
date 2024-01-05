@@ -14,7 +14,7 @@ namespace IdentityService.WebApi.Controllers
         private readonly UserManager<LwIdentityUser> userManager;
         private readonly JwtHandler jwtHandler;
 
-        public AuthenticationController(UserManager<LwIdentityUser> userManager, 
+        public AuthenticationController(UserManager<LwIdentityUser> userManager,
             JwtHandler jwtHandler) 
         {
             this.userManager = userManager;
@@ -34,6 +34,11 @@ namespace IdentityService.WebApi.Controllers
             if (user == null || !await userManager.CheckPasswordAsync(user, loginRequest.Password))
             {
                 return Unauthorized();
+            }
+
+            if (!await userManager.IsEmailConfirmedAsync(user))
+            {
+                return StatusCode(StatusCodes.Status412PreconditionFailed, "Email not confirmed.");
             }
 
             var signingCredentials = jwtHandler.GetSigningCredentials();

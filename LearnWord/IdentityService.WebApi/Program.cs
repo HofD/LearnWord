@@ -1,4 +1,5 @@
 using IdentityService.Authorization.Authorization;
+using IdentityService.Authorization.Services;
 using IdentityService.DAL.Context;
 using IdentityService.DAL.Models.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<IdentityContext>(options =>
 builder.Services.AddIdentityCore<LwIdentityUser>(options =>
     {
         options.SignIn.RequireConfirmedAccount = true;
+        options.SignIn.RequireConfirmedEmail = true;
+        options.User.RequireUniqueEmail = true;
         options.Password.RequireDigit = true;
         options.Password.RequiredLength = 6;
         options.Password.RequireNonAlphanumeric = true;
@@ -25,7 +28,11 @@ builder.Services.AddIdentityCore<LwIdentityUser>(options =>
         options.Password.RequireLowercase = false;
     })
     .AddEntityFrameworkStores<IdentityContext>()
-    .AddSignInManager<SignInManager<LwIdentityUser>>();
+    .AddSignInManager<SignInManager<LwIdentityUser>>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+       options.TokenLifespan = TimeSpan.FromHours(3));
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -43,6 +50,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .GetBytes(jwtSettings.GetSection("Key").Value))
         });
 builder.Services.AddScoped<JwtHandler>();
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
