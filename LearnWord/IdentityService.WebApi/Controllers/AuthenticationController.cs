@@ -38,7 +38,7 @@ namespace IdentityService.WebApi.Controllers
 
             if (!await userManager.IsEmailConfirmedAsync(user))
             {
-                return StatusCode(StatusCodes.Status412PreconditionFailed, "Email not confirmed.");
+                return Forbid("Email not confirmed.");
             }
 
             var signingCredentials = jwtHandler.GetSigningCredentials();

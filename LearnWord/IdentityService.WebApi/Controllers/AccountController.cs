@@ -4,7 +4,7 @@ using IdentityService.Authorization.Services;
 using IdentityService.DAL.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
+using Microsoft.Extensions.Logging;
 
 namespace IdentityService.WebApi.Controllers
 {
@@ -33,7 +33,7 @@ namespace IdentityService.WebApi.Controllers
 
             if (await userManager.FindByEmailAsync(request.Email) != null)
             {
-                return BadRequest($"User with email '{request.Email}' is already exists.");
+                return Created();
             }
 
             var user = new LwIdentityUser(request.UserName);
@@ -43,19 +43,28 @@ namespace IdentityService.WebApi.Controllers
 
             if (result.Succeeded)
             {
-                var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = Url.Action(
-                        "ConfirmEmail",
-                        "Account",
-                        new { userId = user.Id, code = code },
-                        protocol: HttpContext.Request.Scheme);
+                try
+                {
+                    var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action(
+                            "ConfirmEmail",
+                            "Account",
+                            new { userId = user.Id, code = code },
+                            protocol: HttpContext.Request.Scheme);
 
-                await emailService.SendRegistrationEmailAsync(request.Email, "Confirm your account",
-                    $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
+                    await emailService.SendRegistrationEmailAsync(request.Email, "Confirm your account",
+                        $"Please confirm your email by following this <a href='{callbackUrl}'>link</a>");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex.ToString(), user.Email);
+                    return Ok();
+                }
 
                 return Ok();
             }
 
+            logger.LogError(result.Errors.ToString(), user.Email);
             return BadRequest(result.Errors);
         }
 
@@ -82,7 +91,7 @@ namespace IdentityService.WebApi.Controllers
             var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action(
                     "ConfirmEmail",
-                    "User",
+                    "Account",
                     new { userId = user.Id, code = code },
                     protocol: HttpContext.Request.Scheme);
 
