@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44345
+          "Port": 7027
         }
       ],
       "AuthenticationOptions": {
@@ -22,7 +22,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44345
+          "Port": 7027
         }
       ],
       "AuthenticationOptions": {
@@ -38,7 +38,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44345
+          "Port": 7027
         }
       ],
       "AuthenticationOptions": {
@@ -54,7 +54,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44345
+          "Port": 7027
         }
       ],
       "AuthenticationOptions": {
@@ -70,7 +70,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44345
+          "Port": 7027
         }
       ],
       "AuthenticationOptions": {
@@ -86,13 +86,9 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44379
+          "Port": 7039
         }
       ],
-      //"AuthenticationOptions": {
-      //  "AuthenticationProviderKey": "Bearer",
-      //  "AllowedScopes": []
-      //},
       "UpstreamPathTemplate": "/api/account/register",
       "UpstreamHttpMethod": [ "POST" ]
     },
@@ -102,7 +98,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44379
+          "Port": 7039
         }
       ],
       "UpstreamPathTemplate": "/api/auth/login",
@@ -114,7 +110,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44379
+          "Port": 7039
         }
       ],
       "UpstreamPathTemplate": "/api/account/conformation/send",

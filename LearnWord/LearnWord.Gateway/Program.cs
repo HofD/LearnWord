@@ -23,6 +23,8 @@ builder.Services
         };
     });
 
+builder.Services.AddCors();
+
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
 builder.Services.AddOcelot();
@@ -32,6 +34,12 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors(x => x
+        .SetIsOriginAllowed(origin => true)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
 
 app.UseOcelot().Wait();
 

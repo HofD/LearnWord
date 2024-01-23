@@ -25,10 +25,10 @@ dotnet ef database update -p LearnWord.Collections.Identity --startup-project Le
 hofd@mail.ru
 WarhackHD!1
 
-LearnWord.Gateway - 44335
-IdentityService - 44379
-LearnWord.CollectionsIdentity - 44345
-LearnWord.WebApi - 44350
+LearnWord.Gateway - 7237
+IdentityService - 7039
+LearnWord.CollectionsIdentity - 7027
+LearnWord.WebApi - 7228
 
 TODO:
 2. А точно надо поле DeletedAt, зачем?
