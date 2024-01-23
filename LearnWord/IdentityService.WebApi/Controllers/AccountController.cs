@@ -36,7 +36,7 @@ namespace IdentityService.WebApi.Controllers
                 return Created();
             }
 
-            var user = new LwIdentityUser(request.UserName);
+            var user = new LwIdentityUser(request.Email);
             user.Email = request.Email;
 
             var result = await userManager.CreateAsync(user, request.Password);
