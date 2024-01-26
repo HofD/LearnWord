@@ -4,7 +4,11 @@ using IdentityService.Authorization.Services;
 using IdentityService.DAL.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Bcpg;
+using System.Text.Encodings.Web;
+using System.Web;
 
 namespace IdentityService.WebApi.Controllers
 {
@@ -46,11 +50,12 @@ namespace IdentityService.WebApi.Controllers
                 try
                 {
                     var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action(
-                            "ConfirmEmail",
-                            "Account",
-                            new { userId = user.Id, code = code },
-                            protocol: HttpContext.Request.Scheme);
+                    var param = new Dictionary<string, string?>()
+                    {
+                        { "userId", user.Id },
+                        { "code", code }
+                    };
+                    var callbackUrl = QueryHelpers.AddQueryString("http://localhost:4200/confirm", param);
 
                     await emailService.SendRegistrationEmailAsync(request.Email, "Confirm your account",
                         $"Please confirm your email by following this <a href='{callbackUrl}'>link</a>");
@@ -89,15 +94,16 @@ namespace IdentityService.WebApi.Controllers
             }
 
             var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-            var callbackUrl = Url.Action(
-                    "ConfirmEmail",
-                    "Account",
-                    new { userId = user.Id, code = code },
-                    protocol: HttpContext.Request.Scheme);
+            var param = new Dictionary<string, string?>()
+            {
+                { "userId", user.Id },
+                { "code", code }
+            };
+            var callbackUrl = QueryHelpers.AddQueryString("http://localhost:4200/confirm", param);
 
             await emailService.SendRegistrationEmailAsync(sendConfirmationRequest.Email, "Confirm your account",
                 $"Please confirm your email by following this <a href='{callbackUrl}'>link</a>");
-
+            
             return Ok();
         }
 
