@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace LearnWord.Collections.Identity.DAL.Models
+namespace LearnWord.Identity.DAL.Models
 {
     public class CollectionIdentity
     {

@@ -1,8 +1,8 @@
-﻿using LearnWord.Collections.Identity.DAL.Context;
-using LearnWord.Collections.Identity.DAL.Models;
+﻿using LearnWord.Identity.DAL.Context;
+using LearnWord.Identity.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace LearnWord.Collections.Identity.DAL.Repositories
+namespace LearnWord.Identity.DAL.Repositories
 {
     public class CollectionIdentityRepository
     {

@@ -1,6 +1,6 @@
 ﻿using LearnWord.BL.Models.Dto;
 
-namespace LearnWord.Collections.Identity.Abstactions
+namespace LearnWord.Identity.Abstactions
 {
     public interface ICollectionsHttpService
     {

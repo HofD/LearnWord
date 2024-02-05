@@ -33,15 +33,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{319A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.Gateway", "LearnWord.Gateway\LearnWord.Gateway.csproj", "{985AD213-925D-4F56-ABFF-554E599AA6F4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LearnWordCollectionsIdentity", "LearnWordCollectionsIdentity", "{1DF1612B-6FCF-441D-B8CE-F68BBD3DE1AE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LearnWordIdentity", "LearnWordIdentity", "{1DF1612B-6FCF-441D-B8CE-F68BBD3DE1AE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.Collections.Identity", "LearnWord.Collections.Identity\LearnWord.Collections.Identity.csproj", "{B89E9BD1-2ED6-4FB8-ABCF-A64A2A014B1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.Identity", "LearnWord.Identity\LearnWord.Identity.csproj", "{B89E9BD1-2ED6-4FB8-ABCF-A64A2A014B1E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.Collections.Identity.DAL", "LearnWord.Collections.Identity.DAL\LearnWord.Collections.Identity.DAL.csproj", "{7CDDBA55-F05E-492D-BD02-E0A31C6D885E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.Identity.DAL", "LearnWord.Identity.DAL\LearnWord.Identity.DAL.csproj", "{7CDDBA55-F05E-492D-BD02-E0A31C6D885E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.Collections.Identity.DAL.Models", "LearnWord.Collections.Identity.DAL.Models\LearnWord.Collections.Identity.DAL.Models.csproj", "{95150544-8E19-4B3D-89CD-FD5613CD1017}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.Identity.DAL.Models", "LearnWord.Identity.DAL.Models\LearnWord.Identity.DAL.Models.csproj", "{95150544-8E19-4B3D-89CD-FD5613CD1017}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.Collections.Identity.Migrations", "LearnWord.Collections.Identity.Migrations\LearnWord.Collections.Identity.Migrations.csproj", "{1AA12C43-BF0F-4A9F-B435-79F203541CE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.Identity.Migrations", "LearnWord.Identity.Migrations\LearnWord.Identity.Migrations.csproj", "{1AA12C43-BF0F-4A9F-B435-79F203541CE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LearnWord.Collections.Identity.DAL\LearnWord.Collections.Identity.DAL.csproj" />
+    <ProjectReference Include="..\LearnWord.Identity.DAL\LearnWord.Identity.DAL.csproj" />
   </ItemGroup>
 
 </Project>

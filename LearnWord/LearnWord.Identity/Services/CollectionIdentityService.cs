@@ -1,9 +1,9 @@
 ﻿using LearnWord.BL.Models.Dto;
-using LearnWord.Collections.Identity.Abstactions;
-using LearnWord.Collections.Identity.DAL.Models;
-using LearnWord.Collections.Identity.DAL.Repositories;
+using LearnWord.Identity.Abstactions;
+using LearnWord.Identity.DAL.Models;
+using LearnWord.Identity.DAL.Repositories;
 
-namespace LearnWord.Collections.Identity.Services
+namespace LearnWord.Identity.Services
 {
     public class CollectionIdentityService : ICollectionIdentityService
     {

@@ -1,8 +1,8 @@
 ﻿using LearnWord.BL.Models.Dto;
-using LearnWord.Collections.Identity.Abstactions;
+using LearnWord.Identity.Abstactions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LearnWord.Collections.Identity.Controllers
+namespace LearnWord.Identity.Controllers
 {
     [ApiController]
     [Route("collections")]

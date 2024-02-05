@@ -2,7 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
-namespace LearnWord.Collections.Identity.Authorization
+namespace LearnWord.Identity.Authorization
 {
     public class JwtUtils
     {

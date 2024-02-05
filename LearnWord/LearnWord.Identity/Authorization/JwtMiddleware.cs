@@ -1,4 +1,4 @@
-﻿namespace LearnWord.Collections.Identity.Authorization
+﻿namespace LearnWord.Identity.Authorization
 {
     public class JwtMiddleware
     {

@@ -1,8 +1,8 @@
-using LearnWord.Collections.Identity.Abstactions;
-using LearnWord.Collections.Identity.Authorization;
-using LearnWord.Collections.Identity.DAL.Context;
-using LearnWord.Collections.Identity.DAL.Repositories;
-using LearnWord.Collections.Identity.Services;
+using LearnWord.Identity.Abstactions;
+using LearnWord.Identity.Authorization;
+using LearnWord.Identity.DAL.Context;
+using LearnWord.Identity.DAL.Repositories;
+using LearnWord.Identity.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

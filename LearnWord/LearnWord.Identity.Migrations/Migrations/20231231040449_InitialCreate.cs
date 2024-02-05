@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace LearnWord.Collections.Identity.Migrations.Migrations
+namespace LearnWord.Identity.Migrations.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

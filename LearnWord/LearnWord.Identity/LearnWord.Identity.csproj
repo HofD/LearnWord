@@ -21,8 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LearnWord.BL.Models\LearnWord.BL.Models.csproj" />
-    <ProjectReference Include="..\LearnWord.Collections.Identity.DAL\LearnWord.Collections.Identity.DAL.csproj" />
-    <ProjectReference Include="..\LearnWord.Collections.Identity.Migrations\LearnWord.Collections.Identity.Migrations.csproj" />
+    <ProjectReference Include="..\LearnWord.Identity.DAL\LearnWord.Identity.DAL.csproj" />
+    <ProjectReference Include="..\LearnWord.Identity.Migrations\LearnWord.Identity.Migrations.csproj" />
   </ItemGroup>
 
 </Project>

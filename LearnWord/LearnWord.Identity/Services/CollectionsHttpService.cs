@@ -1,7 +1,7 @@
 ﻿using LearnWord.BL.Models.Dto;
-using LearnWord.Collections.Identity.Abstactions;
+using LearnWord.Identity.Abstactions;
 
-namespace LearnWord.Collections.Identity.Services
+namespace LearnWord.Identity.Services
 {
     public class CollectionsHttpService : ICollectionsHttpService
     {
