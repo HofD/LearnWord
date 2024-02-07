@@ -24,7 +24,7 @@ namespace LearnWord.Identity.Services
                 return result;
             }
 
-            return null;
+            throw new Exception($"Failed to create new collection. Server status code: {response.StatusCode}");
         }
 
         public async Task<CollectionDto?> Get(int id)

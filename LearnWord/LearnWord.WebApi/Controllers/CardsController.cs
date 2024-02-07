@@ -18,27 +18,28 @@ namespace LearnWord.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<CardDto> Add(CardCreateDto card)
+        public async Task<ActionResult<CardDto>> Add(CardCreateDto card)
         {
-            return await cardService.Add(card);
+            return Ok(await cardService.Add(card));
         }
 
         [HttpDelete("{id}")]
-        public async Task Remove(int id)
+        public async Task<IActionResult> Remove(int id)
         {
             await cardService.Remove(id);
+            return Ok();
         }
 
         [HttpPost("{id}/learn")]
-        public async Task<CardDto> Learn(int id)
+        public async Task<ActionResult<CardDto>> Learn(int id)
         {
-            return await cardService.Learn(id);
+            return Ok(await cardService.Learn(id));
         }
 
         [HttpPost("{id}/forget")]
-        public async Task<CardDto> Forget(int id)
+        public async Task<ActionResult<CardDto>> Forget(int id)
         {
-            return await cardService.Forget(id);
+            return Ok(await cardService.Forget(id));
         }
     }
 }
