@@ -29,17 +29,37 @@ namespace LearnWord.Identity.Services
 
         public async Task<CardDto> Forget(int id)
         {
-            throw new NotImplementedException();
+            using var response = await httpClient.PostAsJsonAsync($"{serviceBaseUrl}/{id}/forget", new { id });
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<CardDto>();
+
+                return result;
+            }
+
+            throw new Exception($"Failed to forget new card. Server status code: {response.StatusCode}");
         }
 
         public async Task<CardDto> Learn(int id)
         {
-            throw new NotImplementedException();
+            using var response = await httpClient.PostAsJsonAsync($"{serviceBaseUrl}/{id}/learn", new { id });
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<CardDto>();
+
+                return result;
+            }
+
+            throw new Exception($"Failed to learn new card. Server status code: {response.StatusCode}");
         }
 
-        public async Task<bool?> Remove(int id)
+        public async Task<bool> Remove(int id)
         {
-            throw new NotImplementedException();
+            using var response = await httpClient.DeleteAsync($"{serviceBaseUrl}/{id}");
+
+            return response.IsSuccessStatusCode;
         }
     }
 }
