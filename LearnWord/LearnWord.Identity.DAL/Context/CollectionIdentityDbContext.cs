@@ -25,7 +25,7 @@ namespace LearnWord.Identity.DAL.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseNpgsql(Configuration.GetConnectionString("LwConnection"), b => b.MigrationsAssembly("LearnWord.Collections.Identity.Migrations"));
+            options.UseNpgsql(Configuration.GetConnectionString("LwConnection"), b => b.MigrationsAssembly("LearnWord.Identity.Migrations"));
         }
     }
 }
