@@ -17,6 +17,9 @@ builder.Services.AddTransient<JwtUtils>();
 builder.Services.AddTransient<CollectionIdentityRepository>();
 builder.Services.AddSingleton<ICollectionsHttpService, CollectionsHttpService>();
 builder.Services.AddTransient<ICollectionIdentityService, CollectionIdentityService>();
+builder.Services.AddTransient<CardIdentityRepository>();
+builder.Services.AddSingleton<ICardHttpService, CardHttpService>();
+builder.Services.AddTransient<ICardIdentityService, CardIdentityService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
