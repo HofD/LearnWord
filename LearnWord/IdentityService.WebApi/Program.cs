@@ -50,7 +50,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .GetBytes(jwtSettings.GetSection("Key").Value))
         });
 builder.Services.AddScoped<JwtHandler>();
+builder.Services.AddTransient<JwtUtils>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddTransient<RefreshTokenService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

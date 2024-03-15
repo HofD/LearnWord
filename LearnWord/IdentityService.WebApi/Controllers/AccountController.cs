@@ -5,10 +5,6 @@ using IdentityService.DAL.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Bcpg;
-using System.Text.Encodings.Web;
-using System.Web;
 
 namespace IdentityService.WebApi.Controllers
 {
