@@ -10,7 +10,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["IdentityService.WebApi/IdentityService.WebApi.csproj", "IdentityService.WebApi/"]
-RUN dotnet restore "./IdentityService.WebApi/./IdentityService.WebApi.csproj"
+COPY ["IdentityService.Authorization/IdentityService.Authorization.csproj", "IdentityService.Authorization/"]
+COPY ["IdentityService.DAL.Models/IdentityService.DAL.Models.csproj", "IdentityService.DAL.Models/"]
+COPY ["IdentityService.DAL/IdentityService.DAL.csproj", "IdentityService.DAL/"]
+COPY ["IdentityService.Migrations/IdentityService.Migrations.csproj", "IdentityService.Migrations/"]
+RUN dotnet restore "./IdentityService.WebApi/IdentityService.WebApi.csproj"
 COPY . .
 WORKDIR "/src/IdentityService.WebApi"
 RUN dotnet build "./IdentityService.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build

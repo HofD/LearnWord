@@ -9,17 +9,22 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["LearnWord.Collections.Identity/LearnWord.Collections.Identity.csproj", "LearnWord.Collections.Identity/"]
-RUN dotnet restore "./LearnWord.Collections.Identity/./LearnWord.Collections.Identity.csproj"
+COPY ["LearnWord.Identity/LearnWord.Identity.csproj", "LearnWord.Identity/"]
+COPY ["LearnWord.BL.Models/LearnWord.BL.Models.csproj", "LearnWord.BL.Models/"]
+COPY ["LearnWord.Models/LearnWord.DAL.Models.csproj", "LearnWord.Models/"]
+COPY ["LearnWord.Identity.DAL/LearnWord.Identity.DAL.csproj", "LearnWord.Identity.DAL/"]
+COPY ["LearnWord.Identity.DAL.Models/LearnWord.Identity.DAL.Models.csproj", "LearnWord.Identity.DAL.Models/"]
+COPY ["LearnWord.Identity.Migrations/LearnWord.Identity.Migrations.csproj", "LearnWord.Identity.Migrations/"]
+RUN dotnet restore "./LearnWord.Identity/LearnWord.Identity.csproj"
 COPY . .
-WORKDIR "/src/LearnWord.Collections.Identity"
-RUN dotnet build "./LearnWord.Collections.Identity.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/LearnWord.Identity"
+RUN dotnet build "./LearnWord.Identity.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./LearnWord.Collections.Identity.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./LearnWord.Identity.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "LearnWord.Collections.Identity.dll"]
+ENTRYPOINT ["dotnet", "LearnWord.Identity.dll"]
