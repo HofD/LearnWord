@@ -30,6 +30,12 @@ IdentityService - 7039
 LearnWord.CollectionsIdentity - 7027
 LearnWord.WebApi - 7228
 
+Production:
+LearnWord.Gateway - 5000
+IdentityService - 5001
+LearnWord.CollectionsIdentity - 5002
+LearnWord.WebApi - 5003
+
 TODO:
 2. А точно надо поле DeletedAt, зачем?
 3. Скрыть WordService?
