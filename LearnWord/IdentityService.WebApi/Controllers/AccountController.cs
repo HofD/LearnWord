@@ -51,7 +51,7 @@ namespace IdentityService.WebApi.Controllers
                         { "userId", user.Id },
                         { "code", code }
                     };
-                    var callbackUrl = QueryHelpers.AddQueryString("http://localhost:4200/confirm", param);
+                    var callbackUrl = QueryHelpers.AddQueryString("https://learnword.online/confirm", param);
 
                     await emailService.SendRegistrationEmailAsync(request.Email, "Confirm your account",
                         $"Please confirm your email by following this <a href='{callbackUrl}'>link</a>");
@@ -95,7 +95,7 @@ namespace IdentityService.WebApi.Controllers
                 { "userId", user.Id },
                 { "code", code }
             };
-            var callbackUrl = QueryHelpers.AddQueryString("http://localhost:4200/confirm", param);
+            var callbackUrl = QueryHelpers.AddQueryString("https://learnword.online/confirm", param);
 
             await emailService.SendRegistrationEmailAsync(sendConfirmationRequest.Email, "Confirm your account",
                 $"Please confirm your email by following this <a href='{callbackUrl}'>link</a>");

@@ -2,11 +2,11 @@
   "Routes": [
     {
       "DownstreamPathTemplate": "/cards/{id}/forget",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7027
+          "Host": "192.168.0.5",
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
@@ -18,11 +18,11 @@
     },
     {
       "DownstreamPathTemplate": "/cards/{id}/learn",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7027
+          "Host": "192.168.0.5",
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
@@ -34,11 +34,11 @@
     },
     {
       "DownstreamPathTemplate": "/cards/{id}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7027
+          "Host": "192.168.0.5",
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
@@ -50,11 +50,11 @@
     },
     {
       "DownstreamPathTemplate": "/cards",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7027
+          "Host": "192.168.0.5",
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
@@ -66,11 +66,11 @@
     },
     {
       "DownstreamPathTemplate": "/collections/{id}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7027
+          "Host": "192.168.0.5",
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
@@ -82,11 +82,11 @@
     },
     {
       "DownstreamPathTemplate": "/collections",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7027
+          "Host": "192.168.0.5",
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
@@ -98,11 +98,11 @@
     },
     {
       "DownstreamPathTemplate": "/collections",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7027
+          "Host": "192.168.0.5",
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
@@ -114,11 +114,11 @@
     },
     {
       "DownstreamPathTemplate": "/collections/{id}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7027
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
@@ -130,11 +130,11 @@
     },
     {
       "DownstreamPathTemplate": "/collections/{id}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7027
+          "Host": "192.168.0.5",
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
@@ -146,11 +146,11 @@
     },
     {
       "DownstreamPathTemplate": "/account/register",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "192.168.0.5",
+          "Port": 5001
         }
       ],
       "UpstreamPathTemplate": "/api/account/register",
@@ -158,11 +158,11 @@
     },
     {
       "DownstreamPathTemplate": "/auth/login",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "192.168.0.5",
+          "Port": 5001
         }
       ],
       "UpstreamPathTemplate": "/api/auth/login",
@@ -170,11 +170,11 @@
     },
     {
       "DownstreamPathTemplate": "/auth/refresh-token",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "192.168.0.5",
+          "Port": 5001
         }
       ],
       "UpstreamPathTemplate": "/api/auth/refresh-token",
@@ -182,11 +182,11 @@
     },
     {
       "DownstreamPathTemplate": "/auth/revoke-token",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "192.168.0.5",
+          "Port": 5001
         }
       ],
       "AuthenticationOptions": {
@@ -198,11 +198,11 @@
     },
     {
       "DownstreamPathTemplate": "/account/conformation/send",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "192.168.0.5",
+          "Port": 5001
         }
       ],
       "UpstreamPathTemplate": "/api/account/conformation/send",
@@ -210,11 +210,11 @@
     },
     {
       "DownstreamPathTemplate": "/account/confirm",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "192.168.0.5",
+          "Port": 5001
         }
       ],
       "UpstreamPathTemplate": "/api/account/confirm",
