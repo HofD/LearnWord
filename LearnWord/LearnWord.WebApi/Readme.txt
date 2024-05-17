@@ -25,12 +25,6 @@ dotnet ef database update -p LearnWord.Identity --startup-project LearnWord.Iden
 hofd@mail.ru
 WarhackHD!1
 
-LearnWord.Gateway - 7237
-IdentityService - 7039
-LearnWord.CollectionsIdentity - 7027
-LearnWord.WebApi - 7228
-
-Production:
 LearnWord.Gateway - 5000
 IdentityService - 5001
 LearnWord.CollectionsIdentity - 5002

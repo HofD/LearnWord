@@ -24,8 +24,11 @@ builder.Services
     });
 
 builder.Services.AddCors();
-
+#if DEBUG
+builder.Configuration.AddJsonFile("ocelot-dev.json", optional: false, reloadOnChange: true);
+#else
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+#endif
 
 builder.Services.AddOcelot();
 
