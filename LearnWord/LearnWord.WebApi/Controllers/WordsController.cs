@@ -22,7 +22,7 @@ namespace LearnWord.WebApi.Controllers
             return await wordEditService.Add(word, cardId);
         }
 
-        [HttpDelete("words/{id}")]
+        [HttpDelete("cards/{cardId}/words/{id}")]
         public async Task Remove(int id)
         {
             await wordEditService.Remove(id);

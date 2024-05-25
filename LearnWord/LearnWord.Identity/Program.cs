@@ -20,6 +20,8 @@ builder.Services.AddTransient<ICollectionIdentityService, CollectionIdentityServ
 builder.Services.AddTransient<CardIdentityRepository>();
 builder.Services.AddSingleton<ICardHttpService, CardHttpService>();
 builder.Services.AddTransient<ICardIdentityService, CardIdentityService>();
+builder.Services.AddSingleton<IWordHttpService, WordHttpService>();
+builder.Services.AddTransient<IWordIdentityService, WordIdentityService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
