@@ -40,17 +40,14 @@ namespace LearnWord.Identity.Controllers
 
             var result = await cardIdentityService.Remove(id, userId);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            if (result.Value)
+            if (result)
             {
                 return Ok();
             }
-
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpPost("{id}/learn")]

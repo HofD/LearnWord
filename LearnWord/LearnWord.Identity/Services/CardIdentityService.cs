@@ -38,7 +38,7 @@ namespace LearnWord.Identity.Services
             return await cardHttpService.Learn(id);
         }
 
-        public async Task<bool?> Remove(int id, string userId)
+        public async Task<bool> Remove(int id, string userId)
         {
             await CheckCardIdentity(id, userId);
 
