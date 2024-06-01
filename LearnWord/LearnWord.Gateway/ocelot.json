@@ -1,6 +1,54 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/cards/{cardId}/words",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "learnword.identity",
+          "Port": 8080
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "UpstreamPathTemplate": "/api/cards/{cardId}/words",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/cards/{cardId}/words/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "learnword.identity",
+          "Port": 8080
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "UpstreamPathTemplate": "/api/cards/{cardId}/words/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/cards/{cardId}/words/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "learnword.identity",
+          "Port": 8080
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "UpstreamPathTemplate": "/api/cards/{cardId}/words/{id}",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
       "DownstreamPathTemplate": "/cards/{id}/forget",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
