@@ -46,5 +46,11 @@ namespace LearnWord.WebApi.Controllers
         {
             return await collectionService.Rename(id, collectionRenameDto);
         }
+
+        [HttpGet("{id}/review-cards")]
+        public async Task<IEnumerable<CardDto>> GetReviewCards(int id)
+        {
+            return await collectionService.GetReviewCards(id);
+        }
     }
 }

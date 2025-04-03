@@ -9,5 +9,6 @@ namespace LearnWord.BL.Abstractions
         Task Remove(int id);
         Task<CollectionDto> Get(int id);
         Task<CollectionListDto> GetList(List<int> ids);
+        Task<IEnumerable<CardDto>> GetReviewCards(int collectionId);
     }
 }

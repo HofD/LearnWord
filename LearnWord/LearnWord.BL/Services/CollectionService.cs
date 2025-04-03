@@ -10,6 +10,7 @@ namespace LearnWord.BL.Services
     {
         private readonly CollectionRepository collectionRepository;
         private readonly IMapper mapper;
+        private const int ReviewThresholdDays = 7;
 
         public CollectionService(CollectionRepository collectionRepository, IMapper mapper) 
         {
@@ -54,6 +55,22 @@ namespace LearnWord.BL.Services
         public async Task<CollectionDto> Rename(int id, CollectionRenameDto renameDto)
         {
             return mapper.Map<CollectionDto>(await collectionRepository.Rename(id, renameDto.Name));
+        }
+
+        public async Task<IEnumerable<CardDto>> GetReviewCards(int collectionId)
+        {
+            var collection = await collectionRepository.FindById(collectionId);
+            if (collection?.Cards == null)
+            {
+                return Enumerable.Empty<CardDto>();
+            }
+
+            return collection.Cards
+                .Where(card => 
+                    card.ShowedAt == null || // Never shown
+                    !card.Learnt || // Not learned
+                    (DateTimeOffset.UtcNow - card.ShowedAt.Value).TotalDays >= ReviewThresholdDays) // Past review threshold
+                .Select(card => mapper.Map<CardDto>(card));
         }
     }
 }
