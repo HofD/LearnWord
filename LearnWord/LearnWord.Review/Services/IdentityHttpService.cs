@@ -1,4 +1,5 @@
 using LearnWord.Review.Abstractions;
+using LearnWord.BL.Models.Dto;
 
 namespace LearnWord.Review.Services;
 
@@ -41,5 +42,31 @@ public class IdentityHttpService : IIdentityHttpService
         
         var response = await _httpClient.GetAsync($"/cards/{cardId}");
         return response.IsSuccessStatusCode;
+    }
+
+    public async Task<CardDto> ForgetCardAsync(int cardId)
+    {
+        var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].FirstOrDefault();
+        if (token != null)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
+        
+        var response = await _httpClient.PostAsync($"/cards/{cardId}/forget", null);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<CardDto>();
+    }
+
+    public async Task<CardDto> LearnCardAsync(int cardId)
+    {
+        var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].FirstOrDefault();
+        if (token != null)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
+        
+        var response = await _httpClient.PostAsync($"/cards/{cardId}/learn", null);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<CardDto>();
     }
 } 

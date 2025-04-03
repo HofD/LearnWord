@@ -52,16 +52,4 @@ public class ReviewController : ControllerBase
         await _reviewService.MarkCardAsForgottenAsync(userId, cardId);
         return Ok();
     }
-
-    [HttpPost("cards/{cardId}/review")]
-    public async Task<ActionResult<ReviewCardDto>> MarkCardAsReviewed(int cardId)
-    {
-        var userId = HttpContext.Items["UserId"]?.ToString();
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new UnauthorizedAccessException("User ID not found in context");
-        }
-        var updatedCard = await _reviewService.MarkCardAsReviewedAsync(userId, cardId);
-        return Ok(updatedCard);
-    }
 } 

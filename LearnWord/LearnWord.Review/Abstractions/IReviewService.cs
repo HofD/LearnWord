@@ -8,5 +8,4 @@ public interface IReviewService
     Task<IEnumerable<CardDto>> GetCardsForReviewAsync(string userId, int collectionId);
     Task<ReviewCardDto> MarkCardAsLearnedAsync(string userId, int cardId);
     Task<ReviewCardDto> MarkCardAsForgottenAsync(string userId, int cardId);
-    Task<ReviewCardDto> MarkCardAsReviewedAsync(string userId, int cardId);
 } 

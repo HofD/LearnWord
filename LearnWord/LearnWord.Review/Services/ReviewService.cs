@@ -30,46 +30,29 @@ public class ReviewService : IReviewService
 
     public async Task<ReviewCardDto> MarkCardAsLearnedAsync(string userId, int cardId)
     {
-        // Get card to find its collection
-        var card = await _learnWordHttpService.GetCardAsync(cardId);
+        // Use Identity service to mark card as learned
+        var updatedCard = await _identityHttpService.LearnCardAsync(cardId);
         
-        // Verify user owns the collection
-        var isCollectionOwner = await _identityHttpService.IsUserCollectionOwnerAsync(userId, card.CollectionId);
-        if (!isCollectionOwner)
+        return new ReviewCardDto
         {
-            throw new UnauthorizedAccessException("User does not own this collection");
-        }
-
-        return await _learnWordHttpService.LearnCardAsync(cardId);
+            Id = updatedCard.Id,
+            CollectionId = updatedCard.CollectionId,
+            Words = updatedCard.Words,
+            Learnt = updatedCard.Learnt
+        };
     }
 
     public async Task<ReviewCardDto> MarkCardAsForgottenAsync(string userId, int cardId)
     {
-        // Get card to find its collection
-        var card = await _learnWordHttpService.GetCardAsync(cardId);
+        // Use Identity service to mark card as forgotten
+        var updatedCard = await _identityHttpService.ForgetCardAsync(cardId);
         
-        // Verify user owns the collection
-        var isCollectionOwner = await _identityHttpService.IsUserCollectionOwnerAsync(userId, card.CollectionId);
-        if (!isCollectionOwner)
+        return new ReviewCardDto
         {
-            throw new UnauthorizedAccessException("User does not own this collection");
-        }
-
-        return await _learnWordHttpService.ForgetCardAsync(cardId);
-    }
-
-    public async Task<ReviewCardDto> MarkCardAsReviewedAsync(string userId, int cardId)
-    {
-        // Get card to find its collection
-        var card = await _learnWordHttpService.GetCardAsync(cardId);
-        
-        // Verify user owns the collection
-        var isCollectionOwner = await _identityHttpService.IsUserCollectionOwnerAsync(userId, card.CollectionId);
-        if (!isCollectionOwner)
-        {
-            throw new UnauthorizedAccessException("User does not own this collection");
-        }
-
-        return await _learnWordHttpService.LearnCardAsync(cardId);
+            Id = updatedCard.Id,
+            CollectionId = updatedCard.CollectionId,
+            Words = updatedCard.Words,
+            Learnt = updatedCard.Learnt
+        };
     }
 } 
