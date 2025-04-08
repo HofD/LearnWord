@@ -63,16 +63,28 @@ namespace LearnWord.Identity.Services
             return false;
         }
 
-        public async Task<CollectionDto?> Rename(int id, CollectionRenameDto renameDto, string userId)
+        public async Task<CollectionDto?> Rename(int id, CollectionRenameDto collectionRenameDto, string userId)
         {
-            var link = await repository.Get(id, userId);
+            var collection = await Get(id, userId);
 
-            if (link == null)
+            if (collection == null)
             {
                 return null;
             }
 
-            return await collectionsHttpService.Rename(id, renameDto);
+            return await collectionsHttpService.Rename(id, collectionRenameDto);
+        }
+
+        public async Task<IEnumerable<CardDto>> GetCardsForReview(int collectionId, string userId)
+        {
+            var collection = await Get(collectionId, userId);
+
+            if (collection == null)
+            {
+                throw new UnauthorizedAccessException("User does not own this collection");
+            }
+
+            return await collectionsHttpService.GetCardsForReview(collectionId);
         }
     }
 }

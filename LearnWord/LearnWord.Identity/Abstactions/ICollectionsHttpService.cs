@@ -9,5 +9,6 @@ namespace LearnWord.Identity.Abstactions
         Task<bool> Remove(int id);
         Task<CollectionDto?> Get(int id);
         Task<CollectionListDto?> GetList(int[] ids);
+        Task<IEnumerable<CardDto>?> GetCardsForReview(int collectionId);
     }
 }

@@ -269,11 +269,11 @@
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/review/collections/{collectionId}/cards",
+      "DownstreamPathTemplate": "/collections/{collectionId}/review",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "learnword.review",
+          "Host": "learnword.identity",
           "Port": 8080
         }
       ],
@@ -281,56 +281,8 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       },
-      "UpstreamPathTemplate": "/api/review/collections/{collectionId}/cards",
+      "UpstreamPathTemplate": "/api/collections/{collectionId}/review",
       "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/review/cards/{cardId}/learn",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "learnword.review",
-          "Port": 8080
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
-      "UpstreamPathTemplate": "/api/review/cards/{cardId}/learn",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/review/cards/{cardId}/forget",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "learnword.review",
-          "Port": 8080
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
-      "UpstreamPathTemplate": "/api/review/cards/{cardId}/forget",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/review/cards/{cardId}/review",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "learnword.review",
-          "Port": 8080
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
-      "UpstreamPathTemplate": "/api/review/cards/{cardId}/review",
-      "UpstreamHttpMethod": [ "POST" ]
     }
   ],
   "GlobalConfiguration": {

@@ -269,19 +269,19 @@
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/review/collections/{collectionId}/cards",
+      "DownstreamPathTemplate": "/collections/{collectionId}/review",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5004
+          "Port": 5002
         }
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       },
-      "UpstreamPathTemplate": "/api/review/collections/{collectionId}/cards",
+      "UpstreamPathTemplate": "/api/collections/{collectionId}/review",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {

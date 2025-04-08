@@ -35,6 +35,19 @@ namespace LearnWord.Identity.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{collectionId}/review")]
+        public async Task<ActionResult<IEnumerable<CardDto>>> GetCardsForReview(int collectionId)
+        {
+            var userId = HttpContext.Items["UserId"]?.ToString();
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(await collectionIdentityService.GetCardsForReview(collectionId, userId));
+        }
+
         [HttpGet]
         public async Task<ActionResult<CollectionListDto>> GetAll()
         {

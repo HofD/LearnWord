@@ -41,6 +41,20 @@ namespace LearnWord.Identity.Services
             return null;
         }
 
+        public async Task<IEnumerable<CardDto>?> GetCardsForReview(int collectionId)
+        {
+            using var response = await httpClient.GetAsync($"{serviceBaseUrl}/{collectionId}/review-cards");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<IEnumerable<CardDto>>();
+
+                return result;
+            }
+
+            return null;
+        }
+
         public async Task<CollectionListDto?> GetList(int[] ids)
         {
             var request = $"{serviceBaseUrl}?";
