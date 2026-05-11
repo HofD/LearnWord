@@ -1,0 +1,169 @@
+name: learnword-local
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${LW_DB_NAME:-lwdb}
+      POSTGRES_USER: ${LW_DB_USER:-lwuser}
+      POSTGRES_PASSWORD: ${LW_DB_PASSWORD:-lwpassword}
+    ports:
+      - "${LW_DB_PORT:-5432}:5432"
+    volumes:
+      - lw-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${LW_DB_USER:-lwuser} -d ${LW_DB_NAME:-lwdb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "${LW_MAILPIT_UI_PORT:-8025}:8025"
+    expose:
+      - "1025"
+
+  migrations:
+    build:
+      context: ../LearnWord
+      dockerfile: Dockerfile.migrations
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__LwConnection: Host=postgres;Port=5432;Database=${LW_DB_NAME:-lwdb};Username=${LW_DB_USER:-lwuser};Password=${LW_DB_PASSWORD:-lwpassword}
+      JwtSettings__Issuer: ${LW_JWT_ISSUER:-LearnWordIdentity}
+      JwtSettings__Audience: ${LW_JWT_AUDIENCE:-learnword.local}
+      JwtSettings__Key: ${LW_JWT_KEY:-local-development-jwt-key-change-me-32-chars}
+      JwtSettings__ExpiryInMinutes: ${LW_JWT_EXPIRY_MINUTES:-60}
+      JwtSettings__RefreshTokenTTL: ${LW_REFRESH_TOKEN_TTL:-7}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        dotnet ef database update --project IdentityService.Migrations --startup-project IdentityService.WebApi --context IdentityContext
+        dotnet ef database update --project LearnWord.Migrations --startup-project LearnWord.WebApi --context WordsDbContext
+        dotnet ef database update --project LearnWord.Identity.Migrations --startup-project LearnWord.Identity --context CollectionIdentityDbContext
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  learnword.webapi:
+    image: ${LW_IMAGE_PREFIX:-learnword}/learnword-webapi:${LW_IMAGE_TAG:-local}
+    build:
+      context: ../LearnWord
+      dockerfile: LearnWord.WebApi/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      PUBLIC_PORT: ${LW_WEBAPI_PORT:-5003}
+      ConnectionStrings__LwConnection: Host=postgres;Port=5432;Database=${LW_DB_NAME:-lwdb};Username=${LW_DB_USER:-lwuser};Password=${LW_DB_PASSWORD:-lwpassword}
+    ports:
+      - "${LW_WEBAPI_PORT:-5003}:8080"
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+
+  learnword.identity:
+    image: ${LW_IMAGE_PREFIX:-learnword}/learnword-identity:${LW_IMAGE_TAG:-local}
+    build:
+      context: ../LearnWord
+      dockerfile: LearnWord.Identity/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      PUBLIC_PORT: ${LW_IDENTITY_PORT:-5002}
+      ConnectionStrings__LwConnection: Host=postgres;Port=5432;Database=${LW_DB_NAME:-lwdb};Username=${LW_DB_USER:-lwuser};Password=${LW_DB_PASSWORD:-lwpassword}
+      JwtSettings__Issuer: ${LW_JWT_ISSUER:-LearnWordIdentity}
+      JwtSettings__Audience: ${LW_JWT_AUDIENCE:-learnword.local}
+      JwtSettings__Key: ${LW_JWT_KEY:-local-development-jwt-key-change-me-32-chars}
+      JwtSettings__ExpiryInMinutes: ${LW_JWT_EXPIRY_MINUTES:-60}
+      LwServicesRoutes__CollectionsRoute: http://learnword.webapi:8080/collections
+      LwServicesRoutes__CardsRoute: http://learnword.webapi:8080/cards
+      LwServicesRoutes__WordsRoute: http://learnword.webapi:8080/cards
+    ports:
+      - "${LW_IDENTITY_PORT:-5002}:8080"
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      learnword.webapi:
+        condition: service_started
+
+  identityservice:
+    image: ${LW_IMAGE_PREFIX:-learnword}/identityservice:${LW_IMAGE_TAG:-local}
+    hostname: identity
+    user: root
+    networks:
+      default:
+        aliases:
+          - identity
+    build:
+      context: ../LearnWord
+      dockerfile: IdentityService.WebApi/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      PUBLIC_PORT: ${LW_IDENTITYSERVICE_PORT:-5001}
+      ConnectionStrings__LwConnection: Host=postgres;Port=5432;Database=${LW_DB_NAME:-lwdb};Username=${LW_DB_USER:-lwuser};Password=${LW_DB_PASSWORD:-lwpassword}
+      JwtSettings__Issuer: ${LW_JWT_ISSUER:-LearnWordIdentity}
+      JwtSettings__Audience: ${LW_JWT_AUDIENCE:-learnword.local}
+      JwtSettings__Key: ${LW_JWT_KEY:-local-development-jwt-key-change-me-32-chars}
+      JwtSettings__ExpiryInMinutes: ${LW_JWT_EXPIRY_MINUTES:-60}
+      JwtSettings__RefreshTokenTTL: ${LW_REFRESH_TOKEN_TTL:-7}
+      Smtp__Host: mailpit
+      Smtp__Port: 1025
+      Smtp__UseSsl: false
+      Smtp__FromName: Learn Word Local
+      Smtp__FromEmail: register@learnword.local
+      Smtp__Username: ""
+      Smtp__Password: ""
+      Registration__EmailConfirmationUrl: http://localhost:${LW_WEBAPP_PORT:-8088}/confirm
+    ports:
+      - "${LW_IDENTITYSERVICE_PORT:-5001}:8080"
+    volumes:
+      - lw-identityservice-keys:/root/.aspnet/DataProtection-Keys
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      mailpit:
+        condition: service_started
+
+  gateway:
+    image: ${LW_IMAGE_PREFIX:-learnword}/gateway:${LW_IMAGE_TAG:-local}
+    build:
+      context: ../LearnWord
+      dockerfile: LearnWord.Gateway/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      PUBLIC_PORT: ${LW_GATEWAY_PORT:-5100}
+      JwtSettings__Issuer: ${LW_JWT_ISSUER:-LearnWordIdentity}
+      JwtSettings__Audience: ${LW_JWT_AUDIENCE:-learnword.local}
+      JwtSettings__Key: ${LW_JWT_KEY:-local-development-jwt-key-change-me-32-chars}
+      JwtSettings__ExpiryInMinutes: ${LW_JWT_EXPIRY_MINUTES:-60}
+    ports:
+      - "${LW_GATEWAY_PORT:-5100}:8080"
+    depends_on:
+      learnword.webapi:
+        condition: service_started
+      learnword.identity:
+        condition: service_started
+      identityservice:
+        condition: service_started
+
+  webapp:
+    image: ${LW_IMAGE_PREFIX:-learnword}/webapp:${LW_IMAGE_TAG:-local}
+    build:
+      context: ../../LearnWordWebApp/lw-app
+      dockerfile: Dockerfile
+      args:
+        ANGULAR_CONFIGURATION: development
+    ports:
+      - "${LW_WEBAPP_PORT:-8088}:80"
+    depends_on:
+      gateway:
+        condition: service_started
+
+volumes:
+  lw-postgres-data:
+  lw-identityservice-keys:

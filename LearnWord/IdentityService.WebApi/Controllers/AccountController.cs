@@ -15,12 +15,18 @@ namespace IdentityService.WebApi.Controllers
         private readonly UserManager<LwIdentityUser> userManager;
         private readonly EmailService emailService;
         private readonly ILogger<AccountController> logger;
+        private readonly IConfiguration configuration;
 
-        public AccountController(UserManager<LwIdentityUser> userManager, EmailService emailService, ILogger<AccountController> logger) 
+        public AccountController(
+            UserManager<LwIdentityUser> userManager,
+            EmailService emailService,
+            ILogger<AccountController> logger,
+            IConfiguration configuration)
         {
             this.userManager = userManager;
             this.emailService = emailService;
             this.logger = logger;
+            this.configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -33,7 +39,13 @@ namespace IdentityService.WebApi.Controllers
 
             if (await userManager.FindByEmailAsync(request.Email) != null)
             {
-                return Created();
+                var existingUser = await userManager.FindByEmailAsync(request.Email);
+                if (existingUser != null && !await userManager.IsEmailConfirmedAsync(existingUser))
+                {
+                    await SendConfirmationEmailAsync(existingUser, request.Email);
+                }
+
+                return Ok();
             }
 
             var user = new LwIdentityUser(request.Email);
@@ -45,16 +57,7 @@ namespace IdentityService.WebApi.Controllers
             {
                 try
                 {
-                    var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var param = new Dictionary<string, string?>()
-                    {
-                        { "userId", user.Id },
-                        { "code", code }
-                    };
-                    var callbackUrl = QueryHelpers.AddQueryString("https://learnword.online/confirm", param);
-
-                    await emailService.SendRegistrationEmailAsync(request.Email, "Confirm your account",
-                        $"Please confirm your email by following this <a href='{callbackUrl}'>link</a>");
+                    await SendConfirmationEmailAsync(user, request.Email);
                 }
                 catch (Exception ex)
                 {
@@ -65,7 +68,7 @@ namespace IdentityService.WebApi.Controllers
                 return Ok();
             }
 
-            logger.LogError(result.Errors.ToString(), user.Email);
+            logger.LogError("Failed to register {Email}: {Errors}", user.Email, string.Join("; ", result.Errors.Select(x => $"{x.Code}: {x.Description}")));
             return BadRequest(result.Errors);
         }
 
@@ -95,7 +98,7 @@ namespace IdentityService.WebApi.Controllers
                 { "userId", user.Id },
                 { "code", code }
             };
-            var callbackUrl = QueryHelpers.AddQueryString("https://learnword.online/confirm", param);
+            var callbackUrl = QueryHelpers.AddQueryString(GetEmailConfirmationBaseUrl(), param);
 
             await emailService.SendRegistrationEmailAsync(sendConfirmationRequest.Email, "Confirm your account",
                 $"Please confirm your email by following this <a href='{callbackUrl}'>link</a>");
@@ -123,6 +126,25 @@ namespace IdentityService.WebApi.Controllers
                 return Ok();
             else
                 return StatusCode(StatusCodes.Status500InternalServerError, result.Errors);
+        }
+
+        private async Task SendConfirmationEmailAsync(LwIdentityUser user, string email)
+        {
+            var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var param = new Dictionary<string, string?>()
+            {
+                { "userId", user.Id },
+                { "code", code }
+            };
+            var callbackUrl = QueryHelpers.AddQueryString(GetEmailConfirmationBaseUrl(), param);
+
+            await emailService.SendRegistrationEmailAsync(email, "Confirm your account",
+                $"Please confirm your email by following this <a href='{callbackUrl}'>link</a>");
+        }
+
+        private string GetEmailConfirmationBaseUrl()
+        {
+            return configuration["Registration:EmailConfirmationUrl"] ?? "https://learnword.online/confirm";
         }
     }
 }

@@ -1,0 +1,32 @@
+name: learnword-build
+
+services:
+  learnword.webapi:
+    image: ${LW_IMAGE_PREFIX:-learnword}/learnword-webapi:${LW_IMAGE_TAG:-local}
+    build:
+      context: ../LearnWord
+      dockerfile: LearnWord.WebApi/Dockerfile
+
+  learnword.identity:
+    image: ${LW_IMAGE_PREFIX:-learnword}/learnword-identity:${LW_IMAGE_TAG:-local}
+    build:
+      context: ../LearnWord
+      dockerfile: LearnWord.Identity/Dockerfile
+
+  identityservice:
+    image: ${LW_IMAGE_PREFIX:-learnword}/identityservice:${LW_IMAGE_TAG:-local}
+    build:
+      context: ../LearnWord
+      dockerfile: IdentityService.WebApi/Dockerfile
+
+  gateway:
+    image: ${LW_IMAGE_PREFIX:-learnword}/gateway:${LW_IMAGE_TAG:-local}
+    build:
+      context: ../LearnWord
+      dockerfile: LearnWord.Gateway/Dockerfile
+
+  webapp:
+    image: ${LW_IMAGE_PREFIX:-learnword}/webapp:${LW_IMAGE_TAG:-local}
+    build:
+      context: ../../LearnWordWebApp/lw-app
+      dockerfile: Dockerfile
