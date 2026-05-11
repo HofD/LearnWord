@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "C#: LearnWord.Identity Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/LearnWord/LearnWord.Identity/LearnWord.Identity.csproj"
+        },
+        {
             "name": "C#: IdentityService.WebApi Debug",
             "type": "dotnet",
             "request": "launch",
@@ -17,5 +23,12 @@
             "projectPath": "${workspaceFolder}/LearnWord/LearnWord.Gateway/LearnWord.Gateway.csproj"
         }
 
+    ],
+    "compounds": [
+        {
+            "name": "Start All",
+            "configurations": ["C#: IdentityService.WebApi Debug", "C#: LearnWord.Gateway Debug"],
+            "stopAll": true
+        }
     ]
 }
