@@ -73,14 +73,18 @@ docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans
 
 By default deploy builds `linux/amd64` images, which is the usual Linux server platform. Override `LW_PLATFORM` in `deploy/env/deploy.env` only if the server uses another architecture.
 
-If port `80` is already used on the server, either stop the process that owns it or set another frontend port in the production `.env`, for example:
+The production compose is intended to sit behind host nginx. By default it binds only to localhost:
 
 ```env
-LW_WEBAPP_PORT=8088
+LW_BIND_IP=127.0.0.1
+LW_WEBAPP_PORT=8080
+LW_GATEWAY_PORT=5000
 ```
 
-To find what owns port `80` on the server:
+With the current nginx config, `/` proxies to `http://127.0.0.1:8080/` and `/api` proxies to `http://127.0.0.1:5000`, so keep these values unless nginx changes.
+
+To find what owns a port on the server:
 
 ```bash
-ss -ltnp 'sport = :80'
+ss -ltnp 'sport = :8080'
 ```
