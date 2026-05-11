@@ -70,3 +70,17 @@ Both scripts build all images locally, save them to a tar archive, copy the arch
 ```bash
 docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans
 ```
+
+By default deploy builds `linux/amd64` images, which is the usual Linux server platform. Override `LW_PLATFORM` in `deploy/env/deploy.env` only if the server uses another architecture.
+
+If port `80` is already used on the server, either stop the process that owns it or set another frontend port in the production `.env`, for example:
+
+```env
+LW_WEBAPP_PORT=8088
+```
+
+To find what owns port `80` on the server:
+
+```bash
+ss -ltnp 'sport = :80'
+```

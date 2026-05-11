@@ -19,6 +19,7 @@ LW_SERVER_PORT="${LW_SERVER_PORT:-22}"
 LW_SERVER_DIR="${LW_SERVER_DIR:-/opt/lw}"
 LW_IMAGE_PREFIX="${LW_IMAGE_PREFIX:-learnword}"
 LW_IMAGE_TAG="${LW_IMAGE_TAG:-$(date +%Y%m%d%H%M%S)}"
+LW_PLATFORM="${LW_PLATFORM:-linux/amd64}"
 
 DIST_DIR="${SCRIPT_DIR}/dist"
 IMAGE_ARCHIVE="${DIST_DIR}/learnword-images-${LW_IMAGE_TAG}.tar"
@@ -31,7 +32,7 @@ mkdir -p "${DIST_DIR}"
 echo "Building LearnWord images with tag ${LW_IMAGE_TAG}"
 (
   cd "${ROOT_DIR}"
-  LW_IMAGE_PREFIX="${LW_IMAGE_PREFIX}" LW_IMAGE_TAG="${LW_IMAGE_TAG}" \
+  LW_IMAGE_PREFIX="${LW_IMAGE_PREFIX}" LW_IMAGE_TAG="${LW_IMAGE_TAG}" LW_PLATFORM="${LW_PLATFORM}" \
     docker compose -f deploy/docker-compose.build.yml build
 )
 
@@ -61,6 +62,8 @@ ssh -p "${LW_SERVER_PORT}" "${REMOTE}" "\
   cd '${LW_SERVER_DIR}' && \
   test -f .env && \
   docker load -i '$(basename "${IMAGE_ARCHIVE}")' && \
+  sed -i.bak 's/^LW_PLATFORM=.*/LW_PLATFORM=${LW_PLATFORM}/' .env && \
+  if ! grep -q '^LW_PLATFORM=' .env; then echo 'LW_PLATFORM=${LW_PLATFORM}' >> .env; fi && \
   sed -i.bak 's/^LW_IMAGE_TAG=.*/LW_IMAGE_TAG=${LW_IMAGE_TAG}/' .env && \
   if ! grep -q '^LW_IMAGE_TAG=' .env; then echo 'LW_IMAGE_TAG=${LW_IMAGE_TAG}' >> .env; fi && \
   docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans"

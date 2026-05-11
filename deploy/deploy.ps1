@@ -23,6 +23,7 @@ $ServerPort = if ($env:LW_SERVER_PORT) { $env:LW_SERVER_PORT } else { "22" }
 $ServerDir = if ($env:LW_SERVER_DIR) { $env:LW_SERVER_DIR } else { "/opt/lw" }
 $ImagePrefix = if ($env:LW_IMAGE_PREFIX) { $env:LW_IMAGE_PREFIX } else { "learnword" }
 $ImageTag = if ($env:LW_IMAGE_TAG) { $env:LW_IMAGE_TAG } else { Get-Date -Format "yyyyMMddHHmmss" }
+$Platform = if ($env:LW_PLATFORM) { $env:LW_PLATFORM } else { "linux/amd64" }
 
 $DistDir = Join-Path $ScriptDir "dist"
 $ImageArchive = Join-Path $DistDir "learnword-images-$ImageTag.tar"
@@ -36,6 +37,7 @@ Push-Location $RootDir
 try {
     $env:LW_IMAGE_PREFIX = $ImagePrefix
     $env:LW_IMAGE_TAG = $ImageTag
+    $env:LW_PLATFORM = $Platform
     docker compose -f deploy/docker-compose.build.yml build
 }
 finally {
@@ -63,7 +65,7 @@ if ($env:LW_REMOTE_ENV_FILE) {
     scp -P $ServerPort $env:LW_REMOTE_ENV_FILE "${Remote}:$ServerDir/.env"
 }
 
-$RemoteCommand = "cd '$ServerDir' && test -f .env && docker load -i 'learnword-images-$ImageTag.tar' && sed -i.bak 's/^LW_IMAGE_TAG=.*/LW_IMAGE_TAG=$ImageTag/' .env && if ! grep -q '^LW_IMAGE_TAG=' .env; then echo 'LW_IMAGE_TAG=$ImageTag' >> .env; fi && docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans"
+$RemoteCommand = "cd '$ServerDir' && test -f .env && docker load -i 'learnword-images-$ImageTag.tar' && sed -i.bak 's/^LW_PLATFORM=.*/LW_PLATFORM=$Platform/' .env && if ! grep -q '^LW_PLATFORM=' .env; then echo 'LW_PLATFORM=$Platform' >> .env; fi && sed -i.bak 's/^LW_IMAGE_TAG=.*/LW_IMAGE_TAG=$ImageTag/' .env && if ! grep -q '^LW_IMAGE_TAG=' .env; then echo 'LW_IMAGE_TAG=$ImageTag' >> .env; fi && docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans"
 
 Write-Host "Loading images and restarting services"
 ssh -p $ServerPort $Remote $RemoteCommand
