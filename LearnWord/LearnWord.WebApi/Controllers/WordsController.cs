@@ -23,9 +23,9 @@ namespace LearnWord.WebApi.Controllers
         }
 
         [HttpDelete("cards/{cardId}/words/{id}")]
-        public async Task Remove(int id)
+        public async Task Remove(int cardId, int id)
         {
-            await wordEditService.Remove(id);
+            await wordEditService.Remove(cardId, id);
         }
 
         [HttpPut("cards/{cardId}/words/{id}")]

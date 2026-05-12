@@ -5,7 +5,7 @@ namespace LearnWord.BL.Abstractions
     public interface IWordService
     {
         Task<WordDto> Add(WordCreateDto word, int cardId);
-        Task Remove(int id);
+        Task Remove(int cardId, int id);
         Task<WordDto> Update(int cardId, int id, WordUpdateDto word);
     }
 }

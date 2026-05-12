@@ -9,14 +9,21 @@ namespace LearnWord.Identity.Services
     {
         private readonly ICardHttpService cardHttpService;
         private readonly CardIdentityRepository repository;
+        private readonly CollectionIdentityRepository collectionIdentityRepository;
 
-        public CardIdentityService(ICardHttpService cardHttpService, CardIdentityRepository repository)
+        public CardIdentityService(
+            ICardHttpService cardHttpService,
+            CardIdentityRepository repository,
+            CollectionIdentityRepository collectionIdentityRepository)
         {
             this.cardHttpService = cardHttpService;
             this.repository = repository;
+            this.collectionIdentityRepository = collectionIdentityRepository;
         }
         public async Task<CardDto> Add(CardCreateDto cardCreateDto, string userId)
         {
+            await CheckCollectionIdentity(cardCreateDto.CollectionId, userId);
+
             var result = await cardHttpService.Add(cardCreateDto);
 
             await repository.Add(new CardIdentity() { CardId = result.Id, UserId = userId });
@@ -52,6 +59,16 @@ namespace LearnWord.Identity.Services
             if (link == null)
             {
                 throw new Exception($"Card with id: {id} isn't belongs you.");
+            }
+        }
+
+        private async Task CheckCollectionIdentity(int id, string userId)
+        {
+            var link = await collectionIdentityRepository.Get(id, userId);
+
+            if (link == null)
+            {
+                throw new UnauthorizedAccessException($"Collection with id: {id} isn't belongs you.");
             }
         }
     }

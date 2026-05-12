@@ -24,9 +24,9 @@ namespace LearnWord.BL.Services
             return mapper.Map<WordDto>(await wordRepository.Add(wordToSave));
         }
 
-        public async Task Remove(int id)
+        public async Task Remove(int cardId, int id)
         {
-            await wordRepository.Remove(id);
+            await wordRepository.Remove(cardId, id);
         }
 
         public async Task<WordDto> Update(int cardId, int id, WordUpdateDto word)

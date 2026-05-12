@@ -23,9 +23,9 @@ namespace LearnWord.BL.Services
             return addedWord;
         }
 
-        public async Task Remove(int id)
+        public async Task Remove(int cardId, int id)
         {
-            await wordService.Remove(id);
+            await wordService.Remove(cardId, id);
         }
 
         public async Task<WordDto> Update(int cardId, int id, WordUpdateDto word)

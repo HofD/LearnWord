@@ -21,13 +21,18 @@ namespace LearnWord.DAL.Repositories
             return await FindById(word.Id);
         }
 
-        public async Task Remove(int id)
+        public async Task Remove(int cardId, int id)
         {
             var word = await FindById(id);
 
             if (word == null)
             {
                 throw new Exception($"Word {id} not found.");
+            }
+
+            if (word.CardId != cardId)
+            {
+                throw new Exception($"Wrong card id for word {word.Id}.");
             }
 
             dbContext.Words.Remove(word);
