@@ -2,6 +2,7 @@ using LearnWord.Identity.Abstactions;
 using LearnWord.Identity.Authorization;
 using LearnWord.Identity.DAL.Context;
 using LearnWord.Identity.DAL.Repositories;
+using LearnWord.Identity.Middleware;
 using LearnWord.Identity.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ApiExceptionMiddleware>();
 
 app.UseAuthorization();
 

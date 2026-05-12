@@ -1,4 +1,5 @@
-﻿using LearnWord.DAL.Models;
+﻿using LearnWord.BL.Models.Errors;
+using LearnWord.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace LearnWord.DAL.Repositories
 
             if (card == null)
             {
-                throw new Exception($"Card {id} not found.");
+                throw new NotFoundException($"Card {id} not found.", "card_not_found");
             }
 
             dbContext.Cards.Remove(card);
@@ -42,6 +43,11 @@ namespace LearnWord.DAL.Repositories
         public async Task<Card> Reset(int id)
         {
             var card = await FindById(id, false);
+
+            if (card == null)
+            {
+                throw new NotFoundException($"Card {id} not found.", "card_not_found");
+            }
 
             card.ModifiedAt = DateTime.UtcNow;
             card.Learnt = false;
@@ -59,7 +65,7 @@ namespace LearnWord.DAL.Repositories
 
             if (card == null)
             {
-                throw new Exception($"Card {id} not found.");
+                throw new NotFoundException($"Card {id} not found.", "card_not_found");
             }
 
             card.Learnt = true;
@@ -77,7 +83,7 @@ namespace LearnWord.DAL.Repositories
 
             if (card == null)
             {
-                throw new Exception($"Card {id} not found.");
+                throw new NotFoundException($"Card {id} not found.", "card_not_found");
             }
 
             card.Learnt = false;

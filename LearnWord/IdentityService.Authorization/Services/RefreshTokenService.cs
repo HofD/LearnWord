@@ -1,4 +1,5 @@
 ﻿using IdentityService.Authorization.Authorization;
+using IdentityService.Authorization.Errors;
 using IdentityService.DAL.Context;
 using IdentityService.DAL.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,7 @@ namespace IdentityService.Authorization.Services
             var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
 
             if (!refreshToken.IsActive)
-                throw new Exception("Invalid token");
+                throw new InvalidRefreshTokenException();
 
             // revoke token and save
             RevokeRefreshToken(refreshToken, ipAddress, "Revoked without replacement");
@@ -57,7 +58,7 @@ namespace IdentityService.Authorization.Services
             }
 
             if (!refreshToken.IsActive)
-                throw new Exception("Invalid token");
+                throw new InvalidRefreshTokenException();
 
             var newRefreshToken = RotateRefreshToken(refreshToken, ipAddress);
             user.RefreshTokens.Add(newRefreshToken);

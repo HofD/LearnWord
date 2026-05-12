@@ -1,6 +1,6 @@
-﻿using LearnWord.DAL.Models;
+﻿using LearnWord.BL.Models.Errors;
+using LearnWord.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,7 +26,7 @@ namespace LearnWord.DAL.Repositories
 
             if (collection == null)
             {
-                throw new Exception($"Collection {id} not found.");
+                throw new NotFoundException($"Collection {id} not found.", "collection_not_found");
             }
 
             dbContext.Collections.Remove(collection);
@@ -39,7 +39,7 @@ namespace LearnWord.DAL.Repositories
 
             if (collection == null)
             {
-                throw new Exception($"Collection {id} not found.");
+                throw new NotFoundException($"Collection {id} not found.", "collection_not_found");
             }
 
             collection.Name = name;

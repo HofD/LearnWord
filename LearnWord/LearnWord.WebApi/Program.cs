@@ -3,6 +3,7 @@ using LearnWord.BL.MappingProfiles;
 using LearnWord.BL.Services;
 using LearnWord.DAL;
 using LearnWord.DAL.Repositories;
+using LearnWord.WebApi.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +44,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ApiExceptionMiddleware>();
 
 app.UseAuthorization();
 

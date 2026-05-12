@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LearnWord.BL.Models\LearnWord.BL.Models.csproj" />
     <ProjectReference Include="..\LearnWord.Models\LearnWord.DAL.Models.csproj" />
   </ItemGroup>
 

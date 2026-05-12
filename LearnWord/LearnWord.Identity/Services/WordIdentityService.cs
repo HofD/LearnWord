@@ -1,4 +1,5 @@
 ﻿using LearnWord.BL.Models.Dto;
+using LearnWord.BL.Models.Errors;
 using LearnWord.Identity.Abstactions;
 using LearnWord.Identity.DAL.Repositories;
 
@@ -42,7 +43,7 @@ namespace LearnWord.Identity.Services
 
             if (link == null)
             {
-                throw new Exception($"Card with id: {id} isn't belongs you.");
+                throw new ForbiddenException($"Card with id {id} does not belong to current user.", "card_forbidden");
             }
         }
     }

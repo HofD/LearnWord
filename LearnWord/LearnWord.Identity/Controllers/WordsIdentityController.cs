@@ -40,14 +40,7 @@ namespace LearnWord.Identity.Controllers
 
             var result = await wordIdentityService.Remove(id, cardId, userId);
 
-            if (result)
-            {
-                return Ok();
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return result ? Ok() : StatusCode(StatusCodes.Status502BadGateway);
         }
 
         [HttpPut("{cardId}/words/{id}")]

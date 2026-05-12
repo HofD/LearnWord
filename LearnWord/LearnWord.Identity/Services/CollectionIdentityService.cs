@@ -1,4 +1,5 @@
 ﻿using LearnWord.BL.Models.Dto;
+using LearnWord.BL.Models.Errors;
 using LearnWord.Identity.Abstactions;
 using LearnWord.Identity.DAL.Models;
 using LearnWord.Identity.DAL.Repositories;
@@ -81,7 +82,7 @@ namespace LearnWord.Identity.Services
 
             if (collection == null)
             {
-                throw new UnauthorizedAccessException("User does not own this collection");
+                throw new ForbiddenException($"Collection with id {collectionId} does not belong to current user.", "collection_forbidden");
             }
 
             return await collectionsHttpService.GetCardsForReview(collectionId);

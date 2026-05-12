@@ -1,6 +1,6 @@
-﻿using LearnWord.DAL.Models;
+﻿using LearnWord.BL.Models.Errors;
+using LearnWord.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,12 +27,12 @@ namespace LearnWord.DAL.Repositories
 
             if (word == null)
             {
-                throw new Exception($"Word {id} not found.");
+                throw new NotFoundException($"Word {id} not found.", "word_not_found");
             }
 
             if (word.CardId != cardId)
             {
-                throw new Exception($"Wrong card id for word {word.Id}.");
+                throw new BadRequestException($"Wrong card id for word {word.Id}.", "word_card_mismatch");
             }
 
             dbContext.Words.Remove(word);
@@ -46,12 +46,12 @@ namespace LearnWord.DAL.Repositories
 
             if (word == null)
             {
-                throw new Exception($"Word {updatedWord.Id} not found.");
+                throw new NotFoundException($"Word {updatedWord.Id} not found.", "word_not_found");
             }
 
             if (word.CardId != updatedWord.CardId)
             {
-                throw new Exception($"Wrong card id for word {word.Id}.");
+                throw new BadRequestException($"Wrong card id for word {word.Id}.", "word_card_mismatch");
             }
 
             word.Value = updatedWord.Value;

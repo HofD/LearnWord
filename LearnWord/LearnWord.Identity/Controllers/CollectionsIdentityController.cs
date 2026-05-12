@@ -96,7 +96,7 @@ namespace LearnWord.Identity.Controllers
                 return Ok();
             }
 
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+            return StatusCode(StatusCodes.Status502BadGateway);
         }
 
         [HttpPut("{id}")]

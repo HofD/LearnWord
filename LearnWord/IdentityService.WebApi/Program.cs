@@ -2,6 +2,7 @@ using IdentityService.Authorization.Authorization;
 using IdentityService.Authorization.Services;
 using IdentityService.DAL.Context;
 using IdentityService.DAL.Models.Entities;
+using IdentityService.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
@@ -87,6 +88,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ApiExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
