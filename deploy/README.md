@@ -71,6 +71,8 @@ Both scripts build all images locally, save them to a tar archive, copy the arch
 docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans
 ```
 
+After a successful restart, the copied tar archive is removed from the server and from local `deploy/dist`.
+
 By default deploy builds `linux/amd64` images, which is the usual Linux server platform. Override `LW_PLATFORM` in `deploy/env/deploy.env` only if the server uses another architecture.
 
 The production compose is intended to sit behind host nginx. By default it binds only to localhost:

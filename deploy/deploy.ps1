@@ -65,9 +65,13 @@ if ($env:LW_REMOTE_ENV_FILE) {
     scp -P $ServerPort $env:LW_REMOTE_ENV_FILE "${Remote}:$ServerDir/.env"
 }
 
-$RemoteCommand = "cd '$ServerDir' && test -f .env && docker load -i 'learnword-images-$ImageTag.tar' && sed -i.bak 's|^LW_PLATFORM=.*|LW_PLATFORM=$Platform|' .env && if ! grep -q '^LW_PLATFORM=' .env; then echo 'LW_PLATFORM=$Platform' >> .env; fi && sed -i.bak 's|^LW_IMAGE_TAG=.*|LW_IMAGE_TAG=$ImageTag|' .env && if ! grep -q '^LW_IMAGE_TAG=' .env; then echo 'LW_IMAGE_TAG=$ImageTag' >> .env; fi && docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans"
+$RemoteArchiveName = "learnword-images-$ImageTag.tar"
+$RemoteCommand = "cd '$ServerDir' && test -f .env && docker load -i '$RemoteArchiveName' && sed -i.bak 's|^LW_PLATFORM=.*|LW_PLATFORM=$Platform|' .env && if ! grep -q '^LW_PLATFORM=' .env; then echo 'LW_PLATFORM=$Platform' >> .env; fi && sed -i.bak 's|^LW_IMAGE_TAG=.*|LW_IMAGE_TAG=$ImageTag|' .env && if ! grep -q '^LW_IMAGE_TAG=' .env; then echo 'LW_IMAGE_TAG=$ImageTag' >> .env; fi && docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans && rm -f '$RemoteArchiveName'"
 
 Write-Host "Loading images and restarting services"
 ssh -p $ServerPort $Remote $RemoteCommand
+
+Write-Host "Removing local image archive $ImageArchive"
+Remove-Item -Force $ImageArchive
 
 Write-Host "Deployed LearnWord $ImageTag to $ServerDir"

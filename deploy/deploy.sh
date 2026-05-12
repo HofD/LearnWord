@@ -66,6 +66,10 @@ ssh -p "${LW_SERVER_PORT}" "${REMOTE}" "\
   if ! grep -q '^LW_PLATFORM=' .env; then echo 'LW_PLATFORM=${LW_PLATFORM}' >> .env; fi && \
   sed -i.bak 's|^LW_IMAGE_TAG=.*|LW_IMAGE_TAG=${LW_IMAGE_TAG}|' .env && \
   if ! grep -q '^LW_IMAGE_TAG=' .env; then echo 'LW_IMAGE_TAG=${LW_IMAGE_TAG}' >> .env; fi && \
-  docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans"
+  docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans && \
+  rm -f '$(basename "${IMAGE_ARCHIVE}")'"
+
+echo "Removing local image archive ${IMAGE_ARCHIVE}"
+rm -f "${IMAGE_ARCHIVE}"
 
 echo "Deployed LearnWord ${LW_IMAGE_TAG} to ${LW_SERVER_DIR}"
