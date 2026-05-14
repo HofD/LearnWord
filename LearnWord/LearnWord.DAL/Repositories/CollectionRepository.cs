@@ -1,6 +1,7 @@
 ﻿using LearnWord.BL.Models.Errors;
 using LearnWord.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,14 +23,32 @@ namespace LearnWord.DAL.Repositories
 
         public async Task Remove(int id)
         {
-            var collection = await FindById(id, false);
+            var collection = await GetQueryable(true).FirstOrDefaultAsync(x => x.Id == id);
 
             if (collection == null)
             {
                 throw new NotFoundException($"Collection {id} not found.", "collection_not_found");
             }
 
-            dbContext.Collections.Remove(collection);
+            var deletedAt = DateTimeOffset.UtcNow;
+            collection.DeletedAt = deletedAt;
+            collection.ModifiedAt = deletedAt;
+
+            if (collection.Cards != null)
+            {
+                foreach (var card in collection.Cards)
+                {
+                    card.DeletedAt = deletedAt;
+                    card.ModifiedAt = deletedAt;
+
+                    foreach (var word in card.Words ?? Enumerable.Empty<Word>())
+                    {
+                        word.DeletedAt = deletedAt;
+                        word.ModifiedAt = deletedAt;
+                    }
+                }
+            }
+
             await SaveChangesAsync();
         }
 
@@ -76,9 +95,6 @@ namespace LearnWord.DAL.Repositories
                     .Include(x => x.Cards)
                     .ThenInclude(x => x.Words);
             }
-
-            queryable = queryable
-                .Where(x => x.DeletedAt == null);
 
             return queryable;
         }

@@ -23,6 +23,9 @@ namespace LearnWord.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(SchemaName);
+            modelBuilder.Entity<Collection>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<Card>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<Word>().HasQueryFilter(x => x.DeletedAt == null);
             //modelBuilder.ApplyUtcDateTimeConverter();
 
             //modelBuilder.ApplyConfiguration(new DeviceConfiguration());

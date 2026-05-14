@@ -1,6 +1,7 @@
 ﻿using LearnWord.BL.Models.Errors;
 using LearnWord.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,7 +36,9 @@ namespace LearnWord.DAL.Repositories
                 throw new BadRequestException($"Wrong card id for word {word.Id}.", "word_card_mismatch");
             }
 
-            dbContext.Words.Remove(word);
+            var deletedAt = DateTimeOffset.UtcNow;
+            word.DeletedAt = deletedAt;
+            word.ModifiedAt = deletedAt;
 
             await SaveChangesAsync();
         }
@@ -74,7 +77,6 @@ namespace LearnWord.DAL.Repositories
         private IQueryable<Word> GetQueryable()
         {
             var queryable = dbContext.Words.AsQueryable();
-            queryable = queryable.Where(x => x.DeletedAt == null);
             return queryable;
         }
     }

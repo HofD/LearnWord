@@ -54,14 +54,7 @@ namespace LearnWord.Identity.Services
                 return null;
             }
 
-            if (await collectionsHttpService.Remove(id))
-            {
-                await repository.Remove(id, userId);
-
-                return true;
-            }
-
-            return false;
+            return await collectionsHttpService.Remove(id);
         }
 
         public async Task<CollectionDto?> Rename(int id, CollectionRenameDto collectionRenameDto, string userId)

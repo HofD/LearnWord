@@ -24,14 +24,26 @@ namespace LearnWord.DAL.Repositories
 
         public async Task Remove(int id)
         {
-            var card = await FindById(id, false);
+            var card = await FindById(id);
 
             if (card == null)
             {
                 throw new NotFoundException($"Card {id} not found.", "card_not_found");
             }
 
-            dbContext.Cards.Remove(card);
+            var deletedAt = DateTimeOffset.UtcNow;
+            card.DeletedAt = deletedAt;
+            card.ModifiedAt = deletedAt;
+
+            if (card.Words != null)
+            {
+                foreach (var word in card.Words)
+                {
+                    word.DeletedAt = deletedAt;
+                    word.ModifiedAt = deletedAt;
+                }
+            }
+
             await SaveChangesAsync();
         }
 
@@ -104,9 +116,6 @@ namespace LearnWord.DAL.Repositories
                 queryable = queryable
                     .Include(x => x.Words);
             }
-
-            queryable = queryable
-                .Where(x => x.DeletedAt == null);
 
             return queryable;
         }
