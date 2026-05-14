@@ -78,12 +78,13 @@ By default deploy builds `linux/amd64` images, which is the usual Linux server p
 The production compose is intended to sit behind host nginx. By default it binds only to localhost:
 
 ```env
-LW_BIND_IP=127.0.0.1
 LW_WEBAPP_PORT=8080
 LW_GATEWAY_PORT=5000
 ```
 
 With the current nginx config, `/` proxies to `http://127.0.0.1:8080/` and `/api` proxies to `http://127.0.0.1:5000`, so keep these values unless nginx changes.
+
+Only `webapp` and `gateway` publish ports in production, and both are hard-bound to `127.0.0.1` for the host nginx proxy. Internal services (`learnword.webapi`, `learnword.identity`, `identityservice`) are available only on the Docker network through `expose: 8080`; do not add `ports` for them in production.
 
 To find what owns a port on the server:
 
