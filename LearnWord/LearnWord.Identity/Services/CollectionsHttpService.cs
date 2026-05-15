@@ -1,74 +1,53 @@
 ﻿using LearnWord.BL.Models.Dto;
-using LearnWord.BL.Models.Errors;
 using LearnWord.Identity.Abstactions;
 
 namespace LearnWord.Identity.Services
 {
-    public class CollectionsHttpService : ICollectionsHttpService
+    public class CollectionsHttpService : UpstreamHttpService<CollectionsHttpService>, ICollectionsHttpService
     {
-        private readonly HttpClient httpClient = new HttpClient();
+        private const string UpstreamService = "Collections";
         private readonly string serviceBaseUrl;
 
-        public CollectionsHttpService(IConfiguration configuration)
+        public CollectionsHttpService(IConfiguration configuration, ILogger<CollectionsHttpService>? logger = null)
+            : base(logger)
         {
-            this.serviceBaseUrl = configuration["LwServicesRoutes:CollectionsRoute"];
+            this.serviceBaseUrl = configuration["LwServicesRoutes:CollectionsRoute"]
+                ?? throw new InvalidOperationException("LwServicesRoutes:CollectionsRoute configuration is missing.");
         }
 
         public async Task<CollectionDto> Add(CollectionCreateDto createDto)
         {
-            using var response = await httpClient.PostAsJsonAsync(serviceBaseUrl, createDto);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<CollectionDto>();
-
-                if (result == null)
-                {
-                    throw new UpstreamServiceException("Collections service returned an empty response.", "collections_service_empty_response");
-                }
-
-                return result;
-            }
-
-            throw new UpstreamServiceException($"Failed to create collection. Collections service returned {(int)response.StatusCode}.");
+            return await SendForJson<CollectionDto>(
+                UpstreamService,
+                "CreateCollection",
+                serviceBaseUrl,
+                () => HttpClient.PostAsJsonAsync(serviceBaseUrl, createDto),
+                "collections_service_empty_response",
+                "Failed to create collection.");
         }
 
         public async Task<CollectionDto> Get(int id)
         {
-            using var response = await httpClient.GetAsync($"{serviceBaseUrl}/{id}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<CollectionDto>();
-
-                if (result == null)
-                {
-                    throw new UpstreamServiceException("Collections service returned an empty response.", "collections_service_empty_response");
-                }
-
-                return result;
-            }
-
-            throw new UpstreamServiceException($"Failed to get collection {id}. Collections service returned {(int)response.StatusCode}.");
+            var request = $"{serviceBaseUrl}/{id}";
+            return await SendForJson<CollectionDto>(
+                UpstreamService,
+                "GetCollection",
+                request,
+                () => HttpClient.GetAsync(request),
+                "collections_service_empty_response",
+                $"Failed to get collection {id}.");
         }
 
         public async Task<IEnumerable<CardDto>> GetCardsForReview(int collectionId)
         {
-            using var response = await httpClient.GetAsync($"{serviceBaseUrl}/{collectionId}/review-cards");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<IEnumerable<CardDto>>();
-
-                if (result == null)
-                {
-                    throw new UpstreamServiceException("Collections service returned an empty response.", "collections_service_empty_response");
-                }
-
-                return result;
-            }
-
-            throw new UpstreamServiceException($"Failed to get review cards for collection {collectionId}. Collections service returned {(int)response.StatusCode}.");
+            var request = $"{serviceBaseUrl}/{collectionId}/review-cards";
+            return await SendForJson<IEnumerable<CardDto>>(
+                UpstreamService,
+                "GetReviewCards",
+                request,
+                () => HttpClient.GetAsync(request),
+                "collections_service_empty_response",
+                $"Failed to get review cards for collection {collectionId}.");
         }
 
         public async Task<CollectionListDto> GetList(int[] ids)
@@ -80,56 +59,38 @@ namespace LearnWord.Identity.Services
                 request += $"&ids={id}";
             }
 
-            using var response = await httpClient.GetAsync(request);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<CollectionListDto>();
-
-                if (result == null)
-                {
-                    throw new UpstreamServiceException("Collections service returned an empty response.", "collections_service_empty_response");
-                }
-
-                return result;
-            }
-
-            throw new UpstreamServiceException($"Failed to get collections list. Collections service returned {(int)response.StatusCode}.");
+            return await SendForJson<CollectionListDto>(
+                UpstreamService,
+                "GetCollectionsList",
+                request,
+                () => HttpClient.GetAsync(request),
+                "collections_service_empty_response",
+                "Failed to get collections list.");
         }
 
         public async Task<bool> Remove(int id)
         {
             var request = $"{serviceBaseUrl}/{id}";
 
-            using var response = await httpClient.DeleteAsync(request);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
-            throw new UpstreamServiceException($"Failed to remove collection {id}. Collections service returned {(int)response.StatusCode}.");
+            return await SendForSuccess(
+                UpstreamService,
+                "RemoveCollection",
+                request,
+                () => HttpClient.DeleteAsync(request),
+                $"Failed to remove collection {id}.");
         }
 
         public async Task<CollectionDto> Rename(int id, CollectionRenameDto renameDto)
         {
             var request = $"{serviceBaseUrl}/{id}";
 
-            using var response = await httpClient.PutAsJsonAsync(request, renameDto);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<CollectionDto>();
-
-                if (result == null)
-                {
-                    throw new UpstreamServiceException("Collections service returned an empty response.", "collections_service_empty_response");
-                }
-
-                return result;
-            }
-
-            throw new UpstreamServiceException($"Failed to rename collection {id}. Collections service returned {(int)response.StatusCode}.");
+            return await SendForJson<CollectionDto>(
+                UpstreamService,
+                "RenameCollection",
+                request,
+                () => HttpClient.PutAsJsonAsync(request, renameDto),
+                "collections_service_empty_response",
+                $"Failed to rename collection {id}.");
         }
     }
 }

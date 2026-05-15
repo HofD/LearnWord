@@ -31,6 +31,7 @@ builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange
 #endif
 
 builder.Services.AddOcelot();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -44,6 +45,8 @@ app.UseCors(x => x
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
+
+app.MapHealthChecks("/health");
 
 app.UseOcelot().Wait();
 
