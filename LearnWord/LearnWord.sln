@@ -49,6 +49,14 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnWord.DAL.Tests", "tests\LearnWord.DAL.Tests\LearnWord.DAL.Tests.csproj", "{935D4896-12A7-4912-902E-FB605D6F2924}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{87D208B1-2AF0-4F83-96D7-C1FBBBC03EE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearnWord.Identity.Tests", "tests\LearnWord.Identity.Tests\LearnWord.Identity.Tests.csproj", "{95D9DDE6-5F94-4C96-BB30-AC4ABF984283}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearnWord.Identity.DAL.Tests", "tests\LearnWord.Identity.DAL.Tests\LearnWord.Identity.DAL.Tests.csproj", "{B94E3D3A-6314-4877-BE2D-F44652B4AC06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.Authorization.Tests", "tests\IdentityService.Authorization.Tests\IdentityService.Authorization.Tests.csproj", "{6E1D94C8-8180-4129-AB39-528C6F86D324}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +135,18 @@ Global
 		{935D4896-12A7-4912-902E-FB605D6F2924}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{935D4896-12A7-4912-902E-FB605D6F2924}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{935D4896-12A7-4912-902E-FB605D6F2924}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95D9DDE6-5F94-4C96-BB30-AC4ABF984283}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D9DDE6-5F94-4C96-BB30-AC4ABF984283}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D9DDE6-5F94-4C96-BB30-AC4ABF984283}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D9DDE6-5F94-4C96-BB30-AC4ABF984283}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B94E3D3A-6314-4877-BE2D-F44652B4AC06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B94E3D3A-6314-4877-BE2D-F44652B4AC06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B94E3D3A-6314-4877-BE2D-F44652B4AC06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B94E3D3A-6314-4877-BE2D-F44652B4AC06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E1D94C8-8180-4129-AB39-528C6F86D324}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E1D94C8-8180-4129-AB39-528C6F86D324}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E1D94C8-8180-4129-AB39-528C6F86D324}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E1D94C8-8180-4129-AB39-528C6F86D324}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -149,6 +169,9 @@ Global
 		{95150544-8E19-4B3D-89CD-FD5613CD1017} = {1DF1612B-6FCF-441D-B8CE-F68BBD3DE1AE}
 		{1AA12C43-BF0F-4A9F-B435-79F203541CE6} = {1DF1612B-6FCF-441D-B8CE-F68BBD3DE1AE}
 		{935D4896-12A7-4912-902E-FB605D6F2924} = {F5DB7766-DA90-450A-ABA7-83AC5EAE029D}
+		{95D9DDE6-5F94-4C96-BB30-AC4ABF984283} = {87D208B1-2AF0-4F83-96D7-C1FBBBC03EE1}
+		{B94E3D3A-6314-4877-BE2D-F44652B4AC06} = {87D208B1-2AF0-4F83-96D7-C1FBBBC03EE1}
+		{6E1D94C8-8180-4129-AB39-528C6F86D324} = {87D208B1-2AF0-4F83-96D7-C1FBBBC03EE1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2DAF9759-0DEA-4924-9A7C-282719A20758}

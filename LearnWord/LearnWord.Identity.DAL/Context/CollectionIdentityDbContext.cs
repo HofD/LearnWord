@@ -18,6 +18,11 @@ namespace LearnWord.Identity.DAL.Context
             Configuration = configuration;
         }
 
+        public CollectionIdentityDbContext(DbContextOptions<CollectionIdentityDbContext> options) : base(options)
+        {
+            Configuration = null!;
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(SchemaName);
@@ -25,6 +30,11 @@ namespace LearnWord.Identity.DAL.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
+            if (options.IsConfigured)
+            {
+                return;
+            }
+
             options.UseNpgsql(Configuration.GetConnectionString("LwConnection"), b => b.MigrationsAssembly("LearnWord.Identity.Migrations"));
         }
     }
