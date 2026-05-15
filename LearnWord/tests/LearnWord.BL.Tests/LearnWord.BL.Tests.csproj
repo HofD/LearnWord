@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\LearnWord.Identity\LearnWord.Identity.csproj" />
+    <ProjectReference Include="..\..\LearnWord.BL\LearnWord.BL.csproj" />
   </ItemGroup>
 
 </Project>

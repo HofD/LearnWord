@@ -57,6 +57,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearnWord.Identity.DAL.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.Authorization.Tests", "tests\IdentityService.Authorization.Tests\IdentityService.Authorization.Tests.csproj", "{6E1D94C8-8180-4129-AB39-528C6F86D324}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearnWord.BL.Tests", "tests\LearnWord.BL.Tests\LearnWord.BL.Tests.csproj", "{DF532723-F019-4E55-99F1-ABE41D11AB90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,10 @@ Global
 		{6E1D94C8-8180-4129-AB39-528C6F86D324}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E1D94C8-8180-4129-AB39-528C6F86D324}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E1D94C8-8180-4129-AB39-528C6F86D324}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF532723-F019-4E55-99F1-ABE41D11AB90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF532723-F019-4E55-99F1-ABE41D11AB90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF532723-F019-4E55-99F1-ABE41D11AB90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF532723-F019-4E55-99F1-ABE41D11AB90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -172,6 +178,7 @@ Global
 		{95D9DDE6-5F94-4C96-BB30-AC4ABF984283} = {87D208B1-2AF0-4F83-96D7-C1FBBBC03EE1}
 		{B94E3D3A-6314-4877-BE2D-F44652B4AC06} = {87D208B1-2AF0-4F83-96D7-C1FBBBC03EE1}
 		{6E1D94C8-8180-4129-AB39-528C6F86D324} = {87D208B1-2AF0-4F83-96D7-C1FBBBC03EE1}
+		{DF532723-F019-4E55-99F1-ABE41D11AB90} = {87D208B1-2AF0-4F83-96D7-C1FBBBC03EE1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2DAF9759-0DEA-4924-9A7C-282719A20758}
