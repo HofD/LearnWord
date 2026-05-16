@@ -140,6 +140,22 @@ Local endpoints:
 - gateway: `http://localhost:5100`
 - Mailpit: `http://localhost:8025`
 
+## Local Test Account For Acceptance
+
+For local Docker acceptance checks that require authentication, use:
+
+- email: `agent-ui-test@example.com`
+- password: `Agent-test1!`
+
+If the account is missing, unconfirmed, or login fails:
+
+1. Register it through `POST http://localhost:5100/api/account/register` with `{ "email": "agent-ui-test@example.com", "password": "Agent-test1!" }`.
+2. Confirm it through the newest Mailpit message for that address. Mailpit is at `http://localhost:8025`; its API is `GET http://localhost:8025/api/v1/messages` and `GET http://localhost:8025/api/v1/message/{id}`.
+3. Log in through `POST http://localhost:5100/api/auth/login`.
+4. If the account has no data, create a small collection and one card with two words through the gateway before browser checks.
+
+Use this account only in the local Docker environment. It exists to make final browser acceptance repeatable.
+
 ## Quality Bar
 
 System analysis work should be:

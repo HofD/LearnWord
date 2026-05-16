@@ -35,6 +35,22 @@ Local endpoints:
 
 Use direct `dotnet test`, `npm run build`, or other non-Docker commands only for narrow local diagnosis or as a fallback when Docker is unavailable. If a Docker check cannot be run, the agent must say so explicitly.
 
+## Local Test Account
+
+Use this account for local Docker browser and gateway checks that need an authenticated user:
+
+- email: `agent-ui-test@example.com`
+- password: `Agent-test1!`
+
+If the account is missing, unconfirmed, or login fails, recreate it through the local gateway:
+
+1. `POST http://localhost:5100/api/account/register` with `{ "email": "agent-ui-test@example.com", "password": "Agent-test1!" }`.
+2. Open Mailpit at `http://localhost:8025` or query `GET http://localhost:8025/api/v1/messages`, find the newest confirmation email for `agent-ui-test@example.com`, and call the confirmation URL against the gateway host if needed.
+3. Log in with `POST http://localhost:5100/api/auth/login`.
+4. If no learning data exists, create a small collection and one card with two words before visual checks.
+
+Do not rely on this account in production or commit real user data. It is only for the local Docker environment.
+
 ## Shared Sources Of Truth
 
 - Backend behavior: `specs/backend-api.md`

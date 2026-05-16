@@ -158,6 +158,29 @@ Local endpoints:
 - gateway: `http://localhost:5100`
 - Mailpit: `http://localhost:8025`
 
+## Local Test Account
+
+For authenticated browser checks in the local Docker app, use:
+
+- email: `agent-ui-test@example.com`
+- password: `Agent-test1!`
+
+If login fails because the account is missing or unconfirmed, create it instead of skipping the authenticated visual check:
+
+1. Register through the local gateway:
+
+```bash
+curl -s -i -X POST http://localhost:5100/api/account/register \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"agent-ui-test@example.com","password":"Agent-test1!"}'
+```
+
+2. Get the newest Mailpit message for `agent-ui-test@example.com` from `http://localhost:8025/api/v1/messages`, then fetch its body with `http://localhost:8025/api/v1/message/{id}` and call the confirmation URL. If the email link points at `http://localhost:8088/confirm?...`, the equivalent gateway confirmation endpoint is `http://localhost:5100/api/account/confirm?...`.
+3. Log in through the UI or `POST http://localhost:5100/api/auth/login`.
+4. If there are no collections/cards, create a small collection and one card with two words through the gateway so edit/delete UI can be inspected on real data.
+
+Mention in your final report whether you used the existing account or had to recreate/seed it.
+
 ## Quality Bar
 
 Frontend changes should be:
