@@ -1,6 +1,5 @@
 ﻿using LearnWord.Identity.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace LearnWord.Identity.DAL.Context
 {
@@ -10,32 +9,15 @@ namespace LearnWord.Identity.DAL.Context
         public DbSet<CollectionIdentity> CollectionIdentities { get; set; }
         public DbSet<CardIdentity> CardIdentities { get; set; }
 
-        protected readonly IConfiguration Configuration;
         private const string SchemaName = "identitywords";
-
-        public CollectionIdentityDbContext(IConfiguration configuration) : base()
-        {
-            Configuration = configuration;
-        }
 
         public CollectionIdentityDbContext(DbContextOptions<CollectionIdentityDbContext> options) : base(options)
         {
-            Configuration = null!;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(SchemaName);
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            if (options.IsConfigured)
-            {
-                return;
-            }
-
-            options.UseNpgsql(Configuration.GetConnectionString("LwConnection"), b => b.MigrationsAssembly("LearnWord.Identity.Migrations"));
         }
     }
 }

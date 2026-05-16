@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Db configuration
 var connectionString = builder.Configuration.GetConnectionString("LwConnection");
 builder.Services.AddDbContext<CollectionIdentityDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("LearnWord.Identity.Migrations")));
 
 // Add services to the container.
 builder.Services.AddTransient<JwtUtils>();
