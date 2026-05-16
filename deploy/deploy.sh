@@ -26,6 +26,31 @@ IMAGE_ARCHIVE="${DIST_DIR}/learnword-images-${LW_IMAGE_TAG}.tar"
 REMOTE="${LW_SERVER_USER}@${LW_SERVER}"
 REMOTE_COMPOSE="${LW_SERVER_DIR}/docker-compose.yml"
 REMOTE_ARCHIVE="${LW_SERVER_DIR}/$(basename "${IMAGE_ARCHIVE}")"
+REMOTE_ARCHIVE_UPLOADED=0
+
+cleanup_on_error() {
+  local exit_code=$?
+
+  if [[ -f "${IMAGE_ARCHIVE}" ]]; then
+    echo "Removing local image archive ${IMAGE_ARCHIVE}"
+    rm -f "${IMAGE_ARCHIVE}"
+  fi
+
+  if [[ "${REMOTE_ARCHIVE_UPLOADED}" -eq 1 ]]; then
+    echo "Removing remote image archive ${REMOTE_ARCHIVE}"
+    ssh -p "${LW_SERVER_PORT}" "${REMOTE}" "rm -f '${REMOTE_ARCHIVE}'" || true
+  fi
+
+  exit "${exit_code}"
+}
+
+trap cleanup_on_error ERR
+
+echo "Running LearnWord tests"
+(
+  cd "${ROOT_DIR}/LearnWord"
+  ./tests/run-all-tests.sh
+)
 
 mkdir -p "${DIST_DIR}"
 
@@ -51,6 +76,7 @@ ssh -p "${LW_SERVER_PORT}" "${REMOTE}" "mkdir -p '${LW_SERVER_DIR}'"
 echo "Copying compose file and image archive"
 scp -P "${LW_SERVER_PORT}" "${SCRIPT_DIR}/docker-compose.prod.yml" "${REMOTE}:${REMOTE_COMPOSE}"
 scp -P "${LW_SERVER_PORT}" "${IMAGE_ARCHIVE}" "${REMOTE}:${REMOTE_ARCHIVE}"
+REMOTE_ARCHIVE_UPLOADED=1
 
 if [[ -n "${LW_REMOTE_ENV_FILE:-}" ]]; then
   echo "Uploading production .env from ${LW_REMOTE_ENV_FILE}"
@@ -71,5 +97,7 @@ ssh -p "${LW_SERVER_PORT}" "${REMOTE}" "\
 
 echo "Removing local image archive ${IMAGE_ARCHIVE}"
 rm -f "${IMAGE_ARCHIVE}"
+REMOTE_ARCHIVE_UPLOADED=0
+trap - ERR
 
 echo "Deployed LearnWord ${LW_IMAGE_TAG} to ${LW_SERVER_DIR}"

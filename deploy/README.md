@@ -71,6 +71,8 @@ Both scripts build all images locally, save them to a tar archive, copy the arch
 docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans
 ```
 
+Before any images are built or copied, both scripts run the backend test suite: `LearnWord/tests/run-all-tests.sh` on macOS/Linux and `LearnWord\tests\run-all-tests.ps1` on Windows. If tests or any later deploy step fail, deployment stops and any created image archive is removed locally; if the archive was already copied, the remote copy is removed too.
+
 After a successful restart, the copied tar archive is removed from the server and from local `deploy/dist`.
 
 By default deploy builds `linux/amd64` images, which is the usual Linux server platform. Override `LW_PLATFORM` in `deploy/env/deploy.env` only if the server uses another architecture.

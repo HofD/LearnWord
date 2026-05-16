@@ -4,6 +4,21 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RootDir = Split-Path -Parent $ScriptDir
 $DeployEnv = if ($env:DEPLOY_ENV) { $env:DEPLOY_ENV } else { Join-Path $ScriptDir "env\deploy.env" }
 
+function Invoke-Native {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FilePath,
+
+        [Parameter(ValueFromRemainingArguments = $true)]
+        [string[]]$Arguments
+    )
+
+    & $FilePath @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "$FilePath failed with exit code $LASTEXITCODE."
+    }
+}
+
 if (Test-Path $DeployEnv) {
     Get-Content $DeployEnv | ForEach-Object {
         $line = $_.Trim()
@@ -29,49 +44,71 @@ $DistDir = Join-Path $ScriptDir "dist"
 $ImageArchive = Join-Path $DistDir "learnword-images-$ImageTag.tar"
 $Remote = "$($env:LW_SERVER_USER)@$($env:LW_SERVER)"
 $RemoteArchive = "$ServerDir/learnword-images-$ImageTag.tar"
+$RemoteArchiveUploaded = $false
 
-New-Item -ItemType Directory -Force -Path $DistDir | Out-Null
-
-Write-Host "Building LearnWord images with tag $ImageTag"
-Push-Location $RootDir
 try {
-    $env:LW_IMAGE_PREFIX = $ImagePrefix
-    $env:LW_IMAGE_TAG = $ImageTag
-    $env:LW_PLATFORM = $Platform
-    docker compose -f deploy/docker-compose.build.yml build
+    Write-Host "Running LearnWord tests"
+    $PowerShellExe = [System.Diagnostics.Process]::GetCurrentProcess().Path
+    Invoke-Native $PowerShellExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $RootDir "LearnWord\tests\run-all-tests.ps1")
+
+    New-Item -ItemType Directory -Force -Path $DistDir | Out-Null
+
+    Write-Host "Building LearnWord images with tag $ImageTag"
+    Push-Location $RootDir
+    try {
+        $env:LW_IMAGE_PREFIX = $ImagePrefix
+        $env:LW_IMAGE_TAG = $ImageTag
+        $env:LW_PLATFORM = $Platform
+        Invoke-Native docker compose -f deploy/docker-compose.build.yml build
+    }
+    finally {
+        Pop-Location
+    }
+
+    Write-Host "Saving images to $ImageArchive"
+    Invoke-Native docker save `
+        "$ImagePrefix/learnword-webapi:$ImageTag" `
+        "$ImagePrefix/learnword-identity:$ImageTag" `
+        "$ImagePrefix/identityservice:$ImageTag" `
+        "$ImagePrefix/gateway:$ImageTag" `
+        "$ImagePrefix/webapp:$ImageTag" `
+        -o "$ImageArchive"
+
+    Write-Host "Preparing remote directory $ServerDir"
+    Invoke-Native ssh -p $ServerPort $Remote "mkdir -p '$ServerDir'"
+
+    Write-Host "Copying compose file and image archive"
+    Invoke-Native scp -P $ServerPort (Join-Path $ScriptDir "docker-compose.prod.yml") "${Remote}:$ServerDir/docker-compose.yml"
+    Invoke-Native scp -P $ServerPort $ImageArchive "${Remote}:$RemoteArchive"
+    $RemoteArchiveUploaded = $true
+
+    if ($env:LW_REMOTE_ENV_FILE) {
+        Write-Host "Uploading production .env from $($env:LW_REMOTE_ENV_FILE)"
+        Invoke-Native scp -P $ServerPort $env:LW_REMOTE_ENV_FILE "${Remote}:$ServerDir/.env"
+    }
+
+    $RemoteArchiveName = "learnword-images-$ImageTag.tar"
+    $RemoteCommand = "cd '$ServerDir' && test -f .env && docker load -i '$RemoteArchiveName' && sed -i.bak 's|^LW_PLATFORM=.*|LW_PLATFORM=$Platform|' .env && if ! grep -q '^LW_PLATFORM=' .env; then echo 'LW_PLATFORM=$Platform' >> .env; fi && sed -i.bak 's|^LW_IMAGE_TAG=.*|LW_IMAGE_TAG=$ImageTag|' .env && if ! grep -q '^LW_IMAGE_TAG=' .env; then echo 'LW_IMAGE_TAG=$ImageTag' >> .env; fi && docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans && rm -f '$RemoteArchiveName'"
+
+    Write-Host "Loading images and restarting services"
+    Invoke-Native ssh -p $ServerPort $Remote $RemoteCommand
+
+    Write-Host "Removing local image archive $ImageArchive"
+    Remove-Item -Force $ImageArchive
+    $RemoteArchiveUploaded = $false
+
+    Write-Host "Deployed LearnWord $ImageTag to $ServerDir"
 }
-finally {
-    Pop-Location
+catch {
+    if (Test-Path $ImageArchive) {
+        Write-Host "Removing local image archive $ImageArchive"
+        Remove-Item -Force $ImageArchive
+    }
+
+    if ($RemoteArchiveUploaded) {
+        Write-Host "Removing remote image archive $RemoteArchive"
+        & ssh -p $ServerPort $Remote "rm -f '$RemoteArchive'" | Out-Null
+    }
+
+    throw
 }
-
-Write-Host "Saving images to $ImageArchive"
-docker save `
-    "$ImagePrefix/learnword-webapi:$ImageTag" `
-    "$ImagePrefix/learnword-identity:$ImageTag" `
-    "$ImagePrefix/identityservice:$ImageTag" `
-    "$ImagePrefix/gateway:$ImageTag" `
-    "$ImagePrefix/webapp:$ImageTag" `
-    -o "$ImageArchive"
-
-Write-Host "Preparing remote directory $ServerDir"
-ssh -p $ServerPort $Remote "mkdir -p '$ServerDir'"
-
-Write-Host "Copying compose file and image archive"
-scp -P $ServerPort (Join-Path $ScriptDir "docker-compose.prod.yml") "${Remote}:$ServerDir/docker-compose.yml"
-scp -P $ServerPort $ImageArchive "${Remote}:$RemoteArchive"
-
-if ($env:LW_REMOTE_ENV_FILE) {
-    Write-Host "Uploading production .env from $($env:LW_REMOTE_ENV_FILE)"
-    scp -P $ServerPort $env:LW_REMOTE_ENV_FILE "${Remote}:$ServerDir/.env"
-}
-
-$RemoteArchiveName = "learnword-images-$ImageTag.tar"
-$RemoteCommand = "cd '$ServerDir' && test -f .env && docker load -i '$RemoteArchiveName' && sed -i.bak 's|^LW_PLATFORM=.*|LW_PLATFORM=$Platform|' .env && if ! grep -q '^LW_PLATFORM=' .env; then echo 'LW_PLATFORM=$Platform' >> .env; fi && sed -i.bak 's|^LW_IMAGE_TAG=.*|LW_IMAGE_TAG=$ImageTag|' .env && if ! grep -q '^LW_IMAGE_TAG=' .env; then echo 'LW_IMAGE_TAG=$ImageTag' >> .env; fi && docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans && rm -f '$RemoteArchiveName'"
-
-Write-Host "Loading images and restarting services"
-ssh -p $ServerPort $Remote $RemoteCommand
-
-Write-Host "Removing local image archive $ImageArchive"
-Remove-Item -Force $ImageArchive
-
-Write-Host "Deployed LearnWord $ImageTag to $ServerDir"
