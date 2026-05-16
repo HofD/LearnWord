@@ -147,6 +147,24 @@ public class IdentityControllerTests
     }
 
     [Fact]
+    public async Task Words_Update_WithoutResolvedUser_ReturnsUnauthorized()
+    {
+        var service = new StubWordIdentityService();
+        var controller = new WordsIdentityController(service)
+        {
+            ControllerContext = CreateControllerContext()
+        };
+
+        var response = await controller.Update(
+            23,
+            31,
+            new WordUpdateDto { Value = "cat", Transcription = "kat", Translation = "cat-translation" });
+
+        Assert.IsType<UnauthorizedResult>(response.Result);
+        Assert.Null(service.LastUpdate);
+    }
+
+    [Fact]
     public async Task Words_Remove_ReturnsBadGatewayWhenUpstreamDeleteFails()
     {
         var service = new StubWordIdentityService { RemoveResult = false };
@@ -160,6 +178,21 @@ public class IdentityControllerTests
         var status = Assert.IsType<StatusCodeResult>(response);
         Assert.Equal(StatusCodes.Status502BadGateway, status.StatusCode);
         Assert.Equal((31, 23, UserId), service.LastRemove);
+    }
+
+    [Fact]
+    public async Task Words_Remove_WithoutResolvedUser_ReturnsUnauthorized()
+    {
+        var service = new StubWordIdentityService();
+        var controller = new WordsIdentityController(service)
+        {
+            ControllerContext = CreateControllerContext()
+        };
+
+        var response = await controller.Remove(23, 31);
+
+        Assert.IsType<UnauthorizedResult>(response);
+        Assert.Null(service.LastRemove);
     }
 
     private static ControllerContext CreateControllerContext(string? userId = null)

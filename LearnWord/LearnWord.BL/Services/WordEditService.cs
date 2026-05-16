@@ -26,6 +26,15 @@ namespace LearnWord.BL.Services
         public async Task Remove(int cardId, int id)
         {
             await wordService.Remove(cardId, id);
+
+            if (await wordService.HasAnyActiveWords(cardId))
+            {
+                await cardService.Reset(cardId);
+            }
+            else
+            {
+                await cardService.Remove(cardId);
+            }
         }
 
         public async Task<WordDto> Update(int cardId, int id, WordUpdateDto word)

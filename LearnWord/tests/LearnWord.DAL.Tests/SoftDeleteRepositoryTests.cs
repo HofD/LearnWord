@@ -27,6 +27,18 @@ public class SoftDeleteRepositoryTests
     }
 
     [Fact]
+    public async Task WordRepository_HasAnyActiveWords_IgnoresSoftDeletedWords()
+    {
+        await using var fixture = await TestDatabase.Create();
+        var word = await fixture.SeedWord();
+        var repository = new WordRepository(fixture.Context);
+
+        await repository.Remove(word.CardId, word.Id);
+
+        Assert.False(await repository.HasAnyActiveWords(word.CardId));
+    }
+
+    [Fact]
     public async Task CardRepository_Remove_SoftDeletesCardAndItsWords()
     {
         await using var fixture = await TestDatabase.Create();

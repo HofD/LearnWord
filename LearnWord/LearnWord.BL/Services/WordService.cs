@@ -29,6 +29,11 @@ namespace LearnWord.BL.Services
             await wordRepository.Remove(cardId, id);
         }
 
+        public async Task<bool> HasAnyActiveWords(int cardId)
+        {
+            return await wordRepository.HasAnyActiveWords(cardId);
+        }
+
         public async Task<WordDto> Update(int cardId, int id, WordUpdateDto word)
         {
             Word wordToSave = mapper.Map<Word>(word);

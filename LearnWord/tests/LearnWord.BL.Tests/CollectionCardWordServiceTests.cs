@@ -119,7 +119,7 @@ public class CollectionCardWordServiceTests
     }
 
     [Fact]
-    public async Task WordEditService_AddAndUpdateResetCardReviewState_ButRemoveDoesNot()
+    public async Task WordEditService_AddAndUpdateResetCardReviewState()
     {
         await using var fixture = await TestWordsDatabase.Create();
         var card = await fixture.SeedLearntCardWithWord();
@@ -136,10 +136,6 @@ public class CollectionCardWordServiceTests
             new WordUpdateDto { Value = "dog-updated", Transcription = "dog-updated", Translation = "updated-translation" });
         var afterUpdate = await fixture.Context.Cards!.AsNoTracking().SingleAsync(x => x.Id == card.Id);
 
-        await fixture.MarkCardAsLearnt(card.Id);
-        await service.Remove(card.Id, updated.Id);
-        var afterRemove = await fixture.Context.Cards!.AsNoTracking().SingleAsync(x => x.Id == card.Id);
-
         Assert.NotEqual(0, added.Id);
         Assert.Equal("dog-updated", updated.Value);
         Assert.False(afterAdd.Learnt);
@@ -148,10 +144,54 @@ public class CollectionCardWordServiceTests
         Assert.False(afterUpdate.Learnt);
         Assert.Null(afterUpdate.LearntAt);
         Assert.Null(afterUpdate.ShowedAt);
-        Assert.True(afterRemove.Learnt);
-        Assert.NotNull(afterRemove.LearntAt);
-        Assert.NotNull(afterRemove.ShowedAt);
-        Assert.NotNull(await fixture.Context.Words!.IgnoreQueryFilters().SingleAsync(x => x.Id == updated.Id && x.DeletedAt != null));
+    }
+
+    [Fact]
+    public async Task WordEditService_RemoveResetsCardReviewState_WhenCardStillHasActiveWords()
+    {
+        await using var fixture = await TestWordsDatabase.Create();
+        var card = await fixture.SeedLearntCardWithWord();
+        var service = fixture.CreateWordEditService();
+        var added = await service.Add(
+            new WordCreateDto { Value = "dog", Transcription = "dog", Translation = "dog-translation" },
+            card.Id);
+        await fixture.MarkCardAsLearnt(card.Id);
+
+        await service.Remove(card.Id, added.Id);
+
+        var afterRemove = await fixture.Context.Cards!.AsNoTracking().SingleAsync(x => x.Id == card.Id);
+        Assert.False(afterRemove.Learnt);
+        Assert.Null(afterRemove.LearntAt);
+        Assert.Null(afterRemove.ShowedAt);
+        Assert.Null(afterRemove.DeletedAt);
+        Assert.NotNull(await fixture.Context.Words!.IgnoreQueryFilters().SingleAsync(x => x.Id == added.Id && x.DeletedAt != null));
+        Assert.True(await fixture.Context.Words!.AnyAsync(x => x.CardId == card.Id));
+    }
+
+    [Fact]
+    public async Task WordEditService_RemoveDeletesCard_WhenDeletedWordWasLastActiveWord()
+    {
+        await using var fixture = await TestWordsDatabase.Create();
+        var card = await fixture.SeedLearntCardWithWord();
+        var word = await fixture.Context.Words!.AsNoTracking().SingleAsync(x => x.CardId == card.Id);
+        var service = fixture.CreateWordEditService();
+
+        await service.Remove(card.Id, word.Id);
+
+        var deletedCard = await fixture.Context.Cards!
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .SingleAsync(x => x.Id == card.Id);
+        var deletedWord = await fixture.Context.Words!
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .SingleAsync(x => x.Id == word.Id);
+
+        Assert.NotNull(deletedCard.DeletedAt);
+        Assert.Equal(deletedCard.DeletedAt, deletedCard.ModifiedAt);
+        Assert.NotNull(deletedWord.DeletedAt);
+        Assert.Equal(deletedWord.DeletedAt, deletedWord.ModifiedAt);
+        Assert.Null(await fixture.Context.Cards!.SingleOrDefaultAsync(x => x.Id == card.Id));
     }
 
     [Fact]
@@ -168,6 +208,20 @@ public class CollectionCardWordServiceTests
             word.Id,
             new WordUpdateDto { Value = "wrong", Transcription = "wrong", Translation = "wrong" }));
         await Assert.ThrowsAsync<BadRequestException>(() => service.Remove(secondCard.Id, word.Id));
+    }
+
+    [Fact]
+    public async Task WordService_UpdateOrRemoveMissingWordThrowsNotFound()
+    {
+        await using var fixture = await TestWordsDatabase.Create();
+        var card = await fixture.SeedCardWithWord();
+        var service = fixture.CreateWordService();
+
+        await Assert.ThrowsAsync<NotFoundException>(() => service.Update(
+            card.Id,
+            404,
+            new WordUpdateDto { Value = "missing", Transcription = "missing", Translation = "missing" }));
+        await Assert.ThrowsAsync<NotFoundException>(() => service.Remove(card.Id, 404));
     }
 
     private sealed class TestWordsDatabase : IAsyncDisposable

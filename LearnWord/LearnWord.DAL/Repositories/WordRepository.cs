@@ -69,6 +69,11 @@ namespace LearnWord.DAL.Repositories
             return word;
         }
 
+        public async Task<bool> HasAnyActiveWords(int cardId)
+        {
+            return await GetQueryable().AnyAsync(x => x.CardId == cardId);
+        }
+
         public async Task<Word> FindById(int id)
         {
             return await GetQueryable().FirstOrDefaultAsync(x => x.Id == id);

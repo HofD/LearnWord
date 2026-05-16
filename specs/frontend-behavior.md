@@ -257,6 +257,8 @@ Display behavior:
 
 - If `card?.id !== null`, renders the card's current words.
 - Each displayed word shows value, transcription, and translation.
+- Each displayed word exposes edit and delete actions.
+- Delete asks for confirmation before calling the API.
 - A Bootstrap collapse reveals the add-word form.
 
 Submit behavior:
@@ -268,7 +270,19 @@ Submit behavior:
 - On add-word success, `updateCard(data)` currently does not update local state or emit anything.
 - The form is reset immediately after initiating the request.
 
-Current frontend does not expose word update or word delete controls, although backend endpoints exist.
+Edit behavior:
+
+- Editing a word reuses the same validation rules as adding a word: `value` and `translation` are required, `transcription` is optional.
+- Saving an edit calls `PUT /api/cards/{cardId}/words/{id}`.
+- On success, the edited word in `card.words` is replaced with the returned `WordDto`.
+- On error, the displayed word remains unchanged.
+
+Delete behavior:
+
+- Confirming delete calls `DELETE /api/cards/{cardId}/words/{id}`.
+- On success, the word is removed from the local `card.words` array.
+- If the deleted word was the last word in the card, the backend deletes the card and the frontend removes that card from the collection view.
+- On error, the displayed word remains unchanged.
 
 ## Review Flow
 

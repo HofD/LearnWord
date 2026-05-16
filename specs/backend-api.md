@@ -498,9 +498,10 @@ Current behavior:
 
 - Checks card ownership.
 - Deletes the word through internal `LearnWord.WebApi`.
+- If the card still has active words after deletion, resets the card review state the same way as adding/updating a word.
+- If the deleted word was the card's last active word, deletes the card as well because empty cards have no learning value.
 - Returns `200 OK` if internal delete succeeds.
 - Returns `500` if internal delete returns an unsuccessful HTTP status.
-- Current internal `WordEditService.Remove` does not reset the card review state after deleting a word.
 
 ## Internal LearnWord.WebApi
 
@@ -618,4 +619,5 @@ Card review status:
 - `learn` sets `Learnt = true`, `LearntAt = now`, `ShowedAt = now`.
 - `forget` sets `Learnt = false`, `LearntAt = null`, `ShowedAt = now`.
 - adding/updating a word resets card learning state.
-
+- deleting a word resets card learning state when the card still contains active words.
+- deleting the last active word deletes the card.
