@@ -39,7 +39,7 @@ If you do not specify a test level, the agent should choose the smallest reliabl
 For implementation tasks, expect:
 
 - added or updated backend test files;
-- the exact test command it ran;
+- the exact Docker/local endpoint or fallback test command it ran;
 - pass/fail result;
 - a short note about remaining risks.
 
@@ -52,7 +52,15 @@ For analysis tasks, expect:
 
 ## Repository Conventions
 
-Backend solution:
+Preferred local Docker run:
+
+```bash
+./deploy/local-up.sh
+```
+
+Use Docker as the default for integration, E2E, gateway, database, auth, and mail scenarios.
+
+Backend solution fallback:
 
 ```bash
 cd LearnWord

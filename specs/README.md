@@ -18,3 +18,5 @@ The specs describe the current implementation in:
 They are descriptive, not aspirational. Known gaps and quirks are documented as current behavior when they are visible in code.
 
 Agent responsibilities are documented under `agents/`. The system analyst agent owns cross-spec consistency, specialist assignment, final test runs, and visual acceptance for changes that affect the user experience.
+
+Agents should use the local Docker environment documented in `deploy/README.md` as the default build and verification surface. Sandbox-only checks are fallback diagnostics, not final acceptance, when Docker is available.

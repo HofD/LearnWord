@@ -33,6 +33,12 @@ Treat `specs/backend-api.md` as the contract for current behavior, including doc
 5. Report gaps clearly when behavior is not testable without extra infrastructure.
 6. Prefer small focused test projects and helpers over large test frameworks invented from scratch.
 
+## Docker-First Verification
+
+Use the local Docker stack as the preferred environment for integration, E2E, gateway, auth, ownership, database, and mail scenarios. Start it with `./deploy/local-up.sh` and verify public behavior through `http://localhost:5100` whenever feasible.
+
+Use direct `dotnet test`, project-level test runs, or EF test providers only for narrow unit/integration diagnosis or fallback when Docker is unavailable. If final QA did not use Docker for a scenario that depends on services, database, gateway, or mail, state why and name the residual risk.
+
 ## Testing Strategy
 
 Use this order of preference:
@@ -109,8 +115,8 @@ When assigned a QA task:
 1. Read the relevant code and `specs/backend-api.md`.
 2. Identify the smallest reliable test level for the requested behavior.
 3. Add or update tests.
-4. Run the narrowest relevant test command first.
-5. If narrow tests pass, run the broader suite when feasible.
+4. Prefer Docker-backed checks for service, database, gateway, and E2E behavior.
+5. Use narrow `dotnet test` commands for focused diagnosis or fallback when Docker is unavailable.
 6. Report:
    - what was tested,
    - what command was run,
@@ -126,14 +132,20 @@ When a test exposes a product bug:
 
 ## Commands
 
-From the backend solution directory:
+Preferred local Docker run from the project root:
+
+```bash
+./deploy/local-up.sh
+```
+
+Narrow backend fallback checks from the backend solution directory:
 
 ```bash
 cd LearnWord
 dotnet test LearnWord.sln
 ```
 
-Local full-stack environment:
+Manual Docker command equivalent:
 
 ```bash
 cp deploy/env/local.env.example deploy/env/local.env

@@ -39,7 +39,13 @@ Treat `specs/frontend-behavior.md` as the current behavior contract, including d
 4. Keep desktop layouts calm and centered instead of stretched across the full viewport.
 5. Improve accessibility, form ergonomics, validation states, loading states, and empty states.
 6. Keep bundle size and runtime work small; avoid heavy UI dependencies for simple interactions.
-7. Verify changes with the narrowest relevant build or test command, then broader checks when feasible.
+7. Verify changes through the local Docker frontend and gateway whenever feasible.
+
+## Docker-First Verification
+
+Use the local Docker stack as the preferred build and visual verification surface. Start it with `./deploy/local-up.sh`, inspect the app at `http://localhost:8088`, and rely on the Docker-built frontend for final UI acceptance whenever feasible.
+
+Use direct `npm run build`, `npm test`, or `npm start` only for narrow diagnosis, fast feedback, or fallback when Docker is unavailable. If final verification did not use Docker, say why and note the remaining risk.
 
 ## Design Direction
 
@@ -104,9 +110,9 @@ When assigned a frontend task:
 3. Make a small implementation plan if the change touches multiple screens.
 4. Update templates, component logic, and styles in the smallest coherent scope.
 5. Keep shared styles in `src/styles.css` only when they are genuinely reusable.
-6. Run the narrowest relevant check first.
-7. If feasible, run a production build.
-8. For visual changes, inspect the result in a browser at mobile and desktop widths when the app can run locally.
+6. Prefer `./deploy/local-up.sh` to build the Docker frontend and run the full local stack.
+7. Use direct Angular commands only for narrow diagnosis or Docker fallback.
+8. For visual changes, inspect `http://localhost:8088` in a browser at mobile and desktop widths when the Docker app can run locally.
 9. Report what changed, what was verified, and any remaining visual or behavioral risk.
 
 When a UI task reveals a product bug:
@@ -118,31 +124,31 @@ When a UI task reveals a product bug:
 
 ## Commands
 
-From the Angular app directory:
+Preferred local Docker run from the project root:
+
+```bash
+./deploy/local-up.sh
+```
+
+Narrow Angular fallback checks from the Angular app directory:
 
 ```bash
 cd ../LearnWordWebApp/lw-app
 npm run build
 ```
 
-Development server:
+Development server fallback:
 
 ```bash
 cd ../LearnWordWebApp/lw-app
 npm start
 ```
 
-Unit tests:
+Unit tests fallback:
 
 ```bash
 cd ../LearnWordWebApp/lw-app
 npm test
-```
-
-Local full-stack environment from the backend repository:
-
-```bash
-./deploy/local-up.sh
 ```
 
 Local endpoints:

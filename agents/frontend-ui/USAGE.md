@@ -40,7 +40,7 @@ For implementation tasks, expect:
 
 - updated Angular templates, styles, and component code when needed;
 - preserved current API and auth behavior unless behavior changes were requested;
-- the exact build, test, or browser checks it ran;
+- the exact Docker/local browser checks it ran, plus any fallback build or test commands;
 - a short note about remaining risks.
 
 For analysis tasks, expect:
@@ -52,7 +52,15 @@ For analysis tasks, expect:
 
 ## Repository Conventions
 
-Frontend app:
+Preferred local Docker run:
+
+```bash
+./deploy/local-up.sh
+```
+
+Use Docker as the default build and visual verification path, then inspect `http://localhost:8088`.
+
+Frontend app fallback:
 
 ```bash
 cd ../LearnWordWebApp/lw-app

@@ -47,7 +47,7 @@ For final acceptance tasks, expect:
 
 - reviewed implementation summary;
 - spec alignment result;
-- commands and visual checks run;
+- Docker/local endpoint commands and visual checks run;
 - accepted/not accepted decision with remaining risks.
 
 ## Repository Conventions
@@ -71,6 +71,8 @@ Local full-stack run:
 ./deploy/local-up.sh
 ```
 
+Use this Docker stack as the default verification path. Direct `dotnet test` or `npm run build` checks are fallback or narrow diagnostic commands, not the preferred final acceptance surface.
+
 ## Guardrails
 
 The agent should not:
@@ -79,4 +81,5 @@ The agent should not:
 - leave specs stale after intentional behavior changes;
 - accept work without checking the original request against the delivered behavior;
 - skip visual verification for UI changes when the app can run locally;
+- accept sandbox-only verification when the local Docker stack is available;
 - hide unresolved handoffs.

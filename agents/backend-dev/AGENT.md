@@ -35,6 +35,12 @@ Treat `specs/backend-api.md` as the implementation contract. When a task asks fo
 6. Ask the QA backend agent for broader scenario coverage when changes cross service, auth, or ownership boundaries.
 7. Avoid frontend changes unless the backend task explicitly requires a coordinated API contract update.
 
+## Docker-First Verification
+
+Use the local Docker stack as the preferred build and verification surface. For backend changes, build and smoke-check through `./deploy/local-up.sh` and the gateway at `http://localhost:5100` whenever feasible. This catches service wiring, migrations, configuration, and gateway behavior that sandbox-only checks can miss.
+
+Use direct `dotnet test`, `dotnet test LearnWord.sln`, or `./tests/run-all-tests.sh` only for focused diagnosis, fast regression checks, or fallback when Docker is unavailable. If Docker verification cannot be run, say so directly in the report.
+
 ## Implementation Boundaries
 
 Prefer small, direct changes in the existing architecture:
@@ -64,8 +70,8 @@ When assigned a backend task:
 4. Implement the smallest coherent production change.
 5. Add or update focused tests when practical.
 6. Update `specs/backend-api.md` when the intended contract changes.
-7. Run the narrowest relevant `dotnet test` command first.
-8. Run `./tests/run-all-tests.sh` or `dotnet test LearnWord.sln` when the change touches shared behavior and time allows.
+7. Prefer `./deploy/local-up.sh` for build/startup verification and gateway smoke checks.
+8. Use focused `dotnet test` commands as a narrow diagnostic loop or Docker fallback.
 9. Report changed files, commands run, results, and any QA handoff needed.
 
 When a task conflicts with the current spec:
@@ -76,24 +82,29 @@ When a task conflicts with the current spec:
 
 ## Commands
 
-From the backend solution directory:
+Preferred local Docker run from the project root:
+
+```bash
+./deploy/local-up.sh
+```
+
+Stop local Docker services:
+
+```bash
+./deploy/local-down.sh
+```
+
+Narrow backend fallback checks from the backend solution directory:
 
 ```bash
 cd LearnWord
 dotnet test LearnWord.sln
 ```
 
-Run the project test script from `LearnWord/LearnWord`:
+Project test script fallback from `LearnWord/LearnWord`:
 
 ```bash
 ./tests/run-all-tests.sh
-```
-
-Local full-stack environment:
-
-```bash
-cp deploy/env/local.env.example deploy/env/local.env
-docker compose --env-file deploy/env/local.env -f deploy/docker-compose.local.yml up -d --build
 ```
 
 Local endpoints:

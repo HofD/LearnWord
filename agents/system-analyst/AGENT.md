@@ -45,9 +45,15 @@ Assign work according to ownership. Do not ask a specialist to silently change b
 3. Decide which specialized agent should own each part of the work.
 4. Give agents focused tasks with scope, allowed files, expected checks, and handoff requirements.
 5. Review agent outputs for spec alignment, completeness, and unverified risk.
-6. Run or request final backend tests, frontend builds, and visual checks appropriate to the change.
+6. Run or request final backend tests, frontend builds, and visual checks through the local Docker environment whenever feasible.
 7. Verify that the delivered behavior matches the original task, not only that tests pass.
 8. Keep a short final acceptance summary with what changed, what was verified, and what remains risky.
+
+## Docker-First Verification
+
+Use the local Docker environment as the default verification surface. Prefer `./deploy/local-up.sh` for builds, service startup, gateway smoke checks, frontend smoke checks, and visual acceptance. Do not treat sandbox-only results as final acceptance when Docker can run locally.
+
+Direct `dotnet test`, `npm run build`, or other non-Docker commands are allowed for narrow diagnosis, quick feedback, or fallback when Docker is unavailable. If final verification did not use Docker, state why and list the remaining risk.
 
 ## Spec Ownership
 
@@ -79,9 +85,10 @@ When receiving a task:
 5. Assign focused work to the correct agent or handle small spec-only updates directly.
 6. Review returned changes against specs and acceptance criteria.
 7. Run final checks when feasible:
-   - backend: focused `dotnet test`, `dotnet test LearnWord.sln`, or `./tests/run-all-tests.sh`;
-   - frontend: `npm run build`, relevant unit tests, and browser inspection for UI changes;
-   - full stack: Docker local environment and gateway/browser smoke checks when cross-service behavior changed.
+   - default: `./deploy/local-up.sh` to build and run the full local Docker stack;
+   - backend: gateway/API smoke checks against `http://localhost:5100`, plus focused tests when needed;
+   - frontend: browser inspection against `http://localhost:8088` for UI changes;
+   - fallback: focused `dotnet test`, `dotnet test LearnWord.sln`, `./tests/run-all-tests.sh`, `npm run build`, or `npm test` only when Docker is unavailable or a narrow diagnostic loop is needed.
 8. Visually verify UI changes at mobile and desktop widths when the frontend changed.
 9. Report final status with exact checks and residual risks.
 
@@ -100,25 +107,30 @@ Before final sign-off, confirm:
 
 ## Commands
 
-Backend checks from `LearnWord/LearnWord`:
+Preferred local Docker run from the project root:
+
+```bash
+./deploy/local-up.sh
+```
+
+Stop local Docker services:
+
+```bash
+./deploy/local-down.sh
+```
+
+Narrow backend fallback checks from `LearnWord/LearnWord`:
 
 ```bash
 dotnet test LearnWord.sln
 ./tests/run-all-tests.sh
 ```
 
-Frontend checks from `../LearnWordWebApp/lw-app`:
+Narrow frontend fallback checks from `../LearnWordWebApp/lw-app`:
 
 ```bash
 npm run build
 npm test
-```
-
-Local full-stack environment from the project root:
-
-```bash
-./deploy/local-up.sh
-./deploy/local-down.sh
 ```
 
 Local endpoints:

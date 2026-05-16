@@ -40,7 +40,7 @@ For implementation tasks, expect:
 
 - updated backend production code and focused tests when practical;
 - updated `specs/backend-api.md` when the public contract changes;
-- exact commands run and pass/fail result;
+- exact Docker/local endpoint checks run and pass/fail result;
 - any handoff needed for the QA backend agent.
 
 For analysis tasks, expect:
@@ -52,7 +52,15 @@ For analysis tasks, expect:
 
 ## Repository Conventions
 
-Backend solution:
+Preferred local Docker run:
+
+```bash
+./deploy/local-up.sh
+```
+
+Use Docker as the default build and verification path. Direct backend test commands are fallback or narrow diagnostic checks.
+
+Backend solution fallback:
 
 ```bash
 cd LearnWord
