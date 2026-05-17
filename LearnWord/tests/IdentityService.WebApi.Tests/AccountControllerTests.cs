@@ -219,12 +219,132 @@ public class AccountControllerTests
         Assert.Contains(errors, x => x.Code == "InvalidToken");
     }
 
+    [Fact]
+    public async Task ForgotPassword_UnknownEmail_ReturnsOkWithoutLeakingUserExistence()
+    {
+        await using var smtp = await TestSmtpServer.Start();
+        var userManager = new FakeUserManager();
+        var controller = CreateController(userManager, smtp);
+
+        var response = await controller.ForgotPassword(new ForgotPasswordRequest { Email = "missing@example.com" });
+
+        Assert.IsType<OkResult>(response);
+        Assert.Equal(0, userManager.PasswordResetTokenRequestCount);
+        Assert.Empty(smtp.Messages);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_KnownEmail_ReturnsOkAndRequestsPasswordResetEmail()
+    {
+        await using var smtp = await TestSmtpServer.Start();
+        var userManager = new FakeUserManager();
+        var user = new LwIdentityUser("known@example.com")
+        {
+            Id = "known-user",
+            Email = "known@example.com"
+        };
+        userManager.AddUser(user);
+        var controller = CreateController(userManager, smtp);
+
+        var response = await controller.ForgotPassword(new ForgotPasswordRequest { Email = "known@example.com" });
+
+        Assert.IsType<OkResult>(response);
+        Assert.Equal(1, userManager.PasswordResetTokenRequestCount);
+        Assert.Same(user, userManager.LastPasswordResetTokenUser);
+        Assert.Single(smtp.Messages);
+        Assert.Contains("known@example.com", smtp.Messages[0]);
+        Assert.Contains("reset-token", smtp.Messages[0]);
+    }
+
+    [Fact]
+    public async Task ResetPassword_UnknownEmail_ReturnsNotFound()
+    {
+        await using var smtp = await TestSmtpServer.Start();
+        var userManager = new FakeUserManager();
+        var controller = CreateController(userManager, smtp);
+
+        var response = await controller.ResetPassword(new ResetPasswordRequest
+        {
+            Email = "missing@example.com",
+            Code = "reset-token",
+            Password = "NewPassword1!"
+        });
+
+        var notFound = Assert.IsType<NotFoundObjectResult>(response);
+        Assert.Equal("User not exists.", notFound.Value);
+        Assert.Equal(0, userManager.ResetPasswordCallCount);
+    }
+
+    [Fact]
+    public async Task ResetPassword_ValidRequest_ReturnsOkAndResetsPassword()
+    {
+        await using var smtp = await TestSmtpServer.Start();
+        var userManager = new FakeUserManager();
+        var user = new LwIdentityUser("known@example.com")
+        {
+            Id = "known-user",
+            Email = "known@example.com",
+            PasswordHash = "old-password"
+        };
+        userManager.AddUser(user);
+        var controller = CreateController(userManager, smtp);
+
+        var response = await controller.ResetPassword(new ResetPasswordRequest
+        {
+            Email = "known@example.com",
+            Code = "reset-token",
+            Password = "NewPassword1!"
+        });
+
+        Assert.IsType<OkResult>(response);
+        Assert.Equal(1, userManager.ResetPasswordCallCount);
+        Assert.Same(user, userManager.LastResetPasswordUser);
+        Assert.Equal("reset-token", userManager.LastResetPasswordToken);
+        Assert.Equal("NewPassword1!", userManager.LastResetPassword);
+        Assert.Equal("NewPassword1!", user.PasswordHash);
+    }
+
+    [Fact]
+    public async Task ResetPassword_IdentityFailure_ReturnsBadRequestWithErrors()
+    {
+        await using var smtp = await TestSmtpServer.Start();
+        var userManager = new FakeUserManager
+        {
+            ResetPasswordResult = IdentityResult.Failed(new IdentityError { Code = "WeakPassword", Description = "Weak password." })
+        };
+        var user = new LwIdentityUser("known@example.com")
+        {
+            Id = "known-user",
+            Email = "known@example.com",
+            PasswordHash = "old-password"
+        };
+        userManager.AddUser(user);
+        var controller = CreateController(userManager, smtp);
+
+        var response = await controller.ResetPassword(new ResetPasswordRequest
+        {
+            Email = "known@example.com",
+            Code = "reset-token",
+            Password = "weak"
+        });
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(response);
+        var errors = Assert.IsAssignableFrom<IEnumerable<IdentityError>>(badRequest.Value);
+        Assert.Contains(errors, x => x.Code == "WeakPassword");
+        Assert.Equal(1, userManager.ResetPasswordCallCount);
+        Assert.Equal("old-password", user.PasswordHash);
+    }
+
     private static AccountController CreateController(FakeUserManager userManager, TestSmtpServer smtp)
     {
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Registration:EmailConfirmationUrl"] = "https://learnword.test/confirm",
+                ["Registration:PasswordResetUrl"] = "https://learnword.test/reset-password",
+                ["Registration:PasswordRecoveryUrl"] = "https://learnword.test/reset-password",
+                ["PasswordRecovery:ResetPasswordUrl"] = "https://learnword.test/reset-password",
+                ["PasswordReset:Url"] = "https://learnword.test/reset-password",
                 ["Smtp:Host"] = "127.0.0.1",
                 ["Smtp:Port"] = smtp.Port.ToString(),
                 ["Smtp:UseSsl"] = "false",
@@ -259,6 +379,13 @@ public class AccountControllerTests
         }
 
         public IdentityResult CreateResult { get; init; } = IdentityResult.Success;
+        public IdentityResult ResetPasswordResult { get; init; } = IdentityResult.Success;
+        public int PasswordResetTokenRequestCount { get; private set; }
+        public LwIdentityUser? LastPasswordResetTokenUser { get; private set; }
+        public int ResetPasswordCallCount { get; private set; }
+        public LwIdentityUser? LastResetPasswordUser { get; private set; }
+        public string? LastResetPasswordToken { get; private set; }
+        public string? LastResetPassword { get; private set; }
 
         public void AddUser(LwIdentityUser user)
         {
@@ -306,6 +433,28 @@ public class AccountControllerTests
 
             user.EmailConfirmed = true;
             return Task.FromResult(IdentityResult.Success);
+        }
+
+        public override Task<string> GeneratePasswordResetTokenAsync(LwIdentityUser user)
+        {
+            PasswordResetTokenRequestCount++;
+            LastPasswordResetTokenUser = user;
+            return Task.FromResult("reset-token");
+        }
+
+        public override Task<IdentityResult> ResetPasswordAsync(LwIdentityUser user, string token, string newPassword)
+        {
+            ResetPasswordCallCount++;
+            LastResetPasswordUser = user;
+            LastResetPasswordToken = token;
+            LastResetPassword = newPassword;
+
+            if (ResetPasswordResult.Succeeded)
+            {
+                user.PasswordHash = newPassword;
+            }
+
+            return Task.FromResult(ResetPasswordResult);
         }
     }
 

@@ -112,6 +112,53 @@ Current behavior:
 - `200 OK` when confirmation succeeds.
 - `500` with Identity errors when confirmation fails.
 
+#### Forgot Password
+
+```http
+POST /api/account/password/forgot
+Content-Type: application/json
+```
+
+Request:
+
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+Expected behavior:
+
+- `400` if model validation fails.
+- `200 OK` when the request is accepted.
+- If the email belongs to a registered user, sends a password reset email with a frontend callback URL.
+- If the email is unknown, still returns `200 OK` and does not reveal whether an account exists.
+
+#### Reset Password
+
+```http
+POST /api/account/password/reset
+Content-Type: application/json
+```
+
+Request:
+
+```json
+{
+  "email": "user@example.com",
+  "code": "password-reset-token",
+  "password": "new-password"
+}
+```
+
+Expected behavior:
+
+- `400` if model validation fails.
+- `404` with `User not exists.` if the email does not belong to a user.
+- `200 OK` when the password reset succeeds.
+- If Identity password reset fails, returns `400` with Identity errors.
+- New password policy matches registration: length at least 6, at least one digit, at least one non-alphanumeric character.
+
 #### Login
 
 ```http

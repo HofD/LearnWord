@@ -22,6 +22,8 @@ The app uses Bootstrap classes and components in templates.
 | `/` | `HomeComponent` | none |
 | `/register` | `RegisterComponent` | none |
 | `/login` | `LoginComponent` | none |
+| `/forgot-password` | `ForgotPasswordComponent` | none |
+| `/reset-password` | `ResetPasswordComponent` | none |
 | `/confirm` | `EmailConfirmComponent` | none |
 | `/collections` | `CollectionsComponent` | `authGuard` |
 | `/collections/:id` | `CollectionComponent` | `authGuard` |
@@ -107,6 +109,40 @@ Submit behavior:
 
 For a `401` login response, `AuthService.handleError` shows alert `Wrong username or password.`.
 
+The login form links to `/forgot-password`.
+
+## Password Recovery
+
+Route: `/forgot-password`
+
+Form controls:
+
+- `email`: required, Angular email validator.
+
+Submit behavior:
+
+- If invalid, shows field validation and does not call the API.
+- Calls `POST /api/account/password/forgot` with `{ email }`.
+- On success, shows an alert that password reset instructions were sent if the account exists, and leaves the user on the page or offers navigation back to login.
+- On error, shows the error with `autoClose: false`.
+
+The reset email callback opens `/reset-password?email=<email>&code=<token>`.
+
+Route: `/reset-password?email=<email>&code=<token>`
+
+Form controls:
+
+- `email`: required, Angular email validator, prefilled from query params when available.
+- `password`: required, minimum length 6.
+- `confirmPassword`: required, must match `password`.
+
+Submit behavior:
+
+- If invalid, shows field validation and does not call the API.
+- Calls `POST /api/account/password/reset` with `{ email, code, password }`.
+- On success, shows an alert that the password was reset and navigates to `/login`.
+- On error, shows the error with `autoClose: false`.
+
 ## Email Confirmation
 
 Route: `/confirm?userId=<id>&code=<token>`
@@ -123,7 +159,7 @@ Behavior:
   - navigates to `../login`.
 - On error, sets status to `Failed`.
 
-The failed-state template links to `forgot-password`, but no `/forgot-password` route is currently configured.
+The failed-state template links to `/forgot-password`.
 
 ## Collections
 
@@ -357,6 +393,8 @@ Most domain HTTP services use this pattern:
 | Refresh token | `POST /api/auth/refresh-token` |
 | Revoke token | `POST /api/auth/revoke-token` |
 | Confirm email | `GET /api/account/confirm?userId=...&code=...` |
+| Forgot password | `POST /api/account/password/forgot` |
+| Reset password | `POST /api/account/password/reset` |
 | List collections | `GET /api/collections` |
 | Get collection | `GET /api/collections/{id}` |
 | Create collection | `POST /api/collections` |

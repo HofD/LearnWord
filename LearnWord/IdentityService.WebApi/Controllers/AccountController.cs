@@ -106,6 +106,55 @@ namespace IdentityService.WebApi.Controllers
             return Ok();
         }
 
+        [HttpPost("password/forgot")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.ToString());
+            }
+
+            var user = await userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return Ok();
+            }
+
+            try
+            {
+                await SendPasswordResetEmailAsync(user, request.Email);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to send password reset email to {Email}", request.Email);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("password/reset")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.ToString());
+            }
+
+            var user = await userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return NotFound("User not exists.");
+            }
+
+            var result = await userManager.ResetPasswordAsync(user, request.Code, request.Password);
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+
+            return BadRequest(result.Errors);
+        }
+
         [HttpGet("confirm")]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
@@ -142,9 +191,28 @@ namespace IdentityService.WebApi.Controllers
                 $"Please confirm your email by following this <a href='{callbackUrl}'>link</a>");
         }
 
+        private async Task SendPasswordResetEmailAsync(LwIdentityUser user, string email)
+        {
+            var code = await userManager.GeneratePasswordResetTokenAsync(user);
+            var param = new Dictionary<string, string?>()
+            {
+                { "email", email },
+                { "code", code }
+            };
+            var callbackUrl = QueryHelpers.AddQueryString(GetPasswordResetBaseUrl(), param);
+
+            await emailService.SendRegistrationEmailAsync(email, "Reset your password",
+                $"Reset your password by following this <a href='{callbackUrl}'>link</a>");
+        }
+
         private string GetEmailConfirmationBaseUrl()
         {
             return configuration["Registration:EmailConfirmationUrl"] ?? "https://learnword.online/confirm";
+        }
+
+        private string GetPasswordResetBaseUrl()
+        {
+            return configuration["PasswordRecovery:ResetPasswordUrl"] ?? "https://learnword.online/reset-password";
         }
     }
 }
