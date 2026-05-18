@@ -15,6 +15,19 @@ Key setup:
 
 The app uses Bootstrap classes and components in templates.
 
+## Localization
+
+The frontend supports UI localization without changing API contracts or routes.
+
+Supported UI languages:
+
+- English (`en`), the default language.
+- Russian (`ru`).
+
+User-facing interface strings are centralized in frontend language dictionaries rather than hard-coded in component templates or component methods. Dynamic user content, such as collection names, card words, transcriptions, and translations, is not translated by the interface layer.
+
+The selected language is controlled from the compact header language switcher. The current language is persisted in browser storage so a page reload keeps the same UI language. If no stored language exists, or the stored value is unsupported, the app uses English.
+
 ## Routes
 
 | Path | Component | Guard |
@@ -58,12 +71,14 @@ For every outgoing HTTP request:
 
 The header:
 
-- shows brand text `Learn Word` linking to `collections`.
-- shows nav links to `collections` and `about`.
-- shows `Log Out` when `AuthService.authChanged` says authenticated or `AuthService.isLoggedIn()` returns true.
+- shows localized brand text `Learn Word` linking to `collections`.
+- shows localized nav links to `collections` and `about`.
+- shows a compact language switcher with `EN` and `RU` options.
+- updates the UI language immediately when the selector changes.
+- shows localized logout text when `AuthService.authChanged` says authenticated or `AuthService.isLoggedIn()` returns true.
 - logout calls `AuthService.logout()` and navigates to `/`.
 
-Current logout behavior calls `AuthService.revokeToken()` but does not subscribe to the returned observable, so the HTTP revoke request is not guaranteed to execute. It then clears session storage and broadcasts unauthenticated state.
+Logout calls `AuthService.revokeToken()` through a subscribed observable chain, clears session storage, broadcasts unauthenticated state, and navigates to `/`.
 
 ## Home
 
