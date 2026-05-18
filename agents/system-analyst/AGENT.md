@@ -49,11 +49,33 @@ Assign work according to ownership. Do not ask a specialist to silently change b
 7. Verify that the delivered behavior matches the original task, not only that tests pass.
 8. Keep a short final acceptance summary with what changed, what was verified, and what remains risky.
 
+## Delegation Budget
+
+Use specialists sparingly. A specialist assignment should be cheaper than doing the work locally because it is narrow, parallel, or requires that agent's domain rules.
+
+Before assigning work, define:
+
+- one owner agent;
+- the exact area or files to inspect/edit;
+- whether production changes, test changes, and spec changes are allowed;
+- the verification path;
+- a concise output limit.
+
+Do not assign broad discovery tasks like "review the backend" or "investigate the app". Split them into a specific flow, endpoint, component, or failure. Avoid assigning the same question to multiple agents unless their scopes are disjoint.
+
+When assigning backend-dev or qa-backend, include this guardrail in the task:
+
+```text
+Do not run direct dotnet restore/build/test in the sandbox. Use ./deploy/local-up.sh for build/startup verification and cd LearnWord && ./tests/run-all-tests.sh for focused backend regression checks. If that cannot run, report the blocker instead of trying alternate sandbox builds.
+```
+
 ## Docker-First Verification
 
 Use the local Docker environment as the default verification surface. Prefer `./deploy/local-up.sh` for builds, service startup, gateway smoke checks, frontend smoke checks, and visual acceptance. Do not treat sandbox-only results as final acceptance when Docker can run locally.
 
-Direct `dotnet test`, `npm run build`, or other non-Docker commands are allowed for narrow diagnosis, quick feedback, or fallback when Docker is unavailable. If final verification did not use Docker, state why and list the remaining risk.
+Backend verification must not rely on direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test` runs unless the user explicitly approved that diagnostic path. Use `./deploy/local-up.sh` for backend build/startup verification and `cd LearnWord && ./tests/run-all-tests.sh` for focused backend regression checks. If final verification did not use Docker or the local script, state why and list the remaining risk.
+
+Direct frontend commands such as `npm run build` are allowed for narrow diagnosis, quick feedback, or fallback when Docker is unavailable.
 
 ## Spec Ownership
 
@@ -88,7 +110,8 @@ When receiving a task:
    - default: `./deploy/local-up.sh` to build and run the full local Docker stack;
    - backend: gateway/API smoke checks against `http://localhost:5100`, plus focused tests when needed;
    - frontend: browser inspection against `http://localhost:8088` for UI changes;
-   - fallback: focused `dotnet test`, `dotnet test LearnWord.sln`, `./tests/run-all-tests.sh`, `npm run build`, or `npm test` only when Docker is unavailable or a narrow diagnostic loop is needed.
+   - backend regression fallback: `cd LearnWord && ./tests/run-all-tests.sh`;
+   - frontend fallback: focused `npm run build` or `npm test` only when Docker is unavailable or a narrow diagnostic loop is needed.
 8. Visually verify UI changes at mobile and desktop widths when the frontend changed.
 9. Report final status with exact checks and residual risks.
 
@@ -119,10 +142,9 @@ Stop local Docker services:
 ./deploy/local-down.sh
 ```
 
-Narrow backend fallback checks from `LearnWord/LearnWord`:
+Focused backend regression check from `LearnWord/LearnWord`:
 
 ```bash
-dotnet test LearnWord.sln
 ./tests/run-all-tests.sh
 ```
 
@@ -171,6 +193,7 @@ Avoid:
 
 - letting implementation drift away from specs;
 - assigning broad, vague tasks to specialist agents;
+- letting backend agents burn time on direct sandbox `dotnet` builds;
 - accepting "tests pass" as enough for visual or workflow changes;
 - changing frontend and backend contracts independently;
 - skipping final acceptance notes.

@@ -31,6 +31,7 @@ Give the agent:
 - whether it should edit production code or only investigate/propose;
 - whether contract changes are allowed;
 - which test level is expected, if known.
+- the verification guardrail: use `./deploy/local-up.sh` or `cd LearnWord && ./tests/run-all-tests.sh`; do not run direct sandbox `dotnet` build/test commands unless explicitly requested.
 
 If you do not specify a test level, the agent should choose the smallest reliable test for the changed behavior.
 
@@ -58,16 +59,9 @@ Preferred local Docker run:
 ./deploy/local-up.sh
 ```
 
-Use Docker as the default build and verification path. Direct backend test commands are fallback or narrow diagnostic checks.
+Use Docker as the default build and verification path. Direct backend sandbox `dotnet` commands are not a fallback unless the prompt explicitly asks for that diagnostic path.
 
-Backend solution fallback:
-
-```bash
-cd LearnWord
-dotnet test LearnWord.sln
-```
-
-Project test script:
+Focused backend regression check:
 
 ```bash
 cd LearnWord
@@ -86,6 +80,7 @@ The agent should not:
 
 - change public API behavior without either preserving or updating the backend spec;
 - take over broad QA planning when `agents/qa-backend/AGENT.md` is the better owner;
+- run direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test` unless the prompt explicitly asks for that diagnostic path;
 - modify Angular screens unless explicitly assigned as a coordinated full-stack task;
 - introduce new backend frameworks or large dependencies without approval;
 - skip reporting unverified behavior.

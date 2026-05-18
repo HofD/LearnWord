@@ -35,11 +35,26 @@ Treat `specs/backend-api.md` as the implementation contract. When a task asks fo
 6. Ask the QA backend agent for broader scenario coverage when changes cross service, auth, or ownership boundaries.
 7. Avoid frontend changes unless the backend task explicitly requires a coordinated API contract update.
 
+## Token And Scope Budget
+
+Keep backend assignments tight. Read only the spec section, code, and tests needed for the requested endpoint, service, or behavior. Do not produce broad architecture reports unless explicitly asked.
+
+Before editing, identify the smallest coherent change and the smallest useful verification. If the task turns into cross-service design, ownership policy, or large QA planning, stop and hand that part back to the system analyst or qa-backend instead of expanding the scope.
+
+Final reports should be short: changed files, verification command/result, spec impact, and residual risk.
+
 ## Docker-First Verification
 
 Use the local Docker stack as the preferred build and verification surface. For backend changes, build and smoke-check through `./deploy/local-up.sh` and the gateway at `http://localhost:5100` whenever feasible. This catches service wiring, migrations, configuration, and gateway behavior that sandbox-only checks can miss.
 
-Use direct `dotnet test`, `dotnet test LearnWord.sln`, or `./tests/run-all-tests.sh` only for focused diagnosis, fast regression checks, or fallback when Docker is unavailable. If Docker verification cannot be run, say so directly in the report.
+Do not run direct `dotnet restore`, `dotnet build`, `dotnet test`, or `dotnet test LearnWord.sln` in the sandbox as the normal build or verification path. Direct sandbox `dotnet` commands are allowed only when the assignment explicitly requests a narrow diagnostic check.
+
+Use these paths instead:
+
+- build/startup/gateway verification from the project root: `./deploy/local-up.sh`;
+- focused backend regression check from `LearnWord/LearnWord`: `./tests/run-all-tests.sh`.
+
+If Docker or the local test script cannot be run, stop after the first clear blocker, report it, and do not spend time trying alternate sandbox builds.
 
 ## Implementation Boundaries
 
@@ -70,9 +85,10 @@ When assigned a backend task:
 4. Implement the smallest coherent production change.
 5. Add or update focused tests when practical.
 6. Update `specs/backend-api.md` when the intended contract changes.
-7. Prefer `./deploy/local-up.sh` for build/startup verification and gateway smoke checks.
-8. Use focused `dotnet test` commands as a narrow diagnostic loop or Docker fallback.
-9. Report changed files, commands run, results, and any QA handoff needed.
+7. Use `./deploy/local-up.sh` for build/startup verification and gateway smoke checks.
+8. Use `cd LearnWord && ./tests/run-all-tests.sh` for focused backend regression checks when needed.
+9. Do not run direct sandbox `dotnet` build/test commands unless the assignment explicitly asks for that diagnostic path.
+10. Report changed files, commands run, results, and any QA handoff needed.
 
 When a task conflicts with the current spec:
 
@@ -94,14 +110,7 @@ Stop local Docker services:
 ./deploy/local-down.sh
 ```
 
-Narrow backend fallback checks from the backend solution directory:
-
-```bash
-cd LearnWord
-dotnet test LearnWord.sln
-```
-
-Project test script fallback from `LearnWord/LearnWord`:
+Focused backend regression check from `LearnWord/LearnWord`:
 
 ```bash
 ./tests/run-all-tests.sh
@@ -129,6 +138,7 @@ Avoid:
 - changing documented API quirks without updating specs;
 - weakening ownership checks to simplify implementation;
 - adding new dependencies for ordinary service or controller logic;
+- running direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test` as a substitute for the local Docker/script workflow;
 - relying on production or shared development data;
 - hiding failing tests or unverified behavior in vague notes.
 
@@ -141,7 +151,8 @@ Changed:
 - ...
 
 Verified:
-- dotnet test ...
+- ./deploy/local-up.sh ...
+- ./tests/run-all-tests.sh ...
 
 Spec:
 - Updated specs/backend-api.md / No spec change needed

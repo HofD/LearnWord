@@ -31,6 +31,7 @@ Give the agent:
 - whether it should only design tests or also create them;
 - whether production code fixes are allowed;
 - the preferred test level if you know it: unit, integration, or E2E.
+- the verification guardrail: use `./deploy/local-up.sh` or `cd LearnWord && ./tests/run-all-tests.sh`; do not run direct sandbox `dotnet` build/test commands unless explicitly requested.
 
 If you do not specify a test level, the agent should choose the smallest reliable level.
 
@@ -39,7 +40,7 @@ If you do not specify a test level, the agent should choose the smallest reliabl
 For implementation tasks, expect:
 
 - added or updated backend test files;
-- the exact Docker/local endpoint or fallback test command it ran;
+- the exact Docker/local endpoint or repository test script command it ran;
 - pass/fail result;
 - a short note about remaining risks.
 
@@ -59,13 +60,6 @@ Preferred local Docker run:
 ```
 
 Use Docker as the default for integration, E2E, gateway, database, auth, and mail scenarios.
-
-Backend solution fallback:
-
-```bash
-cd LearnWord
-dotnet test LearnWord.sln
-```
 
 Local full-stack run:
 
@@ -93,4 +87,5 @@ The agent should not:
 - use production databases or production credentials;
 - delete user data or shared local databases without approval;
 - replace documented current quirks with ideal behavior without first flagging the mismatch;
-- add large new test infrastructure when a smaller local helper will do.
+- add large new test infrastructure when a smaller local helper will do;
+- run direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test` unless the prompt explicitly asks for that diagnostic path.

@@ -33,11 +33,26 @@ Treat `specs/backend-api.md` as the contract for current behavior, including doc
 5. Report gaps clearly when behavior is not testable without extra infrastructure.
 6. Prefer small focused test projects and helpers over large test frameworks invented from scratch.
 
+## Token And Scope Budget
+
+Keep QA tasks narrow and evidence-driven. Target one flow, endpoint family, service, or bug reproduction at a time. Do not generate broad test inventories unless explicitly asked.
+
+Prefer the smallest reliable test level for the requested risk. If the task needs production fixes, spec decisions, or cross-domain planning, report that handoff instead of expanding the QA task.
+
+Final reports should be short: what was tested, command/result, and residual risk.
+
 ## Docker-First Verification
 
 Use the local Docker stack as the preferred environment for integration, E2E, gateway, auth, ownership, database, and mail scenarios. Start it with `./deploy/local-up.sh` and verify public behavior through `http://localhost:5100` whenever feasible.
 
-Use direct `dotnet test`, project-level test runs, or EF test providers only for narrow unit/integration diagnosis or fallback when Docker is unavailable. If final QA did not use Docker for a scenario that depends on services, database, gateway, or mail, state why and name the residual risk.
+Do not run direct `dotnet restore`, `dotnet build`, `dotnet test`, or `dotnet test LearnWord.sln` in the sandbox as the normal QA path. Direct sandbox `dotnet` commands are allowed only when the assignment explicitly requests a narrow diagnostic check.
+
+Use these paths instead:
+
+- integration/E2E/gateway/auth/database/mail verification from the project root: `./deploy/local-up.sh`;
+- focused backend regression check from `LearnWord/LearnWord`: `./tests/run-all-tests.sh`.
+
+If Docker or the local test script cannot be run, stop after the first clear blocker, report it, and do not spend time trying alternate sandbox builds. If final QA did not use Docker for a scenario that depends on services, database, gateway, or mail, state why and name the residual risk.
 
 ## Testing Strategy
 
@@ -116,8 +131,9 @@ When assigned a QA task:
 2. Identify the smallest reliable test level for the requested behavior.
 3. Add or update tests.
 4. Prefer Docker-backed checks for service, database, gateway, and E2E behavior.
-5. Use narrow `dotnet test` commands for focused diagnosis or fallback when Docker is unavailable.
-6. Report:
+5. Use `cd LearnWord && ./tests/run-all-tests.sh` for focused backend regression checks when needed.
+6. Do not run direct sandbox `dotnet` build/test commands unless the assignment explicitly asks for that diagnostic path.
+7. Report:
    - what was tested,
    - what command was run,
    - pass/fail result,
@@ -136,13 +152,6 @@ Preferred local Docker run from the project root:
 
 ```bash
 ./deploy/local-up.sh
-```
-
-Narrow backend fallback checks from the backend solution directory:
-
-```bash
-cd LearnWord
-dotnet test LearnWord.sln
 ```
 
 Manual Docker command equivalent:
@@ -177,6 +186,8 @@ Tests should be:
 
 Avoid broad snapshots, hidden shared state, tests that depend on execution order, and assertions that only check status codes when the response body or persisted side effects matter.
 
+Also avoid direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test` as a substitute for the local Docker/script workflow.
+
 ## Output Style
 
 Use concise QA reports. Prefer this shape:
@@ -186,7 +197,8 @@ Tested:
 - ...
 
 Commands:
-- dotnet test ...
+- ./deploy/local-up.sh ...
+- ./tests/run-all-tests.sh ...
 
 Result:
 - Passed/Failed ...

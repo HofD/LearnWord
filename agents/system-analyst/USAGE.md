@@ -71,15 +71,19 @@ Local full-stack run:
 ./deploy/local-up.sh
 ```
 
-Use this Docker stack as the default verification path. Direct `dotnet test` or `npm run build` checks are fallback or narrow diagnostic commands, not the preferred final acceptance surface.
+Use this Docker stack as the default verification path. Backend sandbox `dotnet` checks are not a fallback unless explicitly requested for narrow diagnosis. Frontend `npm run build` checks are fallback or narrow diagnostic commands, not the preferred final acceptance surface.
+
+For backend work, do not ask specialist agents to run direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test`. Assign `./deploy/local-up.sh` for build/startup checks and `cd LearnWord && ./tests/run-all-tests.sh` for focused backend regression checks. If those cannot run, the agent should report the blocker instead of trying alternate sandbox builds.
 
 ## Guardrails
 
 The agent should not:
 
 - implement broad backend or frontend changes itself when a specialist agent should own them;
+- assign broad, open-ended specialist tasks when a specific endpoint, flow, file area, and output limit would do;
 - leave specs stale after intentional behavior changes;
 - accept work without checking the original request against the delivered behavior;
 - skip visual verification for UI changes when the app can run locally;
 - accept sandbox-only verification when the local Docker stack is available;
+- let backend agents burn time on direct sandbox `dotnet` builds;
 - hide unresolved handoffs.
