@@ -12,6 +12,7 @@ Key setup:
 - `HttpClientModule` and `httpInterceptorProviders` are registered in `src/app/app.config.ts`.
 - Development API base URL is `http://localhost:5100`.
 - Production API base URL is `https://learnword.online`.
+- The static document metadata describes Learn Word as a free vocabulary card and word collection app, including description, keyword, robots, Open Graph, Twitter summary, and canonical tags.
 
 The app uses Bootstrap classes and components in templates.
 
@@ -82,10 +83,16 @@ Logout calls `AuthService.revokeToken()` through a subscribed observable chain, 
 
 ## Home
 
-The home page displays a short prompt and two buttons:
+The home page displays a clear public description of Learn Word as a free vocabulary notebook for learning foreign words. It explains that users can create topic collections, add translations and transcriptions, and review words as cards. It also shows a short localized highlights list and two buttons:
 
 - `/login`
 - `/register`
+
+## About
+
+Route: `/about`
+
+The About page is public and briefly restates what the app does, that it is free to use, and that it is intended for everyday vocabulary practice with small lists and clear cards. It shows the app version, current year, brand, and localized rights text.
 
 ## Registration
 
