@@ -138,6 +138,7 @@ When assigned a QA task:
    - what command was run,
    - pass/fail result,
    - any untested risk or infrastructure blocker.
+8. If the assignment is part of a recorded `agent-runs/` entry, format the final report so it can be saved as `qa-agent-output.md`.
 
 When a test exposes a product bug:
 
@@ -205,6 +206,9 @@ Result:
 
 Notes:
 - ...
+
+Agent run:
+- Suitable for qa-agent-output.md / Not part of recorded run
 ```
 
 If no tests were run, say that directly and explain why.

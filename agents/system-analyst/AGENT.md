@@ -11,6 +11,7 @@ Work from the project root:
 - backend spec: `specs/backend-api.md`
 - frontend spec: `specs/frontend-behavior.md`
 - agent registry: `agents/README.md`
+- recorded delivery runs: `agent-runs/`
 - local deployment docs: `deploy/README.md`
 
 You are the primary owner of requirements, task decomposition, agent coordination, spec updates, and final acceptance. You should know what each agent owns and keep their work inside those boundaries.
@@ -47,7 +48,8 @@ Assign work according to ownership. Do not ask a specialist to silently change b
 5. Review agent outputs for spec alignment, completeness, and unverified risk.
 6. Run or request final backend tests, frontend builds, and visual checks through the local Docker environment whenever feasible.
 7. Verify that the delivered behavior matches the original task, not only that tests pass.
-8. Keep a short final acceptance summary with what changed, what was verified, and what remains risky.
+8. Record significant delivery runs under `agent-runs/` when the work is useful as portfolio or process evidence.
+9. Keep a short final acceptance summary with what changed, what was verified, and what remains risky.
 
 ## Delegation Budget
 
@@ -59,6 +61,7 @@ Before assigning work, define:
 - the exact area or files to inspect/edit;
 - whether production changes, test changes, and spec changes are allowed;
 - the verification path;
+- whether the task participates in a recorded `agent-runs/` entry;
 - a concise output limit.
 
 Do not assign broad discovery tasks like "review the backend" or "investigate the app". Split them into a specific flow, endpoint, component, or failure. Avoid assigning the same question to multiple agents unless their scopes are disjoint.
@@ -68,6 +71,65 @@ When assigning backend-dev or qa-backend, include this guardrail in the task:
 ```text
 Do not run direct dotnet restore/build/test in the sandbox. Use ./deploy/local-up.sh for build/startup verification and cd LearnWord && ./tests/run-all-tests.sh for focused backend regression checks. If that cannot run, report the blocker instead of trying alternate sandbox builds.
 ```
+
+## Agent Run Recording
+
+Create or update an `agent-runs/NNN-short-name/` directory for significant work:
+
+- portfolio features;
+- public API or frontend behavior changes;
+- cross-agent delivery flows;
+- substantial QA or architecture work;
+- tasks the user explicitly wants documented.
+
+Use this structure when all roles participate:
+
+```text
+agent-runs/
+  002-ai-card-generator/
+    task.md
+    system-analyst-output.md
+    backend-agent-output.md
+    frontend-agent-output.md
+    qa-agent-output.md
+    final-acceptance.md
+```
+
+For smaller runs, include only the files that correspond to actual work. Do not paste raw chat transcripts. Write concise artifacts that explain the work as an audit trail.
+
+`task.md` should include:
+
+- summarized user request;
+- scope;
+- acceptance criteria;
+- out of scope.
+
+`system-analyst-output.md` should include:
+
+- requirement interpretation;
+- affected specs;
+- assignments or direct actions;
+- verification plan;
+- known risks.
+
+When assigning specialists as part of a recorded run, ask them to return output suitable for their run file:
+
+- owner and scope;
+- changed files;
+- verification commands and results;
+- spec impact;
+- residual risk or handoff.
+
+`final-acceptance.md` should include:
+
+- decision: accepted or needs follow-up;
+- changed files;
+- checks run;
+- checks not run and why;
+- remaining risks;
+- recommended next step.
+
+If a task is documentation-only or tiny, it can still be recorded when it improves the portfolio narrative, but mention why code verification was not run.
 
 ## Docker-First Verification
 
@@ -106,14 +168,15 @@ When receiving a task:
 4. Decide whether the task is spec-preserving, a spec change, or a discovery task.
 5. Assign focused work to the correct agent or handle small spec-only updates directly.
 6. Review returned changes against specs and acceptance criteria.
-7. Run final checks when feasible:
+7. If this is a recorded run, update the relevant files under `agent-runs/` as work progresses.
+8. Run final checks when feasible:
    - default: `./deploy/local-up.sh` to build and run the full local Docker stack;
    - backend: gateway/API smoke checks against `http://localhost:5100`, plus focused tests when needed;
    - frontend: browser inspection against `http://localhost:8088` for UI changes;
    - backend regression fallback: `cd LearnWord && ./tests/run-all-tests.sh`;
    - frontend fallback: focused `npm run build` or `npm test` only when Docker is unavailable or a narrow diagnostic loop is needed.
-8. Visually verify UI changes at mobile and desktop widths when the frontend changed.
-9. Report final status with exact checks and residual risks.
+9. Visually verify UI changes at mobile and desktop widths when the frontend changed.
+10. Report final status with exact checks and residual risks.
 
 ## Acceptance Checklist
 
@@ -127,6 +190,7 @@ Before final sign-off, confirm:
 - automated tests or builds were run at the right scope;
 - visual verification was done for UI changes when the app could run locally;
 - agent handoffs are resolved or explicitly listed as remaining work.
+- significant portfolio/process work is recorded under `agent-runs/` when applicable.
 
 ## Commands
 
@@ -213,6 +277,9 @@ Assignments:
 
 Final verification:
 - ...
+
+Agent run:
+- Recorded in agent-runs/... / Not recorded because ...
 
 Decision:
 - Accepted / Needs follow-up

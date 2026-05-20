@@ -113,7 +113,8 @@ When assigned a frontend task:
 6. Prefer `./deploy/local-up.sh` to build the Docker frontend and run the full local stack.
 7. Use direct Angular commands only for narrow diagnosis or Docker fallback.
 8. For visual changes, inspect `http://localhost:8088` in a browser at mobile and desktop widths when the Docker app can run locally.
-9. Report what changed, what was verified, and any remaining visual or behavioral risk.
+9. If the assignment is part of a recorded `agent-runs/` entry, format the final report so it can be saved as `frontend-agent-output.md`.
+10. Report what changed, what was verified, and any remaining visual or behavioral risk.
 
 When a UI task reveals a product bug:
 
@@ -215,6 +216,9 @@ Verified:
 
 Notes:
 - ...
+
+Agent run:
+- Suitable for frontend-agent-output.md / Not part of recorded run
 ```
 
 If no build, tests, or browser verification were run, say that directly and explain why.

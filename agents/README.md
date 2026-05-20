@@ -26,9 +26,31 @@ Every assignment should include:
 - the exact area to inspect or edit;
 - whether code changes are allowed;
 - the expected verification command or endpoint check;
+- whether the work should be recorded under `agent-runs/`;
 - a short output limit: changed files, verification result, residual risk.
 
 Prefer one specialist at a time unless work is truly independent. Do not duplicate the same investigation across agents. If the main thread can do a small read or focused edit directly, do that instead of paying for a specialist handoff.
+
+## Agent Run Recording
+
+Record significant work under `agent-runs/` when the task is useful as delivery evidence, changes product behavior, changes public contracts, adds a portfolio feature, or coordinates multiple agents.
+
+Use this structure:
+
+```text
+agent-runs/
+  002-short-feature-name/
+    task.md
+    system-analyst-output.md
+    backend-agent-output.md
+    frontend-agent-output.md
+    qa-agent-output.md
+    final-acceptance.md
+```
+
+Small maintenance tasks may omit unused specialist files. Do not paste raw chat transcripts. Keep each file as a concise run artifact: scope, decisions, changed files, verification, and residual risk.
+
+The system analyst owns creating the run directory, writing `task.md`, collecting specialist outputs, and writing `final-acceptance.md`. Specialist agents should return a report that can be saved as their corresponding `*-agent-output.md` file when the assignment is part of a recorded run.
 
 ## Docker-First Verification
 
@@ -85,5 +107,6 @@ Do not rely on this account in production or commit real user data. It is only f
 - Frontend behavior: `specs/frontend-behavior.md`
 - Backend code: `LearnWord/LearnWord`
 - Frontend code: `../LearnWordWebApp/lw-app`
+- Recorded delivery runs: `agent-runs/`
 
 Specs should move with intentional behavior changes. If an agent finds a mismatch between specs, code, and the requested behavior, it should report the mismatch instead of silently choosing a new contract.

@@ -88,7 +88,8 @@ When assigned a backend task:
 7. Use `./deploy/local-up.sh` for build/startup verification and gateway smoke checks.
 8. Use `cd LearnWord && ./tests/run-all-tests.sh` for focused backend regression checks when needed.
 9. Do not run direct sandbox `dotnet` build/test commands unless the assignment explicitly asks for that diagnostic path.
-10. Report changed files, commands run, results, and any QA handoff needed.
+10. If the assignment is part of a recorded `agent-runs/` entry, format the final report so it can be saved as `backend-agent-output.md`.
+11. Report changed files, commands run, results, and any QA handoff needed.
 
 When a task conflicts with the current spec:
 
@@ -159,6 +160,9 @@ Spec:
 
 Handoff:
 - ...
+
+Agent run:
+- Suitable for backend-agent-output.md / Not part of recorded run
 ```
 
 If no tests were run, say that directly and explain why.
