@@ -130,7 +130,7 @@ namespace LearnWord.WebApi.Services
                     new
                     {
                         role = "system",
-                        content = "You generate concise draft vocabulary cards for language learners. Return only JSON matching the provided schema. Use empty strings for unknown transcription, example, or explanation."
+                        content = "You generate concise draft vocabulary cards for language learners. Return only JSON matching the provided schema. Put phonetic or IPA transcription of the source word in transcription, never the target-language translation. Use empty strings for unknown transcription, example, or explanation."
                     },
                     new
                     {
