@@ -33,6 +33,7 @@ See:
 
 - [Architecture](docs/architecture.md)
 - [Agentic SDLC workflow](docs/agentic-sdlc.md)
+- [AI features](docs/ai-features.md)
 - [Demo scenarios](docs/demo-scenarios.md)
 - [Agent runs](agent-runs/)
 

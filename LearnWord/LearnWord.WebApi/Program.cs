@@ -3,7 +3,10 @@ using LearnWord.BL.MappingProfiles;
 using LearnWord.BL.Services;
 using LearnWord.DAL;
 using LearnWord.DAL.Repositories;
+using LearnWord.WebApi.Abstractions;
 using LearnWord.WebApi.Middleware;
+using LearnWord.WebApi.Options;
+using LearnWord.WebApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +33,15 @@ builder.Services.AddTransient<ICardService, CardService>();
 builder.Services.AddTransient<WordRepository>();
 builder.Services.AddTransient<IWordService, WordService>();
 builder.Services.AddTransient<IWordEditService, WordEditService>();
+builder.Services.Configure<AiCardGenerationOptions>(builder.Configuration.GetSection("AiCardGeneration"));
+builder.Services.AddTransient<IAiCardGenerationService, AiCardGenerationService>();
+builder.Services.AddTransient<FakeAiCardGenerationProvider>();
+builder.Services.AddTransient<IAiCardGenerationProvider, ConfiguredAiCardGenerationProvider>();
+builder.Services.AddHttpClient<OpenRouterAiCardGenerationProvider>((serviceProvider, httpClient) =>
+{
+    var options = serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<AiCardGenerationOptions>>().Value.OpenRouter;
+    httpClient.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+});
 
 builder.Services.AddAutoMapper(options => options.AddProfile<CollectionMappingProfile>());
 builder.Services.AddAutoMapper(options => options.AddProfile<CardMappingProfile>());

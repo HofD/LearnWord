@@ -10,5 +10,6 @@ namespace LearnWord.Identity.Abstactions
         Task<CollectionDto> Get(int id);
         Task<CollectionListDto> GetList(int[] ids);
         Task<IEnumerable<CardDto>> GetCardsForReview(int collectionId);
+        Task<AiCardGenerationResponse> GenerateAiCards(int collectionId, AiCardGenerationRequest request);
     }
 }

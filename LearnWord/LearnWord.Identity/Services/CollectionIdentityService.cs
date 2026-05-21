@@ -80,5 +80,17 @@ namespace LearnWord.Identity.Services
 
             return await collectionsHttpService.GetCardsForReview(collectionId);
         }
+
+        public async Task<AiCardGenerationResponse> GenerateAiCards(int collectionId, AiCardGenerationRequest request, string userId)
+        {
+            var link = await repository.Get(collectionId, userId);
+
+            if (link == null)
+            {
+                throw new ForbiddenException($"Collection with id {collectionId} does not belong to current user.", "collection_forbidden");
+            }
+
+            return await collectionsHttpService.GenerateAiCards(collectionId, request);
+        }
     }
 }

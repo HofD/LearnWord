@@ -249,6 +249,12 @@ public class IdentityControllerTests
             return Task.FromResult(ReviewResult);
         }
 
+        public Task<AiCardGenerationResponse> GenerateAiCards(int collectionId, AiCardGenerationRequest request, string userId)
+        {
+            WasCalled = true;
+            return Task.FromResult(new AiCardGenerationResponse());
+        }
+
         public Task<bool?> Remove(int id, string userId)
         {
             WasCalled = true;

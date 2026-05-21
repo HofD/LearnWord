@@ -58,6 +58,13 @@ services:
       ASPNETCORE_HTTP_PORTS: 8080
       PUBLIC_PORT: ${LW_WEBAPI_PORT:-5003}
       ConnectionStrings__LwConnection: Host=postgres;Port=5432;Database=${LW_DB_NAME:-lwdb};Username=${LW_DB_USER:-lwuser};Password=${LW_DB_PASSWORD:-lwpassword}
+      AiCardGeneration__Provider: ${LW_AI_PROVIDER:-Fake}
+      AiCardGeneration__MaxSourceTextLength: ${LW_AI_MAX_SOURCE_TEXT_LENGTH:-4000}
+      AiCardGeneration__MaxCards: ${LW_AI_MAX_CARDS:-10}
+      AiCardGeneration__OpenRouter__BaseUrl: ${LW_AI_OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1/chat/completions}
+      AiCardGeneration__OpenRouter__Model: ${LW_AI_OPENROUTER_MODEL:-google/gemma-4-26b-a4b-it:free}
+      AiCardGeneration__OpenRouter__ApiKey: ${LW_AI_OPENROUTER_API_KEY:-}
+      AiCardGeneration__OpenRouter__TimeoutSeconds: ${LW_AI_OPENROUTER_TIMEOUT_SECONDS:-60}
     ports:
       - "${LW_WEBAPI_PORT:-5003}:8080"
     depends_on:

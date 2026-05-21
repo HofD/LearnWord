@@ -50,6 +50,21 @@ public class OwnershipIntegrationTests
     }
 
     [Fact]
+    public async Task CollectionService_ForeignCollectionAiGeneration_ThrowsForbiddenAndDoesNotCallUpstream()
+    {
+        await using var fixture = await TestIdentityDatabase.Create();
+        await fixture.SeedCollectionLink(10, OtherUser);
+        var upstream = new RecordingCollectionsHttpService();
+        var service = fixture.CreateCollectionService(upstream);
+
+        var exception = await Assert.ThrowsAsync<ForbiddenException>(() =>
+            service.GenerateAiCards(10, new AiCardGenerationRequest { SourceText = "hello", MaxCards = 1 }, CurrentUser));
+
+        Assert.Equal("collection_forbidden", exception.ErrorCode);
+        Assert.False(upstream.GenerateAiCardsCalled);
+    }
+
+    [Fact]
     public async Task CardService_CreatingCardInForeignCollection_ThrowsForbiddenAndDoesNotCreateCardLink()
     {
         await using var fixture = await TestIdentityDatabase.Create();
@@ -208,6 +223,7 @@ public class OwnershipIntegrationTests
     {
         public bool WasCalled { get; private set; }
         public bool GetCardsForReviewCalled { get; private set; }
+        public bool GenerateAiCardsCalled { get; private set; }
 
         public Task<CollectionDto> Add(CollectionCreateDto createDto)
         {
@@ -226,6 +242,13 @@ public class OwnershipIntegrationTests
             WasCalled = true;
             GetCardsForReviewCalled = true;
             return Task.FromResult<IEnumerable<CardDto>>([]);
+        }
+
+        public Task<AiCardGenerationResponse> GenerateAiCards(int collectionId, AiCardGenerationRequest request)
+        {
+            WasCalled = true;
+            GenerateAiCardsCalled = true;
+            return Task.FromResult(new AiCardGenerationResponse());
         }
 
         public Task<CollectionListDto> GetList(int[] ids)

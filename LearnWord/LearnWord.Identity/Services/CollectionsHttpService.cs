@@ -50,6 +50,18 @@ namespace LearnWord.Identity.Services
                 $"Failed to get review cards for collection {collectionId}.");
         }
 
+        public async Task<AiCardGenerationResponse> GenerateAiCards(int collectionId, AiCardGenerationRequest request)
+        {
+            var targetUrl = $"{serviceBaseUrl}/{collectionId}/ai/generate-cards";
+            return await SendForJson<AiCardGenerationResponse>(
+                UpstreamService,
+                "GenerateAiCards",
+                targetUrl,
+                () => HttpClient.PostAsJsonAsync(targetUrl, request),
+                "collections_service_empty_response",
+                $"Failed to generate AI cards for collection {collectionId}.");
+        }
+
         public async Task<CollectionListDto> GetList(int[] ids)
         {
             var request = $"{serviceBaseUrl}?";

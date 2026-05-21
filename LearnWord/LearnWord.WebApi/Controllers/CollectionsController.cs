@@ -1,5 +1,6 @@
 using LearnWord.BL.Abstractions;
 using LearnWord.BL.Models.Dto;
+using LearnWord.WebApi.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnWord.WebApi.Controllers
@@ -10,11 +11,16 @@ namespace LearnWord.WebApi.Controllers
     {
         private readonly ILogger<CollectionsController> logger;
         private readonly ICollectionService collectionService;
+        private readonly IAiCardGenerationService aiCardGenerationService;
 
-        public CollectionsController(ILogger<CollectionsController> logger, ICollectionService collectionService)
+        public CollectionsController(
+            ILogger<CollectionsController> logger,
+            ICollectionService collectionService,
+            IAiCardGenerationService aiCardGenerationService)
         {
             this.logger = logger;
             this.collectionService = collectionService;
+            this.aiCardGenerationService = aiCardGenerationService;
         }
 
         [HttpGet("{id}")]
@@ -51,6 +57,16 @@ namespace LearnWord.WebApi.Controllers
         public async Task<IEnumerable<CardDto>> GetReviewCards(int id)
         {
             return await collectionService.GetReviewCards(id);
+        }
+
+        [HttpPost("{collectionId}/ai/generate-cards")]
+        public async Task<AiCardGenerationResponse> GenerateAiCards(
+            int collectionId,
+            AiCardGenerationRequest request,
+            CancellationToken cancellationToken)
+        {
+            logger.LogInformation("Generating AI card suggestions for collection {CollectionId}.", collectionId);
+            return await aiCardGenerationService.GenerateCards(request, cancellationToken);
         }
     }
 }

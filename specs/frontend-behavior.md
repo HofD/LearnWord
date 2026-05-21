@@ -235,6 +235,21 @@ Behavior:
   - collection name
   - `CardsComponent` with `[cards]="collection.cards"` and `[collectionId]="collection.id"`
 
+AI card generation behavior:
+
+- Shows a collapsed AI generation control on the collection details page.
+- Clicking the AI generation header toggles the full form.
+- The user can provide source text and choose generation hints from fixed controls.
+- Source and target language controls are select lists limited to 10 common languages: English, Mandarin Chinese, Hindi, Spanish, French, Arabic, Bengali, Portuguese, Russian, and Urdu.
+- Level is a select list limited to CEFR values: A1, A2, B1, B2, C1, and C2.
+- Submit calls `POST /api/collections/{collectionId}/ai/generate-cards`.
+- While the request is in progress, the generation submit action is disabled and a loading state is shown.
+- On success, the component displays draft suggestions with selection controls.
+- AI suggestions are not saved automatically.
+- Saving selected suggestions creates regular cards through the existing `POST /api/cards` flow.
+- Saved cards are appended to the current collection card list.
+- On generation or save errors, the existing user remains on the collection page and the error is surfaced without losing already loaded collection data.
+
 ## Cards and Words
 
 ### Card Model
@@ -419,6 +434,7 @@ Most domain HTTP services use this pattern:
 | Reset password | `POST /api/account/password/reset` |
 | List collections | `GET /api/collections` |
 | Get collection | `GET /api/collections/{id}` |
+| Generate AI card suggestions | `POST /api/collections/{id}/ai/generate-cards` |
 | Create collection | `POST /api/collections` |
 | Rename collection | `PUT /api/collections/{id}` |
 | Delete collection | `DELETE /api/collections/{id}` |

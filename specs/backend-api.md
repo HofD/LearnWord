@@ -397,6 +397,54 @@ Current behavior:
 - If collection exists but has no cards, returns an empty array.
 - If collection ownership fails, `CollectionIdentityService` throws `UnauthorizedAccessException`; the controller currently does not map this to a typed error response.
 
+#### Generate AI Card Suggestions
+
+```http
+POST /api/collections/{collectionId}/ai/generate-cards
+Authorization: Bearer <access-token>
+Content-Type: application/json
+```
+
+Request:
+
+```json
+{
+  "sourceText": "Yesterday I went to the market and bought fresh vegetables.",
+  "sourceLanguage": "en",
+  "targetLanguage": "ru",
+  "level": "A2",
+  "maxCards": 5
+}
+```
+
+Response:
+
+```json
+{
+  "cards": [
+    {
+      "value": "market",
+      "transcription": "ˈmɑːrkɪt",
+      "translation": "рынок",
+      "example": "I went to the market.",
+      "explanation": "A place where people buy and sell goods.",
+      "difficulty": "A2"
+    }
+  ]
+}
+```
+
+Current behavior:
+
+- Requires bearer authentication at the gateway.
+- `LearnWord.Identity` checks that the collection is linked to the current user before forwarding the request.
+- `LearnWord.Identity` does not call an LLM directly; it proxies the request to internal `LearnWord.WebApi`.
+- `LearnWord.WebApi` validates `sourceText` and `maxCards` before provider calls.
+- Returned cards are suggestions only and are not persisted automatically.
+- The frontend persists accepted suggestions through the existing `POST /api/cards` endpoint.
+- OpenRouter provider configuration is read only by `LearnWord.WebApi`.
+- Tests should use a fake provider and must not require a real OpenRouter API key.
+
 ### Cards
 
 Card endpoints require bearer authentication and are handled by `LearnWord.Identity`.
@@ -651,6 +699,46 @@ These endpoints exist on the internal CRUD service and are not called directly b
   "value": "string",
   "transcription": "string",
   "translation": "string"
+}
+```
+
+### AiCardGenerationRequest
+
+```json
+{
+  "sourceText": "string",
+  "sourceLanguage": "string",
+  "targetLanguage": "string",
+  "level": "string",
+  "maxCards": 5
+}
+```
+
+Validation:
+
+- `sourceText` is required and must fit the configured length limit.
+- `sourceLanguage` and `targetLanguage` are optional language hints.
+- `level` is an optional CEFR-style hint.
+- `maxCards` must be between 1 and the configured maximum.
+
+### AiCardGenerationResponse
+
+```json
+{
+  "cards": []
+}
+```
+
+### AiCardSuggestionDto
+
+```json
+{
+  "value": "string",
+  "transcription": "string",
+  "translation": "string",
+  "example": "string",
+  "explanation": "string",
+  "difficulty": "string"
 }
 ```
 

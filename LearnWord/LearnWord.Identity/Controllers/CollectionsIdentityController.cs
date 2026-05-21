@@ -48,6 +48,21 @@ namespace LearnWord.Identity.Controllers
             return Ok(await collectionIdentityService.GetCardsForReview(collectionId, userId));
         }
 
+        [HttpPost("{collectionId}/ai/generate-cards")]
+        public async Task<ActionResult<AiCardGenerationResponse>> GenerateAiCards(
+            int collectionId,
+            AiCardGenerationRequest request)
+        {
+            var userId = HttpContext.Items["UserId"]?.ToString();
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(await collectionIdentityService.GenerateAiCards(collectionId, request, userId));
+        }
+
         [HttpGet]
         public async Task<ActionResult<CollectionListDto>> GetAll()
         {
