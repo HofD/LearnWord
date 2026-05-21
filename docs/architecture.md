@@ -93,23 +93,33 @@ cd LearnWord
 ./tests/run-all-tests.sh
 ```
 
-## Planned AI Extension
+## AI Card Generation
 
-The first portfolio-grade AI feature should be an AI card generator:
+The first portfolio-grade AI feature is an AI card generator:
 
 ```text
 User source text
       |
       v
-AI generation endpoint
+POST /api/collections/{id}/ai/generate-cards
       |
-      +--> provider abstraction
-      +--> structured output validation
-      +--> safety limits
-      +--> draft cards
+      v
+LearnWord.Identity ownership facade
+      |
+      v
+LearnWord.WebApi
+      |
+      +--> provider abstraction: Fake or OpenRouter
+      +--> structured output parsing
+      +--> validation and safety limits
+      +--> draft card suggestions
       |
       v
 User accepts selected cards
 ```
+
+`LearnWord.Identity` stays a lightweight authenticated facade: it checks ownership and proxies the valid request. LLM-specific behavior stays in `LearnWord.WebApi`.
+
+The local default provider is `Fake`. OpenRouter can be enabled through environment variables without changing frontend code. The recommended starter model is `google/gemma-4-26b-a4b-it:free`, with the model kept configurable because free-model availability and quality can change.
 
 This feature is intentionally suited to the agentic workflow because it touches specs, backend contract design, provider abstraction, frontend UX, validation, tests, and final acceptance.

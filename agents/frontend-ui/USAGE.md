@@ -23,6 +23,11 @@ Use agents/frontend-ui/AGENT.md.
 Review the login and register screens for accessibility and propose changes. Do not edit code yet.
 ```
 
+```text
+Use agents/frontend-ui/AGENT.md.
+Polish the AI card generation panel on the collection page. Preserve the backend API contract, keep provider credentials out of frontend code, and verify the collapsed/expanded form behavior in the browser.
+```
+
 ## Expected Inputs
 
 Give the agent:
@@ -80,6 +85,8 @@ Current frontend contract:
 specs/frontend-behavior.md
 ```
 
+AI card generation UI currently lives on the collection details screen. The form is collapsed by default, expands from the header, uses fixed language choices, uses CEFR levels, and treats suggestions as drafts until the user saves them.
+
 ## Guardrails
 
 The agent should not:
@@ -87,6 +94,7 @@ The agent should not:
 - migrate away from Angular, RxJS, TypeScript, or Bootstrap unless explicitly asked;
 - add a new UI framework or heavy dependency without approval;
 - change documented frontend behavior while doing visual work unless explicitly asked;
+- put OpenRouter keys, model secrets, or provider configuration into Angular code;
 - optimize desktop at the expense of mobile usability;
 - stretch app screens across wide desktop viewports;
 - skip saying which checks were or were not run.

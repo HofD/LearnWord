@@ -23,6 +23,11 @@ Use agents/backend-dev/AGENT.md.
 Review the refresh-token endpoint against specs/backend-api.md. Propose the implementation change first; do not edit code yet.
 ```
 
+```text
+Use agents/backend-dev/AGENT.md.
+Improve AI card generation validation in LearnWord.WebApi. Keep LearnWord.Identity as a thin ownership facade, preserve the public route, update specs/backend-api.md if the contract changes, and use fake-provider tests.
+```
+
 ## Expected Inputs
 
 Give the agent:
@@ -32,6 +37,7 @@ Give the agent:
 - whether contract changes are allowed;
 - which test level is expected, if known.
 - the verification guardrail: use `./deploy/local-up.sh` or `cd LearnWord && ./tests/run-all-tests.sh`; do not run direct sandbox `dotnet` build/test commands unless explicitly requested.
+- for AI work, whether provider changes affect `Fake`, `OpenRouter`, or only configuration.
 
 If you do not specify a test level, the agent should choose the smallest reliable test for the changed behavior.
 
@@ -74,6 +80,12 @@ Current backend contract:
 specs/backend-api.md
 ```
 
+AI feature reference:
+
+```text
+docs/ai-features.md
+```
+
 ## Guardrails
 
 The agent should not:
@@ -82,5 +94,7 @@ The agent should not:
 - take over broad QA planning when `agents/qa-backend/AGENT.md` is the better owner;
 - run direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test` unless the prompt explicitly asks for that diagnostic path;
 - modify Angular screens unless explicitly assigned as a coordinated full-stack task;
+- move OpenRouter or prompt logic into `LearnWord.Identity`;
+- require a real OpenRouter key for automated tests;
 - introduce new backend frameworks or large dependencies without approval;
 - skip reporting unverified behavior.

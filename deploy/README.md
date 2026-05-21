@@ -30,6 +30,23 @@ Gateway: `http://localhost:5100`
 
 Mailpit inbox: `http://localhost:8025`
 
+The local AI card generator uses the fake provider by default:
+
+```env
+LW_AI_PROVIDER=Fake
+LW_AI_OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free
+```
+
+To test OpenRouter locally, set these values in `deploy/env/local.env` before starting the stack:
+
+```env
+LW_AI_PROVIDER=OpenRouter
+LW_AI_OPENROUTER_API_KEY=<secret>
+LW_AI_OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free
+```
+
+Do not put OpenRouter keys in frontend code or committed files.
+
 Stop local services:
 
 ```bash
@@ -48,6 +65,20 @@ At minimum set:
 - `LW_JWT_KEY`
 - `LW_SMTP_USERNAME`
 - `LW_SMTP_PASSWORD`
+
+AI generation can stay disabled from real LLM calls by keeping:
+
+```env
+LW_AI_PROVIDER=Fake
+```
+
+To enable OpenRouter in production, set:
+
+```env
+LW_AI_PROVIDER=OpenRouter
+LW_AI_OPENROUTER_API_KEY=<secret>
+LW_AI_OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free
+```
 
 The default DB host is `192.168.0.6`.
 

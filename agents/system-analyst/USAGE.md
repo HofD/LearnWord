@@ -23,6 +23,11 @@ Use agents/system-analyst/AGENT.md.
 Review the backend-dev and frontend-ui outputs for the collection rename change, run final checks, and decide whether the task is accepted.
 ```
 
+```text
+Use agents/system-analyst/AGENT.md.
+Plan an improvement to AI card generation. Keep LearnWord.Identity as a thin ownership facade, route LLM behavior to LearnWord.WebApi, update specs and docs, record the run if behavior changes, and coordinate backend, frontend, and QA agents as needed.
+```
+
 ## Expected Inputs
 
 Give the agent:
@@ -31,6 +36,7 @@ Give the agent:
 - whether implementation should start immediately or only planning is needed;
 - any known constraints, deadlines, or forbidden changes;
 - which checks are mandatory, if any.
+- whether AI provider changes should use the fake provider, OpenRouter, or only documentation/config updates.
 
 If you do not specify the agent roster, the system analyst should use `agents/README.md`.
 
@@ -49,6 +55,7 @@ For final acceptance tasks, expect:
 - spec alignment result;
 - Docker/local endpoint commands and visual checks run;
 - accepted/not accepted decision with remaining risks.
+- agent-run location when the work was recorded.
 
 ## Repository Conventions
 
@@ -74,6 +81,13 @@ Local full-stack run:
 Use this Docker stack as the default verification path. Backend sandbox `dotnet` checks are not a fallback unless explicitly requested for narrow diagnosis. Frontend `npm run build` checks are fallback or narrow diagnostic commands, not the preferred final acceptance surface.
 
 For backend work, do not ask specialist agents to run direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test`. Assign `./deploy/local-up.sh` for build/startup checks and `cd LearnWord && ./tests/run-all-tests.sh` for focused backend regression checks. If those cannot run, the agent should report the blocker instead of trying alternate sandbox builds.
+
+For AI card generation, keep these boundaries explicit:
+
+- `LearnWord.Identity` checks auth and collection ownership, then proxies the request.
+- `LearnWord.WebApi` owns validation, prompt construction, provider selection, OpenRouter calls, parsing, and suggestion validation.
+- The frontend must not contain provider keys or model credentials.
+- Default local usage should stay on the fake provider unless the task explicitly asks for a live OpenRouter check.
 
 ## Guardrails
 

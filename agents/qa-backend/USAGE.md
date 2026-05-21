@@ -23,6 +23,11 @@ Use agents/qa-backend/AGENT.md.
 Review specs/backend-api.md and propose the next 10 highest-value backend tests. Do not edit code yet.
 ```
 
+```text
+Use agents/qa-backend/AGENT.md.
+Add or review tests for AI card generation. Use the fake provider, verify validation and ownership boundaries, and do not require a real OpenRouter key.
+```
+
 ## Expected Inputs
 
 Give the agent:
@@ -32,6 +37,7 @@ Give the agent:
 - whether production code fixes are allowed;
 - the preferred test level if you know it: unit, integration, or E2E.
 - the verification guardrail: use `./deploy/local-up.sh` or `cd LearnWord && ./tests/run-all-tests.sh`; do not run direct sandbox `dotnet` build/test commands unless explicitly requested.
+- for AI tests, whether to focus on validation, provider fallback, JSON parsing, ownership, or gateway routing.
 
 If you do not specify a test level, the agent should choose the smallest reliable level.
 
@@ -88,4 +94,5 @@ The agent should not:
 - delete user data or shared local databases without approval;
 - replace documented current quirks with ideal behavior without first flagging the mismatch;
 - add large new test infrastructure when a smaller local helper will do;
+- require OpenRouter network access or a real API key for automated regression tests;
 - run direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test` unless the prompt explicitly asks for that diagnostic path.

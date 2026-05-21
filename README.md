@@ -10,6 +10,7 @@ The product lets users register, confirm email, log in, manage word collections,
 - Angular frontend for registration, authentication, collections, cards, words, and review flows.
 - Ocelot gateway as the public `/api/...` entry point.
 - JWT authentication with refresh tokens, email confirmation, and password reset.
+- AI card generation from source text with a fake local provider and configurable OpenRouter provider.
 - PostgreSQL-backed local Docker environment.
 - Current behavior specs for backend and frontend contracts.
 - Role-specific agent instructions for system analysis, backend development, backend QA, and frontend UI work.
@@ -111,6 +112,16 @@ Local endpoints:
 - gateway: `http://localhost:5100`
 - Mailpit inbox: `http://localhost:8025`
 
+The local environment uses `AiCardGeneration__Provider=Fake` by default. This keeps local runs deterministic and does not require an OpenRouter key.
+
+To test the real LLM provider, edit `deploy/env/local.env`:
+
+```env
+LW_AI_PROVIDER=OpenRouter
+LW_AI_OPENROUTER_API_KEY=<secret>
+LW_AI_OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free
+```
+
 Stop local services:
 
 ```bash
@@ -141,9 +152,8 @@ npm test
 
 ## Roadmap
 
-- Record baseline and feature delivery agent runs.
-- Add an AI card generator that creates draft learning cards from source text.
-- Add structured validation and fake-provider tests for AI-generated output.
+- Keep recording baseline and feature delivery agent runs.
+- Improve the AI card generator based on real OpenRouter usage and prompt quality.
 - Expand the review flow into a spaced repetition scheduling engine.
 - Add a short demo video showing architecture, agent workflow, local run, and verification.
 

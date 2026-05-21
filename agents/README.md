@@ -16,6 +16,7 @@ These agents capture the current project working model. Use the system analyst a
 - Backend testing or regression coverage: use `agents/qa-backend/AGENT.md`.
 - Frontend implementation or visual review: use `agents/frontend-ui/AGENT.md`.
 - Cross-domain change: system analyst updates or confirms specs, then assigns backend, frontend, and QA work separately.
+- AI feature changes: start with the system analyst, keep provider configuration in backend docs/specs, keep `LearnWord.Identity` as the ownership-checking facade, and route LLM behavior to `LearnWord.WebApi`.
 
 ## Agent Budget And Delegation Rules
 
@@ -51,6 +52,8 @@ agent-runs/
 Small maintenance tasks may omit unused specialist files. Do not paste raw chat transcripts. Keep each file as a concise run artifact: scope, decisions, changed files, verification, and residual risk.
 
 The system analyst owns creating the run directory, writing `task.md`, collecting specialist outputs, and writing `final-acceptance.md`. Specialist agents should return a report that can be saved as their corresponding `*-agent-output.md` file when the assignment is part of a recorded run.
+
+When a task changes the AI card generator, update the existing feature docs and create a new run only if the work changes behavior, provider integration, prompt design, tests, or user-facing UX. Tiny copy edits can stay out of `agent-runs/` unless the user explicitly asks to record them.
 
 ## Docker-First Verification
 

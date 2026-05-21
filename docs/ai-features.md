@@ -10,7 +10,13 @@ User flow:
 User opens a collection
       |
       v
+Expands the AI generation panel
+      |
+      v
 Pastes source text
+      |
+      v
+Chooses source language, target language, CEFR level, and max cards
       |
       v
 Requests AI suggestions
@@ -23,6 +29,8 @@ Saves selected suggestions as normal cards
 ```
 
 AI suggestions are drafts. They are not persisted until the user explicitly selects and saves them.
+
+The current frontend keeps the AI form collapsed by default. Clicking the AI generation header expands the form. Source and target languages are selected from a fixed starter list of popular languages, and the level is selected from the CEFR list `A1`, `A2`, `B1`, `B2`, `C1`, `C2`.
 
 ## Service Boundaries
 
@@ -57,8 +65,8 @@ Request:
 ```json
 {
   "sourceText": "Yesterday I went to the market and bought fresh vegetables.",
-  "sourceLanguage": "en",
-  "targetLanguage": "ru",
+  "sourceLanguage": "English",
+  "targetLanguage": "Russian",
   "level": "A2",
   "maxCards": 5
 }
@@ -107,11 +115,19 @@ For local development and tests, use:
 AiCardGeneration__Provider=Fake
 ```
 
-## Free Tier Notes
+## Model Choice
 
 OpenRouter free models are acceptable for early development, demo, and low-traffic portfolio use. The model ID should remain configurable because free-model availability, quality, and structured-output support can change.
 
-For a more stable small-production setup, keep the same integration but add a small credit balance and pin a suitable model explicitly.
+The recommended starter model is:
+
+```text
+google/gemma-4-26b-a4b-it:free
+```
+
+Use it for early live checks because it is free and suitable for structured draft generation. For a more stable small-production setup, keep the same integration, add a small credit balance, and switch to a paid or less rate-limited model by changing only `AiCardGeneration__OpenRouter__Model`.
+
+Keep `AiCardGeneration__Provider=Fake` for local demos that do not specifically need a real LLM call.
 
 ## Safety And Validation
 
