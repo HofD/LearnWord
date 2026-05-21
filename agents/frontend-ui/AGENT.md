@@ -131,6 +131,8 @@ Preferred local Docker run from the project root:
 ./deploy/local-up.sh
 ```
 
+The helper pulls standard Docker images only when missing by default and prevents Compose from re-pulling standard service images during local startup. Set `LW_STANDARD_IMAGE_PULL=never` for offline/no-network checks, or `LW_STANDARD_IMAGE_PULL=always` to refresh base images.
+
 Narrow Angular fallback checks from the Angular app directory:
 
 ```bash

@@ -65,6 +65,8 @@ Default local environment:
 ./deploy/local-up.sh
 ```
 
+The local helper uses `LW_STANDARD_IMAGE_PULL=missing` by default: it pulls standard Docker images only when they are absent and then starts Compose with `--pull never`. Use `LW_STANDARD_IMAGE_PULL=never` only when a task must avoid network access completely, or `LW_STANDARD_IMAGE_PULL=always` when explicitly refreshing base images.
+
 Local endpoints:
 
 - frontend: `http://localhost:8088`

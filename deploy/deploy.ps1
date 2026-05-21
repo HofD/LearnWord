@@ -3,6 +3,12 @@ $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RootDir = Split-Path -Parent $ScriptDir
 $DeployEnv = if ($env:DEPLOY_ENV) { $env:DEPLOY_ENV } else { Join-Path $ScriptDir "env\deploy.env" }
+$StandardImages = @(
+    "mcr.microsoft.com/dotnet/sdk:8.0",
+    "mcr.microsoft.com/dotnet/aspnet:8.0",
+    "node:20-alpine",
+    "nginx:1.27-alpine"
+)
 
 function Invoke-Native {
     param(
@@ -16,6 +22,40 @@ function Invoke-Native {
     & $FilePath @Arguments
     if ($LASTEXITCODE -ne 0) {
         throw "$FilePath failed with exit code $LASTEXITCODE."
+    }
+}
+
+function Pull-StandardImages {
+    param(
+        [string]$PullMode
+    )
+
+    if ($PullMode -eq "never") {
+        Write-Host "Skipping standard image pull."
+        return
+    }
+
+    $missingImages = @()
+    foreach ($image in $StandardImages) {
+        $exists = $false
+        if ($PullMode -ne "always") {
+            docker image inspect $image *> $null
+            $exists = $LASTEXITCODE -eq 0
+        }
+
+        if ($PullMode -eq "always" -or -not $exists) {
+            $missingImages += $image
+        }
+    }
+
+    if ($missingImages.Count -eq 0) {
+        Write-Host "Standard images are already present; skipping pull."
+        return
+    }
+
+    Write-Host "Pulling standard images: $($missingImages -join ' ')"
+    foreach ($image in $missingImages) {
+        Invoke-Native docker pull $image
     }
 }
 
@@ -39,6 +79,7 @@ $ServerDir = if ($env:LW_SERVER_DIR) { $env:LW_SERVER_DIR } else { "/opt/lw" }
 $ImagePrefix = if ($env:LW_IMAGE_PREFIX) { $env:LW_IMAGE_PREFIX } else { "learnword" }
 $ImageTag = if ($env:LW_IMAGE_TAG) { $env:LW_IMAGE_TAG } else { Get-Date -Format "yyyyMMddHHmmss" }
 $Platform = if ($env:LW_PLATFORM) { $env:LW_PLATFORM } else { "linux/amd64" }
+$StandardImagePull = if ($env:LW_STANDARD_IMAGE_PULL) { $env:LW_STANDARD_IMAGE_PULL } else { "missing" }
 
 $DistDir = Join-Path $ScriptDir "dist"
 $ImageArchive = Join-Path $DistDir "learnword-images-$ImageTag.tar"
@@ -52,6 +93,7 @@ try {
     Invoke-Native $PowerShellExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $RootDir "LearnWord\tests\run-all-tests.ps1")
 
     New-Item -ItemType Directory -Force -Path $DistDir | Out-Null
+    Pull-StandardImages -PullMode $StandardImagePull
 
     Write-Host "Building LearnWord images with tag $ImageTag"
     Push-Location $RootDir

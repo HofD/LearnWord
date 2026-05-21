@@ -11,17 +11,36 @@ Production uses PostgreSQL on the internal server `192.168.0.6`; the production 
 
 ```bash
 cp deploy/env/local.env.example deploy/env/local.env
-docker compose --env-file deploy/env/local.env -f deploy/docker-compose.local.yml up -d --build
-```
-
-Or use the helper scripts:
-
-```bash
 ./deploy/local-up.sh
 ```
 
+Or from Windows PowerShell:
+
 ```powershell
 .\deploy\local-up.ps1
+```
+
+The helper scripts avoid re-pulling standard images on every run. They check these images first:
+
+- `postgres:16-alpine`
+- `axllent/mailpit:v1.27`
+- `mcr.microsoft.com/dotnet/sdk:8.0`
+- `mcr.microsoft.com/dotnet/aspnet:8.0`
+- `node:20-alpine`
+- `nginx:1.27-alpine`
+
+By default `LW_STANDARD_IMAGE_PULL=missing`, so only absent standard images are pulled. The local compose startup then uses `--pull never`, which prevents Compose from checking `postgres` and `mailpit` again during `up`.
+
+Use these modes when needed:
+
+```bash
+LW_STANDARD_IMAGE_PULL=never ./deploy/local-up.sh
+LW_STANDARD_IMAGE_PULL=always ./deploy/local-up.sh
+```
+
+```powershell
+$env:LW_STANDARD_IMAGE_PULL = "never"; .\deploy\local-up.ps1
+$env:LW_STANDARD_IMAGE_PULL = "always"; .\deploy\local-up.ps1
 ```
 
 Frontend: `http://localhost:8088`
@@ -103,6 +122,15 @@ docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans
 ```
 
 Before any images are built or copied, both scripts run the backend test suite: `LearnWord/tests/run-all-tests.sh` on macOS/Linux and `LearnWord\tests\run-all-tests.ps1` on Windows. If tests or any later deploy step fail, deployment stops and any created image archive is removed locally; if the archive was already copied, the remote copy is removed too.
+
+Before building application images, deploy scripts check standard build/runtime base images:
+
+- `mcr.microsoft.com/dotnet/sdk:8.0`
+- `mcr.microsoft.com/dotnet/aspnet:8.0`
+- `node:20-alpine`
+- `nginx:1.27-alpine`
+
+`LW_STANDARD_IMAGE_PULL=missing` is the default and pulls only absent standard images. Set `LW_STANDARD_IMAGE_PULL=never` to rely only on the local Docker cache, or `LW_STANDARD_IMAGE_PULL=always` to force-refresh standard images before building.
 
 After a successful restart, the copied tar archive is removed from the server and from local `deploy/dist`.
 

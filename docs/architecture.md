@@ -80,6 +80,8 @@ The preferred verification surface is the local Docker environment:
 ./deploy/local-up.sh
 ```
 
+The helper scripts use `LW_STANDARD_IMAGE_PULL=missing` by default to avoid re-pulling standard Docker images on repeat runs. Set it to `never` for offline/no-network checks or `always` to deliberately refresh base images.
+
 The local stack exposes:
 
 - frontend: `http://localhost:8088`

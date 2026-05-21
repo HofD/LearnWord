@@ -4,6 +4,38 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 DEPLOY_ENV="${DEPLOY_ENV:-${SCRIPT_DIR}/env/deploy.env}"
+STANDARD_IMAGE_PULL="${LW_STANDARD_IMAGE_PULL:-missing}"
+STANDARD_IMAGES=(
+  "mcr.microsoft.com/dotnet/sdk:8.0"
+  "mcr.microsoft.com/dotnet/aspnet:8.0"
+  "node:20-alpine"
+  "nginx:1.27-alpine"
+)
+
+pull_missing_standard_images() {
+  local missing_images=()
+  local image
+
+  if [[ "${STANDARD_IMAGE_PULL}" == "never" ]]; then
+    echo "Skipping standard image pull."
+    return
+  fi
+
+  for image in "${STANDARD_IMAGES[@]}"; do
+    if [[ "${STANDARD_IMAGE_PULL}" == "always" ]] || ! docker image inspect "${image}" >/dev/null 2>&1; then
+      missing_images+=("${image}")
+    fi
+  done
+
+  if [[ "${#missing_images[@]}" -gt 0 ]]; then
+    echo "Pulling standard images: ${missing_images[*]}"
+    for image in "${missing_images[@]}"; do
+      docker pull "${image}"
+    done
+  else
+    echo "Standard images are already present; skipping pull."
+  fi
+}
 
 if [[ -f "${DEPLOY_ENV}" ]]; then
   # shellcheck disable=SC1090
@@ -53,6 +85,7 @@ echo "Running LearnWord tests"
 )
 
 mkdir -p "${DIST_DIR}"
+pull_missing_standard_images
 
 echo "Building LearnWord images with tag ${LW_IMAGE_TAG}"
 (

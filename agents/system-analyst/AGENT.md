@@ -200,6 +200,14 @@ Preferred local Docker run from the project root:
 ./deploy/local-up.sh
 ```
 
+Standard image pull policy for local and production helper scripts:
+
+- default: `LW_STANDARD_IMAGE_PULL=missing`, pull only absent standard images;
+- no network refresh: `LW_STANDARD_IMAGE_PULL=never`;
+- force refresh: `LW_STANDARD_IMAGE_PULL=always`.
+
+For local startup, `./deploy/local-up.sh` checks standard images first and then runs Compose with `--pull never`, so repeat runs do not re-check `postgres` and `mailpit`.
+
 Stop local Docker services:
 
 ```bash

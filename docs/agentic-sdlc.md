@@ -69,6 +69,7 @@ If code, specs, and requested behavior disagree, the disagreement should be made
 
 6. Verification
    - Prefer `./deploy/local-up.sh` for full local verification.
+   - By default, local/prod helper scripts use `LW_STANDARD_IMAGE_PULL=missing`, so standard Docker images are pulled only when absent.
    - Use `cd LearnWord && ./tests/run-all-tests.sh` for focused backend regression checks.
    - Use browser inspection for UI changes when the app can run locally.
 

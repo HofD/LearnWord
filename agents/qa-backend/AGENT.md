@@ -155,6 +155,8 @@ Preferred local Docker run from the project root:
 ./deploy/local-up.sh
 ```
 
+The helper pulls standard Docker images only when missing by default. Set `LW_STANDARD_IMAGE_PULL=never` when QA must avoid network access, or `LW_STANDARD_IMAGE_PULL=always` when deliberately refreshing base images.
+
 Manual Docker command equivalent:
 
 ```bash

@@ -106,6 +106,8 @@ cp deploy/env/local.env.example deploy/env/local.env
 ./deploy/local-up.sh
 ```
 
+`./deploy/local-up.sh` and `.\deploy\local-up.ps1` pull standard Docker images only when they are missing by default. Set `LW_STANDARD_IMAGE_PULL=never` to skip standard-image pulls entirely, or `LW_STANDARD_IMAGE_PULL=always` to force-refresh them.
+
 Local endpoints:
 
 - frontend: `http://localhost:8088`
@@ -135,6 +137,8 @@ Preferred full local verification:
 ```bash
 ./deploy/local-up.sh
 ```
+
+The local helper uses `LW_STANDARD_IMAGE_PULL=missing` by default and then runs Compose with `--pull never`, so repeated verification runs do not re-check standard images unless requested.
 
 Focused backend regression checks:
 

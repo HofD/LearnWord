@@ -80,6 +80,8 @@ Local full-stack run:
 
 Use this Docker stack as the default verification path. Backend sandbox `dotnet` checks are not a fallback unless explicitly requested for narrow diagnosis. Frontend `npm run build` checks are fallback or narrow diagnostic commands, not the preferred final acceptance surface.
 
+`./deploy/local-up.sh` defaults to `LW_STANDARD_IMAGE_PULL=missing`, so standard Docker images are pulled only if absent. Use `LW_STANDARD_IMAGE_PULL=never` for offline/no-network verification and `LW_STANDARD_IMAGE_PULL=always` when explicitly refreshing base images.
+
 For backend work, do not ask specialist agents to run direct sandbox `dotnet restore`, `dotnet build`, or broad `dotnet test`. Assign `./deploy/local-up.sh` for build/startup checks and `cd LearnWord && ./tests/run-all-tests.sh` for focused backend regression checks. If those cannot run, the agent should report the blocker instead of trying alternate sandbox builds.
 
 For AI card generation, keep these boundaries explicit:
