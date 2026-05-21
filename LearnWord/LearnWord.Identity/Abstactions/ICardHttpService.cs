@@ -8,5 +8,6 @@ namespace LearnWord.Identity.Abstactions
         Task<bool> Remove(int id);
         Task<CardDto> Learn(int id);
         Task<CardDto> Forget(int id);
+        Task<CardDto> Review(int id, ReviewCardRequest request);
     }
 }

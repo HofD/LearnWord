@@ -81,6 +81,22 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
+      "DownstreamPathTemplate": "/review/cards/{cardId}/review",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "UpstreamPathTemplate": "/api/review/cards/{cardId}/review",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
       "DownstreamPathTemplate": "/cards/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -354,22 +370,6 @@
         "AllowedScopes": []
       },
       "UpstreamPathTemplate": "/api/review/cards/{cardId}/forget",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/review/cards/{cardId}/review",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5004
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
-      "UpstreamPathTemplate": "/api/review/cards/{cardId}/review",
       "UpstreamHttpMethod": [ "POST" ]
     }
   ],

@@ -30,6 +30,7 @@ builder.Services.AddTransient<CollectionRepository>();
 builder.Services.AddTransient<ICollectionService, CollectionService>();
 builder.Services.AddTransient<CardRepository>();
 builder.Services.AddTransient<ICardService, CardService>();
+builder.Services.AddTransient<ISpacedRepetitionScheduler, SpacedRepetitionScheduler>();
 builder.Services.AddTransient<WordRepository>();
 builder.Services.AddTransient<IWordService, WordService>();
 builder.Services.AddTransient<IWordEditService, WordEditService>();

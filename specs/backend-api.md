@@ -382,7 +382,12 @@ Response:
     "id": 5,
     "collectionId": 1,
     "words": [],
-    "learnt": false
+    "learnt": false,
+    "dueDate": "2026-05-21T10:00:00Z",
+    "intervalDays": 1,
+    "easeFactor": 2.5,
+    "reviewCount": 0,
+    "lastReviewedAt": null
   }
 ]
 ```
@@ -390,10 +395,8 @@ Response:
 Current behavior:
 
 - Requires the collection to be linked to the current user.
-- Returns cards where at least one is true:
-  - `ShowedAt == null`
-  - `Learnt == false`
-  - at least 7 days passed since `ShowedAt`
+- Returns cards due for review where `dueDate <= now`.
+- Newly created cards are due immediately.
 - If collection exists but has no cards, returns an empty array.
 - If collection ownership fails, `CollectionIdentityService` throws `UnauthorizedAccessException`; the controller currently does not map this to a typed error response.
 
@@ -507,8 +510,8 @@ Authorization: Bearer <access-token>
 Current behavior:
 
 - Checks card ownership.
-- Sets `Learnt = true`.
-- Sets `LearntAt` and `ShowedAt` to current UTC time.
+- Backward-compatible endpoint for the legacy binary review flow.
+- Applies a successful review outcome equivalent to `Good`.
 - Returns `200 OK` with updated `CardDto`.
 
 #### Mark Card Forgotten
@@ -521,9 +524,48 @@ Authorization: Bearer <access-token>
 Current behavior:
 
 - Checks card ownership.
-- Sets `Learnt = false`.
-- Clears `LearntAt`.
-- Sets `ShowedAt` to current UTC time.
+- Backward-compatible endpoint for the legacy binary review flow.
+- Applies an unsuccessful review outcome equivalent to `Again`.
+- Returns `200 OK` with updated `CardDto`.
+
+### Review
+
+Review endpoints require bearer authentication and are handled by `LearnWord.Identity`.
+
+#### Submit Card Review Outcome
+
+```http
+POST /api/review/cards/{cardId}/review
+Authorization: Bearer <access-token>
+Content-Type: application/json
+```
+
+Request:
+
+```json
+{
+  "outcome": "Good"
+}
+```
+
+Allowed `outcome` values:
+
+- `Again`
+- `Hard`
+- `Good`
+- `Easy`
+
+Current behavior:
+
+- Checks card ownership before forwarding the review to the internal word service.
+- Updates the card spaced-repetition state:
+  - `intervalDays`
+  - `easeFactor`
+  - `reviewCount`
+  - `lastReviewedAt`
+  - `dueDate`
+- Sets `lastReviewedAt` and the legacy `ShowedAt` field to the current UTC time.
+- Sets `Learnt = false` for `Again`; sets `Learnt = true` for `Hard`, `Good`, and `Easy`.
 - Returns `200 OK` with updated `CardDto`.
 
 ### Words
@@ -556,6 +598,7 @@ Current behavior:
   - `Learnt = false`
   - `LearntAt = null`
   - `ShowedAt = null`
+  - SRS state reset to due immediately with `intervalDays = 0`, `easeFactor = 2.5`, `reviewCount = 0`, and `lastReviewedAt = null`
   - `ModifiedAt = now`
 - Returns `201 Created` with `WordDto`.
 
@@ -680,7 +723,20 @@ These endpoints exist on the internal CRUD service and are not called directly b
   "id": 0,
   "collectionId": 0,
   "words": [],
-  "learnt": false
+  "learnt": false,
+  "dueDate": "date-time",
+  "intervalDays": 0,
+  "easeFactor": 2.5,
+  "reviewCount": 0,
+  "lastReviewedAt": null
+}
+```
+
+### ReviewCardRequest
+
+```json
+{
+  "outcome": "Again|Hard|Good|Easy"
 }
 ```
 
@@ -753,9 +809,11 @@ Collection list lookup by ids currently filters by the provided ids and includes
 
 Card review status:
 
-- Newly created cards are returned with `learnt` based on the stored value.
-- `learn` sets `Learnt = true`, `LearntAt = now`, `ShowedAt = now`.
-- `forget` sets `Learnt = false`, `LearntAt = null`, `ShowedAt = now`.
-- adding/updating a word resets card learning state.
-- deleting a word resets card learning state when the card still contains active words.
+- Newly created cards are due immediately with `intervalDays = 0`, `easeFactor = 2.5`, `reviewCount = 0`, and `lastReviewedAt = null`.
+- Review queue selection is based on `dueDate <= now`.
+- `Again`, `Hard`, `Good`, and `Easy` update `dueDate`, `intervalDays`, `easeFactor`, `reviewCount`, and `lastReviewedAt`.
+- Legacy `learn` applies the same scheduler behavior as `Good`.
+- Legacy `forget` applies the same scheduler behavior as `Again`.
+- adding/updating a word resets card review state.
+- deleting a word resets card review state when the card still contains active words.
 - deleting the last active word deletes the card.

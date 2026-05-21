@@ -382,18 +382,17 @@ Review UI:
 - If `currentCard` exists and has at least one word:
   - shows progress as `(currentIndex + 1) / cards.length`.
   - shows the first word's `value`.
-  - attempts to show `currentCard.transcription`.
+  - shows the first word's transcription when present.
+  - may show compact spaced-repetition metadata such as interval, review count, and due date.
   - toggles translation visibility when the translation container is clicked.
   - when hidden, shows `Click to show translation`.
   - when visible, shows the first word's `translation`.
-  - `Forget` calls `POST /api/cards/{id}/forget`.
-  - `Learn` calls `POST /api/cards/{id}/learn`.
-- After successful Learn or Forget:
+  - shows four review outcome actions: `Again`, `Hard`, `Good`, and `Easy`.
+  - each outcome calls `POST /api/review/cards/{id}/review` with `{ outcome }`.
+- After a successful review outcome:
   - advances to the next card.
   - clears translation visibility.
 - When no current card remains, shows `No Cards to Review` and a link back to `/collections`.
-
-Current frontend `Card` interface inside `ReviewComponent` includes `transcription: string`, but backend `CardDto` does not expose a card-level transcription. The template therefore does not show word transcription correctly in review; it should currently be treated as existing behavior.
 
 ## About
 
@@ -444,5 +443,4 @@ Most domain HTTP services use this pattern:
 | Delete card | `DELETE /api/cards/{id}` |
 | Add word | `POST /api/cards/{cardId}/words` |
 | Get review cards | `GET /api/collections/{collectionId}/review` |
-| Mark learned | `POST /api/cards/{cardId}/learn` |
-| Mark forgotten | `POST /api/cards/{cardId}/forget` |
+| Submit review outcome | `POST /api/review/cards/{cardId}/review` |

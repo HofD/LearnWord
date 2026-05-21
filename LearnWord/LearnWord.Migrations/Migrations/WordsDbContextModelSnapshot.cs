@@ -40,6 +40,18 @@ namespace LearnWord.Migrations.Migrations
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTimeOffset>("DueDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("EaseFactor")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("IntervalDays")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("LastReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("Learnt")
                         .HasColumnType("boolean");
 
@@ -48,6 +60,9 @@ namespace LearnWord.Migrations.Migrations
 
                     b.Property<DateTimeOffset?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ReviewCount")
+                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset?>("ShowedAt")
                         .HasColumnType("timestamp with time zone");

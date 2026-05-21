@@ -50,6 +50,18 @@ namespace LearnWord.Identity.Services
                 $"Failed to learn card {id}.");
         }
 
+        public async Task<CardDto> Review(int id, ReviewCardRequest reviewRequest)
+        {
+            var request = $"{serviceBaseUrl.Replace("/cards", "/review/cards")}/{id}/review";
+            return await SendForJson<CardDto>(
+                UpstreamService,
+                "ReviewCard",
+                request,
+                () => HttpClient.PostAsJsonAsync(request, reviewRequest),
+                "cards_service_empty_response",
+                $"Failed to review card {id}.");
+        }
+
         public async Task<bool> Remove(int id)
         {
             var request = $"{serviceBaseUrl}/{id}";

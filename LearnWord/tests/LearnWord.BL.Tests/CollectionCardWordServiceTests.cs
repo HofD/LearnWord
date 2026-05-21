@@ -53,20 +53,19 @@ public class CollectionCardWordServiceTests
     }
 
     [Fact]
-    public async Task CollectionService_GetReviewCards_ReturnsDueUnlearntAndNeverShownCards()
+    public async Task CollectionService_GetReviewCards_ReturnsCardsDueByDueDate()
     {
         await using var fixture = await TestWordsDatabase.Create();
         var collection = await fixture.SeedCollection("Review");
-        var neverShown = await fixture.SeedCard(collection.Id, learnt: true, showedAt: null);
-        var unlearntRecent = await fixture.SeedCard(collection.Id, learnt: false, showedAt: DateTimeOffset.UtcNow.AddDays(-1));
-        var dueLearnt = await fixture.SeedCard(collection.Id, learnt: true, showedAt: DateTimeOffset.UtcNow.AddDays(-8));
-        await fixture.SeedCard(collection.Id, learnt: true, showedAt: DateTimeOffset.UtcNow.AddDays(-2));
+        var overdue = await fixture.SeedCard(collection.Id, dueDate: DateTimeOffset.UtcNow.AddMinutes(-1));
+        var dueNow = await fixture.SeedCard(collection.Id, dueDate: DateTimeOffset.UtcNow);
+        await fixture.SeedCard(collection.Id, dueDate: DateTimeOffset.UtcNow.AddMinutes(30));
         var service = fixture.CreateCollectionService();
 
         var cards = await service.GetReviewCards(collection.Id);
 
         Assert.Equal(
-            [neverShown.Id, unlearntRecent.Id, dueLearnt.Id],
+            [overdue.Id, dueNow.Id],
             cards.Select(x => x.Id).Order());
     }
 
@@ -261,7 +260,7 @@ public class CollectionCardWordServiceTests
 
         public CardService CreateCardService()
         {
-            return new CardService(new CardRepository(Context), mapper);
+            return new CardService(new CardRepository(Context), mapper, new SpacedRepetitionScheduler());
         }
 
         public WordService CreateWordService()
@@ -292,6 +291,7 @@ public class CollectionCardWordServiceTests
             int collectionId,
             bool learnt = false,
             DateTimeOffset? showedAt = null,
+            DateTimeOffset? dueDate = null,
             DateTimeOffset? deletedAt = null)
         {
             var card = new Card
@@ -301,6 +301,10 @@ public class CollectionCardWordServiceTests
                 Learnt = learnt,
                 LearntAt = learnt ? DateTimeOffset.UtcNow.AddDays(-1) : null,
                 ShowedAt = showedAt,
+                DueDate = dueDate ?? DateTimeOffset.UtcNow,
+                IntervalDays = 0,
+                EaseFactor = 2.5m,
+                ReviewCount = 0,
                 DeletedAt = deletedAt,
                 ModifiedAt = deletedAt,
                 Words = []

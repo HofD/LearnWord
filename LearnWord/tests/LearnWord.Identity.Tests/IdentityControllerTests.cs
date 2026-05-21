@@ -275,9 +275,11 @@ public class IdentityControllerTests
         public CardDto AddResult { get; set; } = new() { Id = 1, CollectionId = 1, Words = [] };
         public CardDto LearnResult { get; set; } = new() { Id = 1, CollectionId = 1, Words = [] };
         public CardDto ForgetResult { get; set; } = new() { Id = 1, CollectionId = 1, Words = [] };
+        public CardDto ReviewResult { get; set; } = new() { Id = 1, CollectionId = 1, Words = [] };
         public bool RemoveResult { get; set; } = true;
         public (int Id, string UserId)? LastRemove { get; private set; }
         public (int Id, string UserId)? LastLearn { get; private set; }
+        public (int Id, ReviewCardRequest Request, string UserId)? LastReview { get; private set; }
 
         public Task<CardDto> Add(CardCreateDto cardCreateDto, string userId)
         {
@@ -303,6 +305,13 @@ public class IdentityControllerTests
             WasCalled = true;
             LastRemove = (id, userId);
             return Task.FromResult(RemoveResult);
+        }
+
+        public Task<CardDto> Review(int id, ReviewCardRequest request, string userId)
+        {
+            WasCalled = true;
+            LastReview = (id, request, userId);
+            return Task.FromResult(ReviewResult);
         }
     }
 

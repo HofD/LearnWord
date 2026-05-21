@@ -9,5 +9,6 @@ namespace LearnWord.BL.Abstractions
         Task<CardDto> Reset(int id);
         Task<CardDto> Learn(int id);
         Task<CardDto> Forget(int id);
+        Task<CardDto> Review(int id, ReviewCardRequest request);
     }
 }

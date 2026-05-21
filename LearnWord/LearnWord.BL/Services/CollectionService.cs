@@ -10,8 +10,6 @@ namespace LearnWord.BL.Services
     {
         private readonly CollectionRepository collectionRepository;
         private readonly IMapper mapper;
-        private const int ReviewThresholdDays = 7;
-
         public CollectionService(CollectionRepository collectionRepository, IMapper mapper) 
         {
             this.collectionRepository = collectionRepository;
@@ -66,10 +64,7 @@ namespace LearnWord.BL.Services
             }
 
             return collection.Cards
-                .Where(card => 
-                    card.ShowedAt == null || // Never shown
-                    !card.Learnt || // Not learned
-                    (DateTimeOffset.UtcNow - card.ShowedAt.Value).TotalDays >= ReviewThresholdDays) // Past review threshold
+                .Where(card => card.DueDate <= DateTimeOffset.UtcNow)
                 .Select(card => mapper.Map<CardDto>(card));
         }
     }

@@ -13,6 +13,11 @@ namespace LearnWord.DAL.Models
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? ShowedAt { get; set; }
         public DateTimeOffset? LearntAt { get; set; }
+        public DateTimeOffset DueDate { get; set; }
+        public int IntervalDays { get; set; }
+        public decimal EaseFactor { get; set; }
+        public int ReviewCount { get; set; }
+        public DateTimeOffset? LastReviewedAt { get; set; }
         public DateTimeOffset? ModifiedAt { get; set; }
         public DateTimeOffset? DeletedAt { get; set; }
     }
