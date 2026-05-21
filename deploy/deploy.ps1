@@ -109,6 +109,7 @@ try {
 
     Write-Host "Saving images to $ImageArchive"
     Invoke-Native docker save `
+        "$ImagePrefix/migrations:$ImageTag" `
         "$ImagePrefix/learnword-webapi:$ImageTag" `
         "$ImagePrefix/learnword-identity:$ImageTag" `
         "$ImagePrefix/identityservice:$ImageTag" `

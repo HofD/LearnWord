@@ -121,6 +121,14 @@ Both scripts build all images locally, save them to a tar archive, copy the arch
 docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans
 ```
 
+The production compose runs a one-shot `migrations` service before starting application services. It applies all EF Core migrations for:
+
+- `IdentityContext`
+- `WordsDbContext`
+- `CollectionIdentityDbContext`
+
+If migrations fail, dependent application services do not start.
+
 Before any images are built or copied, both scripts run the backend test suite: `LearnWord/tests/run-all-tests.sh` on macOS/Linux and `LearnWord\tests\run-all-tests.ps1` on Windows. If tests or any later deploy step fail, deployment stops and any created image archive is removed locally; if the archive was already copied, the remote copy is removed too.
 
 Before building application images, deploy scripts check standard build/runtime base images:

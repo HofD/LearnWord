@@ -1,6 +1,13 @@
 name: learnword-build
 
 services:
+  migrations:
+    image: ${LW_IMAGE_PREFIX:-learnword}/migrations:${LW_IMAGE_TAG:-local}
+    platform: ${LW_PLATFORM:-linux/amd64}
+    build:
+      context: ../LearnWord
+      dockerfile: LearnWord/Dockerfile.migrations
+
   learnword.webapi:
     image: ${LW_IMAGE_PREFIX:-learnword}/learnword-webapi:${LW_IMAGE_TAG:-local}
     platform: ${LW_PLATFORM:-linux/amd64}

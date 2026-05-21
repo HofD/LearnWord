@@ -96,6 +96,7 @@ echo "Building LearnWord images with tag ${LW_IMAGE_TAG}"
 
 echo "Saving images to ${IMAGE_ARCHIVE}"
 docker save \
+  "${LW_IMAGE_PREFIX}/migrations:${LW_IMAGE_TAG}" \
   "${LW_IMAGE_PREFIX}/learnword-webapi:${LW_IMAGE_TAG}" \
   "${LW_IMAGE_PREFIX}/learnword-identity:${LW_IMAGE_TAG}" \
   "${LW_IMAGE_PREFIX}/identityservice:${LW_IMAGE_TAG}" \
