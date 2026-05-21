@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using LearnWord.BL.Models.Errors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace LearnWord.Identity.Services
@@ -43,7 +44,7 @@ namespace LearnWord.Identity.Services
                 return result;
             }
 
-            throw new UpstreamServiceException($"{failureMessage} {upstreamService} service returned {(int)response.StatusCode}.");
+            throw await BuildUpstreamException(response, upstreamService, failureMessage);
         }
 
         protected async Task<bool> SendForSuccess(
@@ -60,7 +61,52 @@ namespace LearnWord.Identity.Services
                 return true;
             }
 
-            throw new UpstreamServiceException($"{failureMessage} {upstreamService} service returned {(int)response.StatusCode}.");
+            throw await BuildUpstreamException(response, upstreamService, failureMessage);
+        }
+
+        private static async Task<UpstreamServiceException> BuildUpstreamException(
+            HttpResponseMessage response,
+            string upstreamService,
+            string failureMessage)
+        {
+            var problemDetails = await ReadProblemDetails(response);
+            var statusCode = problemDetails?.Status ?? StatusCodes.Status502BadGateway;
+            var title = string.IsNullOrWhiteSpace(problemDetails?.Title)
+                ? "Upstream service error"
+                : problemDetails.Title;
+            var detail = string.IsNullOrWhiteSpace(problemDetails?.Detail)
+                ? $"{failureMessage} {upstreamService} service returned {(int)response.StatusCode}."
+                : problemDetails.Detail;
+            var errorCode = GetErrorCode(problemDetails) ?? "upstream_service_error";
+
+            return new UpstreamServiceException(statusCode, title, errorCode, detail);
+        }
+
+        private static async Task<ProblemDetails?> ReadProblemDetails(HttpResponseMessage response)
+        {
+            if (response.Content.Headers.ContentLength == 0)
+            {
+                return null;
+            }
+
+            try
+            {
+                return await response.Content.ReadFromJsonAsync<ProblemDetails>();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static string? GetErrorCode(ProblemDetails? problemDetails)
+        {
+            if (problemDetails?.Extensions.TryGetValue("code", out var codeValue) != true || codeValue == null)
+            {
+                return null;
+            }
+
+            return codeValue.ToString();
         }
 
         private async Task<HttpResponseMessage> Send(

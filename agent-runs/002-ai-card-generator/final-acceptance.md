@@ -68,6 +68,32 @@ The AI generation form was refined after initial acceptance:
 - source and target languages use fixed select lists with 10 common languages;
 - language level uses fixed CEFR values from A1 to C2.
 
+## Follow-Up Provider Error Handling
+
+Production testing showed that the OpenRouter free route can return `429` for real generation while a tiny model ping succeeds. The follow-up change keeps paid/free model choice configurable and improves the product behavior:
+
+- OpenRouter `429` is returned as ProblemDetails code `ai_provider_rate_limited`;
+- temporary provider failures use `ai_provider_unavailable`;
+- provider credential or route failures use `ai_provider_configuration_error`;
+- `LearnWord.Identity` preserves ProblemDetails from `LearnWord.WebApi` instead of replacing it with a generic upstream error;
+- the frontend maps AI provider errors to retry-later messages;
+- after all selected AI suggestions are saved successfully, the AI form and suggestion list are cleared.
+
+Follow-up verification:
+
+```bash
+cd LearnWord
+./tests/run-all-tests.sh
+```
+
+Passed 9/9 backend test projects after adding regression coverage for OpenRouter `429` mapping and Identity ProblemDetails propagation.
+
+```bash
+docker build --target build-source -t lw-app-ai-error-handling-build-check .
+```
+
+Passed Angular production build through the frontend Docker build stage.
+
 ## Next Step
 
-Configure `LW_AI_PROVIDER=OpenRouter`, set `LW_AI_OPENROUTER_API_KEY`, keep `LW_AI_OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free` for the first live demo, then run one live generation check and update this run with the observed provider behavior.
+Use the paid OpenRouter route for production if the free route returns provider-side `429` errors during real generation. Keep the model configurable through `LW_AI_OPENROUTER_MODEL`.

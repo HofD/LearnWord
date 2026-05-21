@@ -248,6 +248,8 @@ AI card generation behavior:
 - AI suggestions are not saved automatically.
 - Saving selected suggestions creates regular cards through the existing `POST /api/cards` flow.
 - Saved cards are appended to the current collection card list.
+- After all selected suggestions are saved successfully, the AI form values and suggestion list are cleared back to defaults.
+- If the AI provider returns a rate-limit or temporary-unavailable error, the user sees a specific retry-later message instead of a generic failure.
 - On generation or save errors, the existing user remains on the collection page and the error is surfaced without losing already loaded collection data.
 
 ## Cards and Words

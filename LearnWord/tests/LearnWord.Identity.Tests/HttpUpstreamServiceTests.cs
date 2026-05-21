@@ -6,6 +6,7 @@ using LearnWord.BL.Models.Dto;
 using LearnWord.BL.Models.Errors;
 using LearnWord.Identity.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
@@ -71,6 +72,31 @@ public class HttpUpstreamServiceTests
         Assert.Equal(StatusCodes.Status502BadGateway, exception.StatusCode);
         Assert.Contains("Failed to get collection 17", exception.Message);
         Assert.Contains("503", exception.Message);
+    }
+
+    [Fact]
+    public async Task CollectionsHttpService_ProblemDetailsStatus_PreservesErrorCodeAndStatus()
+    {
+        await using var server = await TestHttpServer.Start(async context =>
+        {
+            var problemDetails = new ProblemDetails
+            {
+                Status = StatusCodes.Status429TooManyRequests,
+                Title = "AI provider rate limit",
+                Detail = "AI generation is temporarily rate limited by the provider."
+            };
+            problemDetails.Extensions["code"] = "ai_provider_rate_limited";
+
+            await WriteJson(context.Response, problemDetails, HttpStatusCode.TooManyRequests);
+        });
+        var service = new CollectionsHttpService(CreateConfiguration("CollectionsRoute", server.Url("/collections")));
+
+        var exception = await Assert.ThrowsAsync<UpstreamServiceException>(() => service.Get(17));
+
+        Assert.Equal(StatusCodes.Status429TooManyRequests, exception.StatusCode);
+        Assert.Equal("AI provider rate limit", exception.Title);
+        Assert.Equal("ai_provider_rate_limited", exception.ErrorCode);
+        Assert.Equal("AI generation is temporarily rate limited by the provider.", exception.Message);
     }
 
     [Fact]

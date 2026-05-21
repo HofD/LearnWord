@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -44,10 +45,15 @@ namespace LearnWord.WebApi.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                logger.LogWarning("OpenRouter generation failed with {StatusCode}.", (int)response.StatusCode);
-                throw new UpstreamServiceException(
-                    $"AI provider returned {(int)response.StatusCode}.",
-                    "ai_provider_error");
+                var retryAfter = response.Headers.RetryAfter?.Delta?.TotalSeconds
+                    ?? response.Headers.RetryAfter?.Date?.Subtract(DateTimeOffset.UtcNow).TotalSeconds;
+                logger.LogWarning(
+                    "OpenRouter generation failed with {StatusCode}. RetryAfterSeconds={RetryAfterSeconds}. ResponseBody={ResponseBody}",
+                    (int)response.StatusCode,
+                    retryAfter,
+                    TruncateForLog(responseBody));
+
+                throw BuildProviderException(response.StatusCode);
             }
 
             var completion = JsonSerializer.Deserialize<OpenRouterChatResponse>(responseBody, JsonOptions);
@@ -76,6 +82,38 @@ namespace LearnWord.WebApi.Services
                     "AI provider returned invalid structured output.",
                     "ai_provider_invalid_json");
             }
+        }
+
+        private static UpstreamServiceException BuildProviderException(HttpStatusCode statusCode)
+        {
+            return statusCode switch
+            {
+                HttpStatusCode.TooManyRequests => new UpstreamServiceException(
+                    StatusCodes.Status429TooManyRequests,
+                    "AI provider rate limit",
+                    "ai_provider_rate_limited",
+                    "AI generation is temporarily rate limited by the provider. Please try again in a minute."),
+                HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden => new UpstreamServiceException(
+                    StatusCodes.Status502BadGateway,
+                    "AI provider configuration error",
+                    "ai_provider_configuration_error",
+                    "AI generation provider is not configured correctly."),
+                _ => new UpstreamServiceException(
+                    StatusCodes.Status503ServiceUnavailable,
+                    "AI provider unavailable",
+                    "ai_provider_unavailable",
+                    "AI generation provider is temporarily unavailable. Please try again later.")
+            };
+        }
+
+        private static string TruncateForLog(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return "";
+            }
+
+            return value.Length <= 1000 ? value : value[..1000];
         }
 
         private object BuildRequestBody(AiCardGenerationRequest request)

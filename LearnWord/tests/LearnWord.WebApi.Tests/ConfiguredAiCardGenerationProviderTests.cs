@@ -1,4 +1,6 @@
+using System.Net;
 using LearnWord.BL.Models.Dto;
+using LearnWord.BL.Models.Errors;
 using LearnWord.WebApi.Options;
 using LearnWord.WebApi.Services;
 using Microsoft.Extensions.Logging;
@@ -46,11 +48,60 @@ public class ConfiguredAiCardGenerationProviderTests
         Assert.Equal("[Spanish] alpha", card.Translation);
     }
 
+    [Fact]
+    public async Task GenerateCards_OpenRouterRateLimit_ThrowsUserFacingRateLimitError()
+    {
+        var httpClient = new HttpClient(new StaticHttpMessageHandler(
+            HttpStatusCode.TooManyRequests,
+            """{"error":{"message":"rate limited"}}"""));
+        var options = OptionsFactory.Create(new AiCardGenerationOptions
+        {
+            Provider = "OpenRouter",
+            OpenRouter = new OpenRouterOptions
+            {
+                ApiKey = "test-key",
+                BaseUrl = "https://openrouter.ai/api/v1/chat/completions"
+            }
+        });
+        var provider = new OpenRouterAiCardGenerationProvider(
+            httpClient,
+            options,
+            new NoopLogger<OpenRouterAiCardGenerationProvider>());
+
+        var exception = await Assert.ThrowsAsync<UpstreamServiceException>(() =>
+            provider.GenerateCards(
+                new AiCardGenerationRequest { SourceText = "alpha beta", MaxCards = 1 },
+                CancellationToken.None));
+
+        Assert.Equal(429, exception.StatusCode);
+        Assert.Equal("ai_provider_rate_limited", exception.ErrorCode);
+    }
+
     private sealed class ThrowingHttpMessageHandler : HttpMessageHandler
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             throw new InvalidOperationException("OpenRouter network call should not be used without an API key.");
+        }
+    }
+
+    private sealed class StaticHttpMessageHandler : HttpMessageHandler
+    {
+        private readonly HttpStatusCode statusCode;
+        private readonly string body;
+
+        public StaticHttpMessageHandler(HttpStatusCode statusCode, string body)
+        {
+            this.statusCode = statusCode;
+            this.body = body;
+        }
+
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new HttpResponseMessage(statusCode)
+            {
+                Content = new StringContent(body)
+            });
         }
     }
 

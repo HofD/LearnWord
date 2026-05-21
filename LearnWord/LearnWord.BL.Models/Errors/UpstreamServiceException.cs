@@ -6,5 +6,10 @@ namespace LearnWord.BL.Models.Errors
             : base(502, "Upstream service error", errorCode, detail)
         {
         }
+
+        public UpstreamServiceException(int statusCode, string title, string errorCode, string detail)
+            : base(statusCode, title, errorCode, detail)
+        {
+        }
     }
 }

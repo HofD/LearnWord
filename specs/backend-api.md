@@ -440,6 +440,9 @@ Current behavior:
 - `LearnWord.Identity` checks that the collection is linked to the current user before forwarding the request.
 - `LearnWord.Identity` does not call an LLM directly; it proxies the request to internal `LearnWord.WebApi`.
 - `LearnWord.WebApi` validates `sourceText` and `maxCards` before provider calls.
+- If the LLM provider rate-limits generation, returns `429` with ProblemDetails code `ai_provider_rate_limited` and a retry-later message.
+- If the LLM provider is unavailable, returns `503` with ProblemDetails code `ai_provider_unavailable`.
+- If the LLM provider credentials or route are invalid, returns `502` with ProblemDetails code `ai_provider_configuration_error`.
 - Returned cards are suggestions only and are not persisted automatically.
 - The frontend persists accepted suggestions through the existing `POST /api/cards` endpoint.
 - OpenRouter provider configuration is read only by `LearnWord.WebApi`.
