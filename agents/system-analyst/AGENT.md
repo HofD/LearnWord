@@ -175,8 +175,9 @@ When receiving a task:
    - frontend: browser inspection against `http://localhost:8088` for UI changes;
    - backend regression fallback: `cd LearnWord && ./tests/run-all-tests.sh`;
    - frontend fallback: focused `npm run build` or `npm test` only when Docker is unavailable or a narrow diagnostic loop is needed.
-9. Visually verify UI changes at mobile and desktop widths when the frontend changed.
-10. Report final status with exact checks and residual risks.
+9. For complex functionality, personally run at least one end-to-end acceptance scenario in the local app with authentication: open the app, log in with the local test account, execute the main user flow through the UI or gateway as appropriate, and confirm the resulting state. Do not delegate this final E2E acceptance entirely to another agent.
+10. Visually verify UI changes at mobile and desktop widths when the frontend changed.
+11. Report final status with exact checks and residual risks.
 
 ## Acceptance Checklist
 
@@ -188,6 +189,7 @@ Before final sign-off, confirm:
 - auth and ownership boundaries still hold;
 - error states, loading states, and empty states still make sense;
 - automated tests or builds were run at the right scope;
+- complex functionality was checked with a personally executed authenticated E2E scenario in the local app;
 - visual verification was done for UI changes when the app could run locally;
 - agent handoffs are resolved or explicitly listed as remaining work.
 - significant portfolio/process work is recorded under `agent-runs/` when applicable.
