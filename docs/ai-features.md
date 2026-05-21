@@ -48,6 +48,7 @@ The current frontend keeps the AI form collapsed by default. Clicking the AI gen
 - OpenRouter API calls;
 - structured output parsing;
 - suggestion validation;
+- duplicate filtering against the target collection after the provider response;
 - fake-provider behavior for local/test-safe runs.
 
 This keeps identity/auth concerns separate from AI provider concerns.
@@ -138,6 +139,7 @@ The backend should:
 - request structured JSON output;
 - validate every returned suggestion;
 - discard empty or malformed suggestions;
+- filter suggestions whose word already exists in the target collection, using trimmed case-insensitive matching;
 - avoid persisting suggestions automatically;
 - avoid logging API keys or full user text at error level;
 - return stable errors for validation and provider failure cases.
@@ -149,4 +151,5 @@ Automated tests should not require OpenRouter. Use a fake provider to verify:
 - validation blocks invalid requests before provider calls;
 - ownership failures in `LearnWord.Identity` do not reach `LearnWord.WebApi`;
 - successful fake generation returns draft suggestions;
+- duplicate suggestions already present in the target collection are filtered after provider generation;
 - malformed provider output is rejected or sanitized.

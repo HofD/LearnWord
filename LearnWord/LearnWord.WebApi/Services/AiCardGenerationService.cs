@@ -1,4 +1,5 @@
-﻿using LearnWord.BL.Models.Dto;
+﻿using LearnWord.BL.Abstractions;
+using LearnWord.BL.Models.Dto;
 using LearnWord.BL.Models.Errors;
 using LearnWord.WebApi.Abstractions;
 using LearnWord.WebApi.Options;
@@ -9,22 +10,26 @@ namespace LearnWord.WebApi.Services
     public class AiCardGenerationService : IAiCardGenerationService
     {
         private readonly IAiCardGenerationProvider provider;
+        private readonly ICollectionService collectionService;
         private readonly AiCardGenerationOptions options;
 
         public AiCardGenerationService(
             IAiCardGenerationProvider provider,
+            ICollectionService collectionService,
             IOptions<AiCardGenerationOptions> options)
         {
             this.provider = provider;
+            this.collectionService = collectionService;
             this.options = options.Value;
         }
 
-        public async Task<AiCardGenerationResponse> GenerateCards(AiCardGenerationRequest request, CancellationToken cancellationToken)
+        public async Task<AiCardGenerationResponse> GenerateCards(int collectionId, AiCardGenerationRequest request, CancellationToken cancellationToken)
         {
             ValidateRequest(request);
 
             var response = await provider.GenerateCards(request, cancellationToken);
             ValidateResponse(response, request.MaxCards);
+            await RemoveCollectionDuplicates(collectionId, response);
 
             return response;
         }
@@ -74,6 +79,33 @@ namespace LearnWord.WebApi.Services
                 card.Explanation = card.Explanation.Trim();
                 card.Difficulty = card.Difficulty.Trim();
             }
+        }
+
+        private async Task RemoveCollectionDuplicates(int collectionId, AiCardGenerationResponse response)
+        {
+            var collection = await collectionService.Get(collectionId);
+            var knownWords = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var word in collection?.Cards?
+                .SelectMany(card => card.Words ?? [])
+                .Select(word => word.Value) ?? [])
+            {
+                var normalized = NormalizeWordValue(word);
+
+                if (!string.IsNullOrWhiteSpace(normalized))
+                {
+                    knownWords.Add(normalized);
+                }
+            }
+
+            response.Cards = response.Cards
+                .Where(card => knownWords.Add(NormalizeWordValue(card.Value)))
+                .ToList();
+        }
+
+        private static string NormalizeWordValue(string? value)
+        {
+            return value?.Trim() ?? string.Empty;
         }
     }
 }

@@ -249,7 +249,7 @@ AI card generation behavior:
 - Level is a select list limited to CEFR values: A1, A2, B1, B2, C1, and C2.
 - Submit calls `POST /api/collections/{collectionId}/ai/generate-cards`.
 - While the request is in progress, the generation submit action is disabled and a loading state is shown.
-- On success, the component displays draft suggestions with selection controls.
+- On success, the component displays the backend-returned draft suggestions with selection controls. Backend generation filters out suggestions whose word already exists in the current collection.
 - AI suggestions are not saved automatically.
 - Saving selected suggestions creates regular cards through the existing `POST /api/cards` flow.
 - Saved cards are appended to the current collection card list.

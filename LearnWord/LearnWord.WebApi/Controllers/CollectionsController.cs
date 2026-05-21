@@ -66,7 +66,7 @@ namespace LearnWord.WebApi.Controllers
             CancellationToken cancellationToken)
         {
             logger.LogInformation("Generating AI card suggestions for collection {CollectionId}.", collectionId);
-            return await aiCardGenerationService.GenerateCards(request, cancellationToken);
+            return await aiCardGenerationService.GenerateCards(collectionId, request, cancellationToken);
         }
     }
 }

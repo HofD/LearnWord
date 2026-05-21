@@ -1,3 +1,4 @@
+using LearnWord.BL.Abstractions;
 using LearnWord.BL.Models.Dto;
 using LearnWord.BL.Models.Errors;
 using LearnWord.WebApi.Abstractions;
@@ -19,7 +20,7 @@ public class AiCardGenerationServiceTests
         var service = CreateService(provider);
 
         var exception = await Assert.ThrowsAsync<BadRequestException>(() =>
-            service.GenerateCards(new AiCardGenerationRequest { SourceText = sourceText, MaxCards = 1 }, CancellationToken.None));
+            service.GenerateCards(1, new AiCardGenerationRequest { SourceText = sourceText, MaxCards = 1 }, CancellationToken.None));
 
         Assert.Equal(expectedErrorCode, exception.ErrorCode);
         Assert.False(provider.WasCalled);
@@ -29,10 +30,10 @@ public class AiCardGenerationServiceTests
     public async Task GenerateCards_SourceTextTooLong_RejectsBeforeProviderCall()
     {
         var provider = new RecordingProvider();
-        var service = CreateService(provider, new AiCardGenerationOptions { MaxSourceTextLength = 5, MaxCards = 3 });
+        var service = CreateService(provider, options: new AiCardGenerationOptions { MaxSourceTextLength = 5, MaxCards = 3 });
 
         var exception = await Assert.ThrowsAsync<BadRequestException>(() =>
-            service.GenerateCards(new AiCardGenerationRequest { SourceText = "123456", MaxCards = 1 }, CancellationToken.None));
+            service.GenerateCards(1, new AiCardGenerationRequest { SourceText = "123456", MaxCards = 1 }, CancellationToken.None));
 
         Assert.Equal("ai_source_text_too_long", exception.ErrorCode);
         Assert.False(provider.WasCalled);
@@ -44,10 +45,10 @@ public class AiCardGenerationServiceTests
     public async Task GenerateCards_MaxCardsOutOfConfiguredRange_RejectsBeforeProviderCall(int maxCards)
     {
         var provider = new RecordingProvider();
-        var service = CreateService(provider, new AiCardGenerationOptions { MaxSourceTextLength = 100, MaxCards = 3 });
+        var service = CreateService(provider, options: new AiCardGenerationOptions { MaxSourceTextLength = 100, MaxCards = 3 });
 
         var exception = await Assert.ThrowsAsync<BadRequestException>(() =>
-            service.GenerateCards(new AiCardGenerationRequest { SourceText = "alpha beta", MaxCards = maxCards }, CancellationToken.None));
+            service.GenerateCards(1, new AiCardGenerationRequest { SourceText = "alpha beta", MaxCards = maxCards }, CancellationToken.None));
 
         Assert.Equal("ai_max_cards_out_of_range", exception.ErrorCode);
         Assert.False(provider.WasCalled);
@@ -58,9 +59,10 @@ public class AiCardGenerationServiceTests
     {
         var service = CreateService(
             new FakeAiCardGenerationProvider(),
-            new AiCardGenerationOptions { Provider = "Fake", MaxSourceTextLength = 100, MaxCards = 5 });
+            options: new AiCardGenerationOptions { Provider = "Fake", MaxSourceTextLength = 100, MaxCards = 5 });
 
         var result = await service.GenerateCards(
+            1,
             new AiCardGenerationRequest
             {
                 SourceText = "Apple apple banana cat.",
@@ -94,9 +96,58 @@ public class AiCardGenerationServiceTests
         var service = CreateService(new RecordingProvider { Response = response });
 
         var exception = await Assert.ThrowsAsync<UpstreamServiceException>(() =>
-            service.GenerateCards(new AiCardGenerationRequest { SourceText = "alpha beta", MaxCards = 2 }, CancellationToken.None));
+            service.GenerateCards(1, new AiCardGenerationRequest { SourceText = "alpha beta", MaxCards = 2 }, CancellationToken.None));
 
         Assert.Equal("ai_invalid_provider_response", exception.ErrorCode);
+    }
+
+    [Fact]
+    public async Task GenerateCards_ProviderSuggestionsAlreadyInCollection_AreFilteredAfterProviderResponse()
+    {
+        var service = CreateService(
+            new RecordingProvider
+            {
+                Response = new AiCardGenerationResponse
+                {
+                    Cards =
+                    [
+                        new AiCardSuggestionDto { Value = " apple ", Translation = "apple-translation" },
+                        new AiCardSuggestionDto { Value = "BANANA", Translation = "banana-translation" },
+                        new AiCardSuggestionDto { Value = "banana", Translation = "banana-repeat" },
+                        new AiCardSuggestionDto { Value = "pear", Translation = "pear-translation" }
+                    ]
+                }
+            },
+            collectionService: new StubCollectionService
+            {
+                Collection = new CollectionDto
+                {
+                    Id = 7,
+                    Name = "Food",
+                    Cards =
+                    [
+                        new CardDto
+                        {
+                            Id = 11,
+                            CollectionId = 7,
+                            Words =
+                            [
+                                new WordDto { Id = 13, Value = "Apple", Translation = "apple-translation" }
+                            ]
+                        }
+                    ]
+                }
+            });
+
+        var result = await service.GenerateCards(
+            7,
+            new AiCardGenerationRequest { SourceText = "apple banana pear", MaxCards = 4 },
+            CancellationToken.None);
+
+        Assert.Collection(
+            result.Cards,
+            first => Assert.Equal("BANANA", first.Value),
+            second => Assert.Equal("pear", second.Value));
     }
 
     public static TheoryData<AiCardGenerationResponse> InvalidProviderResponses()
@@ -130,10 +181,12 @@ public class AiCardGenerationServiceTests
 
     private static AiCardGenerationService CreateService(
         IAiCardGenerationProvider provider,
+        StubCollectionService? collectionService = null,
         AiCardGenerationOptions? options = null)
     {
         return new AiCardGenerationService(
             provider,
+            collectionService ?? new StubCollectionService(),
             OptionsFactory.Create(options ?? new AiCardGenerationOptions { MaxSourceTextLength = 100, MaxCards = 5 }));
     }
 
@@ -161,6 +214,46 @@ public class AiCardGenerationServiceTests
         {
             WasCalled = true;
             return Task.FromResult(Response);
+        }
+    }
+
+    private sealed class StubCollectionService : ICollectionService
+    {
+        public CollectionDto Collection { get; init; } = new()
+        {
+            Id = 1,
+            Name = "Default",
+            Cards = []
+        };
+
+        public Task<CollectionDto> Add(CollectionCreateDto createDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CollectionDto> Rename(int id, CollectionRenameDto renameDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Remove(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CollectionDto> Get(int id)
+        {
+            return Task.FromResult(Collection);
+        }
+
+        public Task<CollectionListDto> GetList(List<int> ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<CardDto>> GetReviewCards(int collectionId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
