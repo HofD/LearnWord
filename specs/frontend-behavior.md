@@ -12,7 +12,12 @@ Key setup:
 - `HttpClientModule` and `httpInterceptorProviders` are registered in `src/app/app.config.ts`.
 - Development API base URL is `http://localhost:5100`.
 - Production API base URL is `https://learnword.online`.
-- The static document metadata describes Learn Word as a free vocabulary card and word collection app, including description, keyword, robots, Open Graph, Twitter summary, and canonical tags.
+- The static document metadata describes Learn Word as a free AI-assisted vocabulary learning app with AI-generated draft cards, topic collections, translations, transcriptions, and spaced repetition review.
+- SEO metadata includes English and Russian keywords so the public pages can be discovered through Google and Yandex search terms.
+- Static SEO files are published with the Angular build:
+  - `robots.txt` allows indexing and points crawlers to the sitemap.
+  - `sitemap.xml` lists only public routes intended for indexing.
+- Static metadata includes description, bilingual keyword, robots, Open Graph, Twitter summary, canonical, and JSON-LD educational application tags.
 
 The app uses Bootstrap classes and components in templates.
 
@@ -83,7 +88,7 @@ Logout calls `AuthService.revokeToken()` through a subscribed observable chain, 
 
 ## Home
 
-The home page displays a clear public description of Learn Word as a free vocabulary notebook for learning foreign words. It explains that users can create topic collections, add translations and transcriptions, and review words as cards. It also shows a short localized highlights list and two buttons:
+The home page displays a clear public description of Learn Word as a free AI-assisted vocabulary app for learning foreign words. It explains that users can generate draft cards with AI from texts, notes, or word lists, review translations and transcriptions before saving, organize words into topic collections, and practice them with spaced repetition. It also shows a short localized highlights list and two buttons:
 
 - `/login`
 - `/register`
@@ -92,7 +97,7 @@ The home page displays a clear public description of Learn Word as a free vocabu
 
 Route: `/about`
 
-The About page is public and briefly restates what the app does, that it is free to use, and that it is intended for everyday vocabulary practice with small lists and clear cards. It shows the app version, current year, brand, and localized rights text.
+The About page is public and briefly restates what the app does, that it is free to use, and that it is intended for everyday language practice with AI-assisted card creation, clear review flows, and spaced repetition. It shows the app version, current year, brand, and localized rights text.
 
 ## Registration
 
