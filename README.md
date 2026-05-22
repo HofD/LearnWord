@@ -167,3 +167,7 @@ npm test
 - Current implementation specs live in `specs/`.
 - Project agent roles live in `agents/`.
 - Start cross-domain or ambiguous work with `agents/system-analyst/AGENT.md`.
+
+## License
+
+This repository is source-available for non-commercial use only. See [LICENSE](LICENSE).
