@@ -121,7 +121,9 @@ Both scripts build all images locally, save them to a tar archive, copy the arch
 docker compose --env-file .env -f docker-compose.yml up -d --remove-orphans
 ```
 
-The production compose runs a one-shot `migrations` service before starting application services. It applies all EF Core migrations for:
+The production compose runs a one-shot `migrations` service before starting application services. The migrations image is built with the .NET SDK, but the final runtime image contains only a small framework-dependent migrator executable on `mcr.microsoft.com/dotnet/aspnet:8.0`; production does not ship the SDK, `dotnet-ef`, or the source tree just to apply migrations.
+
+The service applies all EF Core migrations for:
 
 - `IdentityContext`
 - `WordsDbContext`

@@ -13,14 +13,6 @@ services:
       JwtSettings__Key: ${LW_JWT_KEY:?Set LW_JWT_KEY in .env}
       JwtSettings__ExpiryInMinutes: ${LW_JWT_EXPIRY_MINUTES:-5}
       JwtSettings__RefreshTokenTTL: ${LW_REFRESH_TOKEN_TTL:-7}
-    entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        dotnet ef database update --project IdentityService.Migrations --startup-project IdentityService.WebApi --context IdentityContext
-        dotnet ef database update --project LearnWord.Migrations --startup-project LearnWord.WebApi --context WordsDbContext
-        dotnet ef database update --project LearnWord.Identity.Migrations --startup-project LearnWord.Identity --context CollectionIdentityDbContext
-
   learnword.webapi:
     image: ${LW_IMAGE_PREFIX:-learnword}/learnword-webapi:${LW_IMAGE_TAG:?Set LW_IMAGE_TAG in .env}
     platform: ${LW_PLATFORM:-linux/amd64}

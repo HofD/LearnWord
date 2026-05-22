@@ -36,13 +36,6 @@ services:
       JwtSettings__Key: ${LW_JWT_KEY:-local-development-jwt-key-change-me-32-chars}
       JwtSettings__ExpiryInMinutes: ${LW_JWT_EXPIRY_MINUTES:-60}
       JwtSettings__RefreshTokenTTL: ${LW_REFRESH_TOKEN_TTL:-7}
-    entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        dotnet ef database update --project IdentityService.Migrations --startup-project IdentityService.WebApi --context IdentityContext
-        dotnet ef database update --project LearnWord.Migrations --startup-project LearnWord.WebApi --context WordsDbContext
-        dotnet ef database update --project LearnWord.Identity.Migrations --startup-project LearnWord.Identity --context CollectionIdentityDbContext
     depends_on:
       postgres:
         condition: service_healthy
