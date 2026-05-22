@@ -92,6 +92,11 @@ namespace IdentityService.Authorization.Services
             if (!string.IsNullOrEmpty(refreshToken.ReplacedByToken))
             {
                 var childToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken.ReplacedByToken);
+                if (childToken == null)
+                {
+                    return;
+                }
+
                 if (childToken.IsActive)
                     RevokeRefreshToken(childToken, ipAddress, reason);
                 else
@@ -99,7 +104,7 @@ namespace IdentityService.Authorization.Services
             }
         }
 
-        private void RevokeRefreshToken(RefreshToken token, string ipAddress, string reason = null, string replacedByToken = null)
+        private void RevokeRefreshToken(RefreshToken token, string ipAddress, string? reason = null, string? replacedByToken = null)
         {
             token.Revoked = DateTime.UtcNow;
             token.RevokedByIp = ipAddress;

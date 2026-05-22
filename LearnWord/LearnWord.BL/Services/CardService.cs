@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using LearnWord.BL.Abstractions;
+﻿using LearnWord.BL.Abstractions;
+using LearnWord.BL.Mapping;
 using LearnWord.BL.Models.Dto;
 using LearnWord.BL.Models.Errors;
 using LearnWord.DAL.Models;
@@ -10,10 +10,10 @@ namespace LearnWord.BL.Services
     public class CardService : ICardService
     {
         private readonly CardRepository cardRepository;
-        private readonly IMapper mapper;
+        private readonly ObjectMapper mapper;
         private readonly ISpacedRepetitionScheduler scheduler;
 
-        public CardService(CardRepository cardRepository, IMapper mapper, ISpacedRepetitionScheduler scheduler)
+        public CardService(CardRepository cardRepository, ObjectMapper mapper, ISpacedRepetitionScheduler scheduler)
         {
             this.cardRepository = cardRepository;
             this.mapper = mapper;

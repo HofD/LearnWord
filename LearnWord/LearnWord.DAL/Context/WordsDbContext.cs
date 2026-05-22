@@ -7,9 +7,9 @@ namespace LearnWord.DAL
     public class WordsDbContext : DbContext
     {
         #region DbSets
-        public DbSet<Word>? Words { get; set; }
-        public DbSet<Collection>? Collections { get; set; }
-        public DbSet<Card>? Cards { get; set; }
+        public DbSet<Word> Words { get; set; }
+        public DbSet<Collection> Collections { get; set; }
+        public DbSet<Card> Cards { get; set; }
         #endregion
 
         protected readonly IConfiguration Configuration;

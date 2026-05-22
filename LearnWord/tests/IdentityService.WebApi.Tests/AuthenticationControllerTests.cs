@@ -252,7 +252,7 @@ public class AuthenticationControllerTests
         public FakeUserManager()
             : base(
                 new FakeUserStore(),
-                null,
+                Microsoft.Extensions.Options.Options.Create(new IdentityOptions()),
                 new PasswordHasher<LwIdentityUser>(),
                 [],
                 [],

@@ -1,5 +1,5 @@
 using LearnWord.BL.Abstractions;
-using LearnWord.BL.MappingProfiles;
+using LearnWord.BL.Mapping;
 using LearnWord.BL.Services;
 using LearnWord.DAL;
 using LearnWord.DAL.Repositories;
@@ -34,6 +34,7 @@ builder.Services.AddTransient<ISpacedRepetitionScheduler, SpacedRepetitionSchedu
 builder.Services.AddTransient<WordRepository>();
 builder.Services.AddTransient<IWordService, WordService>();
 builder.Services.AddTransient<IWordEditService, WordEditService>();
+builder.Services.AddSingleton<ObjectMapper>();
 builder.Services.Configure<AiCardGenerationOptions>(builder.Configuration.GetSection("AiCardGeneration"));
 builder.Services.AddTransient<IAiCardGenerationService, AiCardGenerationService>();
 builder.Services.AddTransient<FakeAiCardGenerationProvider>();
@@ -43,10 +44,6 @@ builder.Services.AddHttpClient<OpenRouterAiCardGenerationProvider>((serviceProvi
     var options = serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<AiCardGenerationOptions>>().Value.OpenRouter;
     httpClient.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
 });
-
-builder.Services.AddAutoMapper(options => options.AddProfile<CollectionMappingProfile>());
-builder.Services.AddAutoMapper(options => options.AddProfile<CardMappingProfile>());
-builder.Services.AddAutoMapper(options => options.AddProfile<WordMappingProfile>());
 
 var app = builder.Build();
 

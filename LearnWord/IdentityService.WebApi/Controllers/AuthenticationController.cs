@@ -62,6 +62,11 @@ namespace IdentityService.WebApi.Controllers
         [HttpPost("refresh-token")]
         public async Task<ActionResult> RefreshToken(RefreshTokenRequest refreshToken)
         {
+            if (string.IsNullOrEmpty(refreshToken.RefreshToken))
+            {
+                return BadRequest("Invalid token");
+            }
+
             var user = await refreshTokenService.GetUserByRefreshToken(refreshToken.RefreshToken);
 
             if (user == null)

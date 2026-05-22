@@ -1,5 +1,4 @@
-using AutoMapper;
-using LearnWord.BL.MappingProfiles;
+using LearnWord.BL.Mapping;
 using LearnWord.BL.Models.Dto;
 using LearnWord.BL.Services;
 using LearnWord.DAL;
@@ -158,18 +157,13 @@ public class Variant2SpacedRepetitionRegressionTests
     private sealed class TestWordsDatabase : IAsyncDisposable
     {
         private readonly SqliteConnection connection;
-        private readonly IMapper mapper;
+        private readonly ObjectMapper mapper;
 
         private TestWordsDatabase(SqliteConnection connection, TestWordsDbContext context)
         {
             this.connection = connection;
             Context = context;
-            mapper = new MapperConfiguration(config =>
-            {
-                config.AddProfile<CollectionMappingProfile>();
-                config.AddProfile<CardMappingProfile>();
-                config.AddProfile<WordMappingProfile>();
-            }).CreateMapper();
+            mapper = new ObjectMapper();
         }
 
         public TestWordsDbContext Context { get; }

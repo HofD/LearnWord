@@ -42,6 +42,11 @@ namespace IdentityService.Authorization.Services
 
                 if (!string.IsNullOrWhiteSpace(username))
                 {
+                    if (password == null)
+                    {
+                        throw new InvalidOperationException("Smtp:Password is required when Smtp:Username is configured.");
+                    }
+
                     await client.AuthenticateAsync(username, password);
                 }
 

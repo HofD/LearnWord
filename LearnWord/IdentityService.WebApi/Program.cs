@@ -38,6 +38,7 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
        options.TokenLifespan = TimeSpan.FromHours(3));
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var jwtKey = jwtSettings.GetSection("Key").Value ?? throw new InvalidOperationException("JwtSettings:Key is required.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
         options.TokenValidationParameters = new TokenValidationParameters
@@ -50,7 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-            .GetBytes(jwtSettings.GetSection("Key").Value))
+            .GetBytes(jwtKey))
         });
 
 builder.Services.AddRateLimiter(options =>

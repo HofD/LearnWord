@@ -16,7 +16,8 @@ namespace IdentityService.Authorization.Authorization
         }
         public SigningCredentials GetSigningCredentials()
         {
-            var key = Encoding.UTF8.GetBytes(jwtSettings.GetSection("Key").Value);
+            var jwtKey = jwtSettings.GetSection("Key").Value ?? throw new InvalidOperationException("JwtSettings:Key is required.");
+            var key = Encoding.UTF8.GetBytes(jwtKey);
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }

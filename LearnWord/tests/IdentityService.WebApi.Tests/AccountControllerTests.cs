@@ -31,9 +31,9 @@ public class AccountControllerTests
 
         Assert.IsType<OkResult>(response);
         Assert.NotNull(await userManager.FindByEmailAsync("new@example.com"));
-        Assert.Equal(1, smtp.Messages.Count);
-        Assert.Contains("userId=", smtp.Messages[0]);
-        Assert.Contains("code=confirm-token", smtp.Messages[0]);
+        var message = Assert.Single(smtp.Messages);
+        Assert.Contains("userId=", message);
+        Assert.Contains("code=confirm-token", message);
     }
 
     [Fact]
@@ -367,7 +367,7 @@ public class AccountControllerTests
         public FakeUserManager()
             : base(
                 new FakeUserStore(),
-                null,
+                Microsoft.Extensions.Options.Options.Create(new IdentityOptions()),
                 new PasswordHasher<LwIdentityUser>(),
                 [],
                 [],

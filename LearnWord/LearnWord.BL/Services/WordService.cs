@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using LearnWord.BL.Abstractions;
+﻿using LearnWord.BL.Abstractions;
+using LearnWord.BL.Mapping;
 using LearnWord.BL.Models.Dto;
 using LearnWord.DAL.Models;
 using LearnWord.DAL.Repositories;
@@ -9,9 +9,9 @@ namespace LearnWord.BL.Services
     public class WordService : IWordService
     {
         private readonly WordRepository wordRepository;
-        private readonly IMapper mapper;
+        private readonly ObjectMapper mapper;
 
-        public WordService(WordRepository wordRepository, IMapper mapper) 
+        public WordService(WordRepository wordRepository, ObjectMapper mapper)
         {
             this.wordRepository = wordRepository;
             this.mapper = mapper;

@@ -13,13 +13,14 @@ namespace LearnWord.Identity.Authorization
             this.configuration = configuration;
         }
 
-        public string ValidateJwtToken(string token)
+        public string? ValidateJwtToken(string? token)
         {
             if (token == null)
                 return null;
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(configuration["JwtSettings:Key"]);
+            var jwtKey = configuration["JwtSettings:Key"] ?? throw new InvalidOperationException("JwtSettings:Key is required.");
+            var key = Encoding.ASCII.GetBytes(jwtKey);
 
             try
             {
