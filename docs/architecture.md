@@ -61,7 +61,7 @@ Current user-facing flows include:
 - password recovery;
 - collection list and collection details;
 - card and word editing;
-- review flow.
+- spaced repetition review flow.
 
 ## Source Of Truth
 

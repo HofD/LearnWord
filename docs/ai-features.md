@@ -137,6 +137,7 @@ The backend should:
 - limit `sourceText` length;
 - limit `maxCards`;
 - request structured JSON output;
+- instruct the LLM that `transcription` must be a phonetic or IPA transcription of the source word, not the target-language translation;
 - validate every returned suggestion;
 - discard empty or malformed suggestions;
 - filter suggestions whose word already exists in the target collection, using trimmed case-insensitive matching;

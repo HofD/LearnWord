@@ -14,7 +14,7 @@ Goal: show the existing LearnWord product as a usable fullstack application.
 6. Create a collection.
 7. Add a card with two words, translations, and transcription values.
 8. Open the review flow.
-9. Mark a card as learned or forgotten.
+9. Reveal the translation and submit a spaced repetition outcome: `Again`, `Hard`, `Good`, or `Easy`.
 
 What this demonstrates:
 
@@ -22,7 +22,7 @@ What this demonstrates:
 - account lifecycle;
 - authenticated user-owned data;
 - collection/card/word CRUD;
-- review behavior;
+- spaced repetition review behavior;
 - local Docker verification.
 
 ## Scenario 2: Agentic SDLC Walkthrough

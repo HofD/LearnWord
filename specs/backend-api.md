@@ -444,6 +444,7 @@ Current behavior:
 - `LearnWord.Identity` does not call an LLM directly; it proxies the request to internal `LearnWord.WebApi`.
 - `LearnWord.WebApi` validates `sourceText` and `maxCards` before provider calls.
 - `LearnWord.WebApi` filters provider suggestions after the LLM response so words already present in the target collection are not returned again. Matching trims surrounding whitespace and is case-insensitive.
+- Provider prompts require `transcription` to contain a phonetic or IPA transcription of the source word, never the target-language translation.
 - If the LLM provider rate-limits generation, returns `429` with ProblemDetails code `ai_provider_rate_limited` and a retry-later message.
 - If the LLM provider is unavailable, returns `503` with ProblemDetails code `ai_provider_unavailable`.
 - If the LLM provider credentials or route are invalid, returns `502` with ProblemDetails code `ai_provider_configuration_error`.

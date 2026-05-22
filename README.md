@@ -2,7 +2,7 @@
 
 LearnWord is a fullstack language-learning application used as a sandbox for experimenting with a spec-driven, agent-assisted software delivery workflow.
 
-The product lets users register, confirm email, log in, manage word collections, create cards with words and translations, and review cards. The portfolio value of the project is broader than the learning app itself: it demonstrates how a small product can be developed through explicit contracts, role-specific AI agents, Docker-first verification, and final acceptance checks.
+The product lets users register, confirm email, log in, manage word collections, create cards with words and translations, generate draft cards with AI, and review cards with spaced repetition. The portfolio value of the project is broader than the learning app itself: it demonstrates how a small product can be developed through explicit contracts, role-specific AI agents, Docker-first verification, and final acceptance checks.
 
 ## Highlights
 
@@ -11,6 +11,7 @@ The product lets users register, confirm email, log in, manage word collections,
 - Ocelot gateway as the public `/api/...` entry point.
 - JWT authentication with refresh tokens, email confirmation, and password reset.
 - AI card generation from source text with a fake local provider and configurable OpenRouter provider.
+- Spaced repetition review with due-card selection and four outcome grades.
 - PostgreSQL-backed local Docker environment.
 - Current behavior specs for backend and frontend contracts.
 - Role-specific agent instructions for system analysis, backend development, backend QA, and frontend UI work.
@@ -158,7 +159,7 @@ npm test
 
 - Keep recording baseline and feature delivery agent runs.
 - Improve the AI card generator based on real OpenRouter usage and prompt quality.
-- Expand the review flow into a spaced repetition scheduling engine.
+- Polish spaced repetition review UX and add more learning analytics.
 - Add a short demo video showing architecture, agent workflow, local run, and verification.
 
 ## Project Guidance
