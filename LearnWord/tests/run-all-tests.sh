@@ -32,7 +32,7 @@ for project in "${projects[@]}"; do
   echo "========================================"
 
   start_seconds="$SECONDS"
-  dotnet test "$project" --logger "console;verbosity=minimal"
+  dotnet test "$project" --disable-build-servers --logger "console;verbosity=minimal"
   exit_code="$?"
   duration="$((SECONDS - start_seconds))s"
   durations+=("$duration")
