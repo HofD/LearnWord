@@ -42,31 +42,5 @@ namespace LearnWord.Identity.Controllers
 
             return result ? Ok() : StatusCode(StatusCodes.Status502BadGateway);
         }
-
-        [HttpPost("{id}/learn")]
-        public async Task<ActionResult<CardDto>> Learn(int id)
-        {
-            var userId = HttpContext.Items["UserId"]?.ToString();
-
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
-
-            return Ok(await cardIdentityService.Learn(id, userId));
-        }
-
-        [HttpPost("{id}/forget")]
-        public async Task<ActionResult<CardDto>> Forget(int id)
-        {
-            var userId = HttpContext.Items["UserId"]?.ToString();
-
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
-
-            return Ok(await cardIdentityService.Forget(id, userId));
-        }
     }
 }

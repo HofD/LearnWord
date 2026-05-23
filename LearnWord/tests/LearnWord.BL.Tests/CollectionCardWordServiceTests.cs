@@ -83,9 +83,9 @@ public class CollectionCardWordServiceTests
                 new WordCreateDto { Value = "cat", Transcription = "kat", Translation = "cat-translation" }
             ]
         });
-        var learnt = await service.Learn(created.Id);
+        var learnt = await service.Review(created.Id, new ReviewCardRequest { Outcome = ReviewOutcome.Good.ToString() });
         var storedLearnt = await fixture.Context.Cards!.AsNoTracking().SingleAsync(x => x.Id == created.Id);
-        var forgotten = await service.Forget(created.Id);
+        var forgotten = await service.Review(created.Id, new ReviewCardRequest { Outcome = ReviewOutcome.Again.ToString() });
         var reset = await service.Reset(created.Id);
         await service.Remove(created.Id);
 
@@ -110,8 +110,8 @@ public class CollectionCardWordServiceTests
         await using var fixture = await TestWordsDatabase.Create();
         var service = fixture.CreateCardService();
 
-        await Assert.ThrowsAsync<NotFoundException>(() => service.Learn(404));
-        await Assert.ThrowsAsync<NotFoundException>(() => service.Forget(404));
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            service.Review(404, new ReviewCardRequest { Outcome = ReviewOutcome.Good.ToString() }));
         await Assert.ThrowsAsync<NotFoundException>(() => service.Reset(404));
         await Assert.ThrowsAsync<NotFoundException>(() => service.Remove(404));
     }

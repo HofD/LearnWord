@@ -88,18 +88,12 @@ public class OwnershipIntegrationTests
         var upstream = new RecordingCardHttpService();
         var service = fixture.CreateCardService(upstream);
 
-        var learn = await Assert.ThrowsAsync<ForbiddenException>(() => service.Learn(20, CurrentUser));
-        var forget = await Assert.ThrowsAsync<ForbiddenException>(() => service.Forget(20, CurrentUser));
         var review = await Assert.ThrowsAsync<ForbiddenException>(() =>
             service.Review(20, new ReviewCardRequest { Outcome = ReviewOutcome.Good.ToString() }, CurrentUser));
         var remove = await Assert.ThrowsAsync<ForbiddenException>(() => service.Remove(20, CurrentUser));
 
-        Assert.Equal("card_forbidden", learn.ErrorCode);
-        Assert.Equal("card_forbidden", forget.ErrorCode);
         Assert.Equal("card_forbidden", review.ErrorCode);
         Assert.Equal("card_forbidden", remove.ErrorCode);
-        Assert.False(upstream.LearnCalled);
-        Assert.False(upstream.ForgetCalled);
         Assert.False(upstream.ReviewCalled);
         Assert.False(upstream.RemoveCalled);
     }
@@ -280,8 +274,6 @@ public class OwnershipIntegrationTests
     private sealed class RecordingCardHttpService : ICardHttpService
     {
         public bool AddCalled { get; private set; }
-        public bool ForgetCalled { get; private set; }
-        public bool LearnCalled { get; private set; }
         public bool RemoveCalled { get; private set; }
         public bool ReviewCalled { get; private set; }
         public CardDto AddResult { get; set; } = new() { Id = 1, CollectionId = 1, Words = [] };
@@ -290,18 +282,6 @@ public class OwnershipIntegrationTests
         {
             AddCalled = true;
             return Task.FromResult(AddResult);
-        }
-
-        public Task<CardDto> Forget(int id)
-        {
-            ForgetCalled = true;
-            return Task.FromResult(new CardDto { Id = id, CollectionId = 1, Words = [], Learnt = false });
-        }
-
-        public Task<CardDto> Learn(int id)
-        {
-            LearnCalled = true;
-            return Task.FromResult(new CardDto { Id = id, CollectionId = 1, Words = [], Learnt = true });
         }
 
         public Task<bool> Remove(int id)

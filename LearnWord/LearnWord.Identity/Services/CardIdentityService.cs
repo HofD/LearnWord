@@ -32,20 +32,6 @@ namespace LearnWord.Identity.Services
             return result;
         }
 
-        public async Task<CardDto> Forget(int id, string userId)
-        {
-            await CheckCardIdentity(id, userId);
-
-            return await cardHttpService.Forget(id);
-        }
-
-        public async Task<CardDto> Learn(int id, string userId)
-        {
-            await CheckCardIdentity(id, userId);
-
-            return await cardHttpService.Learn(id);
-        }
-
         public async Task<CardDto> Review(int id, ReviewCardRequest request, string userId)
         {
             await CheckCardIdentity(id, userId);

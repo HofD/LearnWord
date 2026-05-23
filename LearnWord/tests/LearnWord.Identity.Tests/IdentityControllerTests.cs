@@ -107,20 +107,21 @@ public class IdentityControllerTests
     }
 
     [Fact]
-    public async Task Cards_Learn_PassesCurrentUserAndReturnsCard()
+    public async Task Review_SubmitOutcome_PassesCurrentUserAndReturnsCard()
     {
+        var request = new ReviewCardRequest { Outcome = ReviewOutcome.Good.ToString() };
         var card = new CardDto { Id = 23, CollectionId = 17, Words = [], Learnt = true };
-        var service = new StubCardIdentityService { LearnResult = card };
-        var controller = new CardsIdentityController(service)
+        var service = new StubCardIdentityService { ReviewResult = card };
+        var controller = new ReviewIdentityController(service)
         {
             ControllerContext = CreateControllerContext(UserId)
         };
 
-        var response = await controller.Learn(23);
+        var response = await controller.Review(23, request);
 
         var ok = Assert.IsType<OkObjectResult>(response.Result);
         Assert.Equal(card, ok.Value);
-        Assert.Equal((23, UserId), service.LastLearn);
+        Assert.Equal((23, request, UserId), service.LastReview);
     }
 
     [Fact]
@@ -273,31 +274,15 @@ public class IdentityControllerTests
     {
         public bool WasCalled { get; private set; }
         public CardDto AddResult { get; set; } = new() { Id = 1, CollectionId = 1, Words = [] };
-        public CardDto LearnResult { get; set; } = new() { Id = 1, CollectionId = 1, Words = [] };
-        public CardDto ForgetResult { get; set; } = new() { Id = 1, CollectionId = 1, Words = [] };
         public CardDto ReviewResult { get; set; } = new() { Id = 1, CollectionId = 1, Words = [] };
         public bool RemoveResult { get; set; } = true;
         public (int Id, string UserId)? LastRemove { get; private set; }
-        public (int Id, string UserId)? LastLearn { get; private set; }
         public (int Id, ReviewCardRequest Request, string UserId)? LastReview { get; private set; }
 
         public Task<CardDto> Add(CardCreateDto cardCreateDto, string userId)
         {
             WasCalled = true;
             return Task.FromResult(AddResult);
-        }
-
-        public Task<CardDto> Forget(int id, string userId)
-        {
-            WasCalled = true;
-            return Task.FromResult(ForgetResult);
-        }
-
-        public Task<CardDto> Learn(int id, string userId)
-        {
-            WasCalled = true;
-            LastLearn = (id, userId);
-            return Task.FromResult(LearnResult);
         }
 
         public Task<bool> Remove(int id, string userId)

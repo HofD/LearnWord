@@ -71,42 +71,6 @@ namespace LearnWord.DAL.Repositories
             return card;
         }
 
-        public async Task<Card> Learn(int id)
-        {
-            var card = await FindById(id);
-
-            if (card == null)
-            {
-                throw new NotFoundException($"Card {id} not found.", "card_not_found");
-            }
-
-            card.Learnt = true;
-            card.LearntAt = DateTime.UtcNow;
-            card.ShowedAt = DateTime.UtcNow;
-
-            await SaveChangesAsync();
-
-            return card;
-        }
-
-        public async Task<Card> Forget(int id)
-        {
-            var card = await FindById(id);
-
-            if (card == null)
-            {
-                throw new NotFoundException($"Card {id} not found.", "card_not_found");
-            }
-
-            card.Learnt = false;
-            card.LearntAt = null;
-            card.ShowedAt = DateTime.UtcNow;
-
-            await SaveChangesAsync();
-
-            return card;
-        }
-
         private IQueryable<Card> GetQueryable(bool include)
         {
             var queryable = dbContext.Cards.AsQueryable();

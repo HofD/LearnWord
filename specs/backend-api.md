@@ -502,34 +502,6 @@ Current behavior:
 - `500` when internal delete returns an unsuccessful HTTP status.
 - If ownership check fails, the service throws; the controller currently does not map this to `404`/`403`.
 
-#### Mark Card Learned
-
-```http
-POST /api/cards/{id}/learn
-Authorization: Bearer <access-token>
-```
-
-Current behavior:
-
-- Checks card ownership.
-- Backward-compatible endpoint for the legacy binary review flow.
-- Applies a successful review outcome equivalent to `Good`.
-- Returns `200 OK` with updated `CardDto`.
-
-#### Mark Card Forgotten
-
-```http
-POST /api/cards/{id}/forget
-Authorization: Bearer <access-token>
-```
-
-Current behavior:
-
-- Checks card ownership.
-- Backward-compatible endpoint for the legacy binary review flow.
-- Applies an unsuccessful review outcome equivalent to `Again`.
-- Returns `200 OK` with updated `CardDto`.
-
 ### Review
 
 Review endpoints require bearer authentication and are handled by `LearnWord.Identity`.
@@ -658,8 +630,7 @@ These endpoints exist on the internal CRUD service and are not called directly b
 - `GET /collections/{id}/review-cards`: returns review candidates.
 - `POST /cards`: creates card.
 - `DELETE /cards/{id}`: deletes card.
-- `POST /cards/{id}/learn`: marks card learned.
-- `POST /cards/{id}/forget`: marks card forgotten.
+- `POST /review/cards/{cardId}/review`: submits a review outcome.
 - `POST /cards/{cardId}/words`: adds word.
 - `PUT /cards/{cardId}/words/{id}`: updates word.
 - `DELETE /cards/{cardId}/words/{id}`: deletes word.

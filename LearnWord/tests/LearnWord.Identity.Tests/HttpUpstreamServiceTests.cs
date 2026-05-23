@@ -100,20 +100,20 @@ public class HttpUpstreamServiceTests
     }
 
     [Fact]
-    public async Task CardHttpService_Learn_PostsToLearnRouteAndReturnsCard()
+    public async Task CardHttpService_Review_PostsToReviewRouteAndReturnsCard()
     {
         await using var server = await TestHttpServer.Start(async context =>
         {
             Assert.Equal("POST", context.Request.HttpMethod);
-            Assert.Equal("/cards/23/learn", context.Request.Url!.AbsolutePath);
+            Assert.Equal("/review/cards/23/review", context.Request.Url!.AbsolutePath);
             using var body = await ReadJsonBody(context.Request);
-            Assert.Equal(23, body.RootElement.GetProperty("id").GetInt32());
+            Assert.Equal("Good", body.RootElement.GetProperty("outcome").GetString());
 
             await WriteJson(context.Response, new CardDto { Id = 23, CollectionId = 17, Learnt = true, Words = [] });
         });
         var service = new CardHttpService(CreateConfiguration("CardsRoute", server.Url("/cards")));
 
-        var result = await service.Learn(23);
+        var result = await service.Review(23, new ReviewCardRequest { Outcome = ReviewOutcome.Good.ToString() });
 
         Assert.Equal(23, result.Id);
         Assert.True(result.Learnt);

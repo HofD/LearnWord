@@ -29,17 +29,5 @@ namespace LearnWord.WebApi.Controllers
             await cardService.Remove(id);
             return Ok();
         }
-
-        [HttpPost("{id}/learn")]
-        public async Task<ActionResult<CardDto>> Learn(int id)
-        {
-            return Ok(await cardService.Learn(id));
-        }
-
-        [HttpPost("{id}/forget")]
-        public async Task<ActionResult<CardDto>> Forget(int id)
-        {
-            return Ok(await cardService.Forget(id));
-        }
     }
 }

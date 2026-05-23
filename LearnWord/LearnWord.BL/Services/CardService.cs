@@ -23,14 +23,6 @@ namespace LearnWord.BL.Services
         {
             return mapper.Map<CardDto>(await cardRepository.Add(mapper.Map<Card>(createDto)));
         }
-        public async Task<CardDto> Forget(int id)
-        {
-            return await Review(id, new ReviewCardRequest { Outcome = ReviewOutcome.Again.ToString() });
-        }
-        public async Task<CardDto> Learn(int id)
-        {
-            return await Review(id, new ReviewCardRequest { Outcome = ReviewOutcome.Good.ToString() });
-        }
         public async Task Remove(int id)
         {
             await cardRepository.Remove(id);

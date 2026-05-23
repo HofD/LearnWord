@@ -6,8 +6,6 @@ namespace LearnWord.Identity.Abstactions
     {
         Task<CardDto> Add(CardCreateDto cardCreateDto, string userId);
         Task<bool> Remove(int id, string userId);
-        Task<CardDto> Learn(int id, string userId);
-        Task<CardDto> Forget(int id, string userId);
         Task<CardDto> Review(int id, ReviewCardRequest request, string userId);
     }
 }

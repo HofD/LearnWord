@@ -26,30 +26,6 @@ namespace LearnWord.Identity.Services
                 "Failed to create card.");
         }
 
-        public async Task<CardDto> Forget(int id)
-        {
-            var request = $"{serviceBaseUrl}/{id}/forget";
-            return await SendForJson<CardDto>(
-                UpstreamService,
-                "ForgetCard",
-                request,
-                () => HttpClient.PostAsJsonAsync(request, new { id }),
-                "cards_service_empty_response",
-                $"Failed to forget card {id}.");
-        }
-
-        public async Task<CardDto> Learn(int id)
-        {
-            var request = $"{serviceBaseUrl}/{id}/learn";
-            return await SendForJson<CardDto>(
-                UpstreamService,
-                "LearnCard",
-                request,
-                () => HttpClient.PostAsJsonAsync(request, new { id }),
-                "cards_service_empty_response",
-                $"Failed to learn card {id}.");
-        }
-
         public async Task<CardDto> Review(int id, ReviewCardRequest reviewRequest)
         {
             var request = $"{serviceBaseUrl.Replace("/cards", "/review/cards")}/{id}/review";
