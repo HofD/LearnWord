@@ -1,5 +1,7 @@
 # LearnWord
 
+[![Backend CI](https://github.com/HofD/LearnWord/actions/workflows/backend-ci.yml/badge.svg?branch=main)](https://github.com/HofD/LearnWord/actions/workflows/backend-ci.yml)
+
 LearnWord is a fullstack language-learning application used as a sandbox for experimenting with a spec-driven, agent-assisted software delivery workflow.
 
 The product lets users register, confirm email, log in, manage word collections, create cards with words and translations, generate draft cards with AI, and review cards with spaced repetition. The portfolio value of the project is broader than the learning app itself: it demonstrates how a small product can be developed through explicit contracts, role-specific AI agents, Docker-first verification, and final acceptance checks.
