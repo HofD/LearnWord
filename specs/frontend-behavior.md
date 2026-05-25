@@ -18,8 +18,48 @@ Key setup:
   - `robots.txt` allows indexing and points crawlers to the sitemap.
   - `sitemap.xml` lists only public routes intended for indexing.
 - Static metadata includes description, bilingual keyword, robots, Open Graph, Twitter summary, canonical, and JSON-LD educational application tags.
+- Product activity monitoring uses Yandex Metrica in production only. The frontend exposes a numeric `yandexMetricaCounterId` environment value; analytics is disabled when the value is `0` or missing. Local development does not send analytics events.
 
 The app uses Bootstrap classes and components in templates.
+
+## Product Analytics
+
+Yandex Metrica is the MVP product monitoring provider. The production Angular build uses `src/index.prod.html`, which contains the Yandex Metrica counter snippet and noscript fallback for counter `109403787`. The same counter id is stored in `environment.prod.ts` as `yandexMetricaCounterId`. The runtime `AnalyticsService` does not install or initialize the counter; it only guards product goals with `environment.production` and `environment.yandexMetricaCounterId > 0`, then calls the global `ym` function installed by the production HTML snippet.
+
+The counter is initialized with:
+
+- click map enabled;
+- link tracking enabled;
+- accurate bounce tracking enabled;
+- Webvisor enabled.
+- SSR marker enabled.
+- Ecommerce data layer name set to `dataLayer`.
+- Initial referrer and URL passed from `document.referrer` and `location.href`.
+
+The app starts the counter from the root component so regular visits are counted even when a visitor performs no tracked product action. Angular route changes are sent to Metrica as page hits.
+
+The frontend sends JavaScript goals only after successful application actions, not on button click before the API response. Events must not include email addresses, access tokens, refresh tokens, words, translations, transcriptions, source text, or any other user-entered learning content.
+
+Current goals:
+
+| Goal | Trigger | Allowed parameters |
+| --- | --- | --- |
+| `REGISTER_SUCCESS` | Registration API returns success. | none |
+| `LOGIN_SUCCESS` | Login API returns success and tokens are stored. | none |
+| `COLLECTION_CREATED` | Collection creation API returns success. | `source` |
+| `CARD_CREATED` | Manual card creation or selected AI card save returns success. | `collectionId`, `source`, `cardsCount` |
+| `AI_CARDS_GENERATED` | AI card generation API returns suggestions. | `collectionId`, `cardsCount`, `sourceLanguage`, `targetLanguage`, `level` |
+| `REVIEW_STARTED` | Review route loads at least one card. | `collectionId`, `cardsCount` |
+| `REVIEW_CARD_ANSWERED` | Review answer API returns success. | `collectionId`, `outcome`, `cardPosition`, `cardsCount` |
+| `REVIEW_FINISHED` | The last loaded review card is answered successfully. | `collectionId`, `cardsReviewed`, `cardsCount` |
+
+For MVP reporting, an active learning user is a unique visitor who reached `REVIEW_STARTED` or `REVIEW_CARD_ANSWERED` during the reporting period. A content-active user is a unique visitor who reached `COLLECTION_CREATED` or `CARD_CREATED`.
+
+Production counter installation is verified through the Yandex status-check URL:
+
+```text
+https://learnword.online/?_ym_status-check=109403787&_ym_lang=ru
+```
 
 ## Localization
 

@@ -157,9 +157,38 @@ With the current nginx config, `/` proxies to `http://127.0.0.1:8080/` and `/api
 
 Only `webapp` and `gateway` publish ports in production, and both are hard-bound to `127.0.0.1` for the host nginx proxy. Internal services (`learnword.webapi`, `learnword.identity`, `identityservice`) are available only on the Docker network through `expose: 8080`; do not add `ports` for them in production.
 
+## Frontend analytics
+
+Production frontend builds include the Yandex Metrica counter in `../../LearnWordWebApp/lw-app/src/index.prod.html`. The same counter id must also be set in `../../LearnWordWebApp/lw-app/src/environments/environment.prod.ts` as `yandexMetricaCounterId`, because the Angular analytics service uses that value for SPA page hits and JavaScript goals.
+
+When changing the counter, update both places:
+
+- `src/index.prod.html`: the Metrica snippet URL, `ym(<counterId>, 'init', ...)`, and the noscript `watch/<counterId>` URL.
+- `src/environments/environment.prod.ts`: `yandexMetricaCounterId`.
+
+Do not add a second runtime loader for the Metrica script in Angular code. The production HTML snippet owns counter installation; Angular should only call `ym(..., 'hit')` and `ym(..., 'reachGoal')` after it is installed.
+
+After deploying the frontend, verify the production counter with the Yandex status-check URL:
+
+```text
+https://learnword.online/?_ym_status-check=<counterId>&_ym_lang=ru
+```
+
+For the current counter:
+
+```text
+https://learnword.online/?_ym_status-check=109403787&_ym_lang=ru
+```
+
+The expected result is the green Yandex Metrica banner saying the counter was found on the page. As a quick shell check, the production HTML should also contain the counter id:
+
+```bash
+curl -L -s 'https://learnword.online/?_ym_status-check=109403787&_ym_lang=ru' \
+  | grep -E 'tag.js\?id=109403787|ym\(109403787|watch/109403787'
+```
+
 To find what owns a port on the server:
 
 ```bash
 ss -ltnp 'sport = :8080'
 ```
-
