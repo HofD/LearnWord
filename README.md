@@ -64,10 +64,18 @@ LearnWord/
   agent-runs/                 recorded agent-assisted delivery runs
 ```
 
-The Angular frontend lives in the sibling repository:
+## Related Repository
+
+The Angular frontend is published separately:
+
+- [HofD/LearnWordWebApp](https://github.com/HofD/LearnWordWebApp)
+
+For local full-stack development, clone both repositories as sibling directories:
 
 ```text
-../LearnWordWebApp/lw-app
+workspace/
+  LearnWord/
+  LearnWordWebApp/
 ```
 
 ## Architecture
