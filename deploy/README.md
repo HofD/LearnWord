@@ -5,7 +5,7 @@ This directory contains the combined Docker deployment for the two repositories:
 - backend: `../LearnWord`
 - frontend: `../../LearnWordWebApp/lw-app`
 
-Production uses PostgreSQL on the internal server `192.168.0.6`; the production compose file does not start a PostgreSQL container. Local development starts PostgreSQL in Docker.
+Production uses PostgreSQL on the internal server `postgres.internal`; the production compose file does not start a PostgreSQL container. Local development starts PostgreSQL in Docker.
 
 ## Local run
 
@@ -162,3 +162,4 @@ To find what owns a port on the server:
 ```bash
 ss -ltnp 'sport = :8080'
 ```
+
