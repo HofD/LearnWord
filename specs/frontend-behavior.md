@@ -77,7 +77,7 @@ For every outgoing HTTP request:
 
 The header:
 
-- shows localized brand text `Learn Word` linking to `collections`.
+- shows the Learn Word brand icon with localized brand text `Learn Word`, linking to `collections`.
 - shows localized nav links to `collections` and `about`.
 - shows a compact language switcher with `EN` and `RU` options.
 - updates the UI language immediately when the selector changes.
