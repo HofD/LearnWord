@@ -4,6 +4,17 @@ LearnWord is a fullstack language-learning application used as a sandbox for exp
 
 The product lets users register, confirm email, log in, manage word collections, create cards with words and translations, generate draft cards with AI, and review cards with spaced repetition. The portfolio value of the project is broader than the learning app itself: it demonstrates how a small product can be developed through explicit contracts, role-specific AI agents, Docker-first verification, and final acceptance checks.
 
+## Live Demo
+
+Try the published application: **[learnword.online](https://learnword.online)**
+
+Key scenario:
+1. Register and confirm email.
+2. Create a collection.
+3. Paste source text into AI Card Generator.
+4. Review generated card suggestions.
+5. Save selected cards and practice them through spaced repetition.
+
 ## Highlights
 
 - .NET backend with gateway, identity, user-owned learning entities, and backend tests.
