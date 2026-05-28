@@ -431,12 +431,14 @@ Review UI:
 - While loading, shows spinner.
 - If `currentCard` exists and has at least one word:
   - shows progress as `(currentIndex + 1) / cards.length`.
-  - shows the first word's `value`.
-  - shows the first word's transcription when present.
+  - shows all words in the card.
+  - shows each word's transcription when present.
+  - preserves the existing single-word card layout and large word treatment when the card contains exactly one word.
+  - uses a compact scrollable list for multi-word cards so long cards do not push the review actions too far down the page.
   - may show compact spaced-repetition metadata such as interval, review count, and due date.
   - toggles translation visibility when the translation container is clicked.
   - when hidden, shows `Click to show translation`.
-  - when visible, shows the first word's `translation`.
+  - when visible, shows translations for all words in the same order as the words.
   - shows four review outcome actions: `Again`, `Hard`, `Good`, and `Easy`.
   - each outcome calls `POST /api/review/cards/{id}/review` with `{ outcome }`.
 - After a successful review outcome:
