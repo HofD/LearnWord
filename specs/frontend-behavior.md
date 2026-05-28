@@ -278,12 +278,23 @@ Behavior:
 - Shows spinner until loaded.
 - On success, stores the returned collection and shows:
   - collection name
+  - an add-card panel with mode switching
   - `CardsComponent` with `[cards]="collection.cards"` and `[collectionId]="collection.id"`
+
+Add-card panel behavior:
+
+- The collection details page shows one add-card panel above the card list.
+- The panel offers two mutually exclusive modes: AI generation and manual card creation.
+- AI generation is the default selected mode after the collection page component is created.
+- The add-card panel body can be expanded or collapsed from the panel header; the initial mode remains AI even when the body is collapsed.
+- Selecting either mode opens the panel body for that mode.
+- Switching modes is kept only in the current frontend component instance; the app does not persist the choice to the backend, cookies, `localStorage`, or `sessionStorage`.
+- In manual mode, the panel renders an empty `CardComponent` for creating a new card in the collection.
+- When the manual child emits `onCardAdded`, the returned card is pushed into the local collection card list and the card pager moves to the last page.
+- In AI mode, the panel renders the AI generation form and suggestions described below.
 
 AI card generation behavior:
 
-- Shows a collapsed AI generation control on the collection details page.
-- Clicking the AI generation header toggles the full form.
 - The user can provide source text and choose generation hints from fixed controls.
 - Source and target language controls are select lists limited to 10 common languages: English, Mandarin Chinese, Hindi, Spanish, French, Arabic, Bengali, Portuguese, Russian, and Urdu.
 - Level is a select list limited to CEFR values: A1, A2, B1, B2, C1, and C2.
@@ -346,8 +357,7 @@ Behavior:
 - Each card has a `Delete` button that opens one shared Bootstrap confirmation modal for the currently selected card.
 - Confirming delete calls `DELETE /api/cards/{id}` and removes the card from the local `cards` array on success.
 - If deletion leaves the current page beyond the end, the component moves to the last available page.
-- Renders one trailing empty `CardComponent` for adding a new card to the collection.
-- When the trailing child emits `onCardAdded`, pushes the returned card into the local `cards` array and moves to the last page.
+- Does not render a trailing manual add-card form; manual creation is owned by the collection details add-card panel.
 
 ### CardComponent
 
