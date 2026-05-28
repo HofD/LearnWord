@@ -297,6 +297,7 @@ AI card generation behavior:
 
 - The user can provide source text and choose generation hints from fixed controls.
 - Source and target language controls are select lists limited to 10 common languages: English, Mandarin Chinese, Hindi, Spanish, French, Arabic, Bengali, Portuguese, Russian, and Urdu.
+- The target language control does not offer the currently selected source language. If changing the source language would make source and target languages equal, the target language is automatically moved to the first available different language.
 - Level is a select list limited to CEFR values: A1, A2, B1, B2, C1, and C2.
 - Submit calls `POST /api/collections/{collectionId}/ai/generate-cards`.
 - While the request is in progress, the generation submit action is disabled and a loading state is shown.
