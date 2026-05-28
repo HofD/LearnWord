@@ -334,6 +334,12 @@ Inputs:
 Behavior:
 
 - Keeps the full input `cards` array in memory but renders only the current client-side page to keep large collections from creating a large DOM.
+- Provides a compact search control in the card pager area. Search filters the full local `cards` array by each word's `value` or `translation` before pagination is applied.
+- Card search trims the query, is case-insensitive, and normalizes diacritics so accented and unaccented text can match.
+- Empty search preserves the normal unfiltered card list.
+- Changing the search query resets the current page to the first page.
+- When search is active, the component shows the number of matching cards out of the full collection size.
+- When search is active and no cards match, the card list area shows an empty-state message while the add-card panel remains available.
 - Default page size is `25`; available page sizes are `25`, `50`, and `100`.
 - If there are more than 25 cards, shows a compact pager with the current visible range, total card count, page-size selector, previous action, current page indicator, and next action.
 - Renders each visible card inside a Bootstrap card.
