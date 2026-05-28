@@ -293,6 +293,7 @@ AI card generation behavior:
 - AI suggestions are not saved automatically.
 - Saving selected suggestions creates regular cards through the existing `POST /api/cards` flow.
 - Saved cards are appended to the current collection card list.
+- After one or more selected AI suggestions are saved, the card pager moves to the last page so the newly created cards are visible.
 - After all selected suggestions are saved successfully, the AI form values and suggestion list are cleared back to defaults.
 - If the AI provider returns a rate-limit or temporary-unavailable error, the user sees a specific retry-later message instead of a generic failure.
 - On generation or save errors, the existing user remains on the collection page and the error is surfaced without losing already loaded collection data.
@@ -332,11 +333,15 @@ Inputs:
 
 Behavior:
 
-- Renders each existing card inside a Bootstrap card.
-- Each card has a `Delete` button that opens a Bootstrap confirmation modal.
+- Keeps the full input `cards` array in memory but renders only the current client-side page to keep large collections from creating a large DOM.
+- Default page size is `25`; available page sizes are `25`, `50`, and `100`.
+- If there are more than 25 cards, shows a compact pager with the current visible range, total card count, page-size selector, previous action, current page indicator, and next action.
+- Renders each visible card inside a Bootstrap card.
+- Each card has a `Delete` button that opens one shared Bootstrap confirmation modal for the currently selected card.
 - Confirming delete calls `DELETE /api/cards/{id}` and removes the card from the local `cards` array on success.
+- If deletion leaves the current page beyond the end, the component moves to the last available page.
 - Renders one trailing empty `CardComponent` for adding a new card to the collection.
-- When the trailing child emits `onCardAdded`, pushes the returned card into the local `cards` array.
+- When the trailing child emits `onCardAdded`, pushes the returned card into the local `cards` array and moves to the last page.
 
 ### CardComponent
 
