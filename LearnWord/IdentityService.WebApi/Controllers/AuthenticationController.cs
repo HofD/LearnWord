@@ -41,7 +41,7 @@ namespace IdentityService.WebApi.Controllers
 
             if (!await userManager.IsEmailConfirmedAsync(user))
             {
-                return Forbid("Email not confirmed.");
+                return StatusCode(StatusCodes.Status403Forbidden, "Email not confirmed.");
             }
 
             var ipAddress = HttpContext.Connection.LocalIpAddress?.ToString() ?? string.Empty;

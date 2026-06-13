@@ -175,6 +175,7 @@ Submit behavior:
 - After login, if an access token exists, the component broadcasts authenticated state again and navigates to `returnUrl` query param, defaulting to `collections`.
 
 For a `401` login response, `AuthService.handleError` shows alert `Wrong username or password.`.
+For a `403` response from `/api/auth/login`, `AuthService.handleError` shows a persistent alert explaining that the user must confirm email before logging in and can register again with the same email to resend the confirmation email.
 
 The login form links to `/forgot-password`.
 
@@ -226,7 +227,7 @@ Behavior:
   - navigates to `../login`.
 - On error, sets status to `Failed`.
 
-The failed-state template links to `/forgot-password`.
+The failed-state template tells the user to open the newest confirmation link from email or go to `/register` with the same email to send a new confirmation link.
 
 ## Collections
 

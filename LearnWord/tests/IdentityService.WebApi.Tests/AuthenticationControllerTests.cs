@@ -53,7 +53,9 @@ public class AuthenticationControllerTests
 
         var response = await controller.Login(new LoginRequest { Email = "known@example.com", Password = "right-pass" });
 
-        Assert.IsType<ForbidResult>(response.Result);
+        var forbidden = Assert.IsType<ObjectResult>(response.Result);
+        Assert.Equal(StatusCodes.Status403Forbidden, forbidden.StatusCode);
+        Assert.Equal("Email not confirmed.", forbidden.Value);
     }
 
     [Fact]
