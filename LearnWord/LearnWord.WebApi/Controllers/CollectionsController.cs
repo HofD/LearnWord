@@ -23,6 +23,11 @@ namespace LearnWord.WebApi.Controllers
             this.aiCardGenerationService = aiCardGenerationService;
         }
 
+        [HttpPut("{id}/visibility")]
+        public Task<CollectionDto> SetVisibility(int id, CollectionVisibilityDto request,
+            [FromServices] LearnWord.BL.Services.SocialCollectionService socialService)
+            => socialService.SetVisibility(id, request.Visibility!.Value);
+
         [HttpGet("{id}")]
         public async Task<CollectionDto> Get(int id)
         {

@@ -34,6 +34,9 @@ namespace LearnWord.BL.Mapping
             return new CollectionDto
             {
                 Id = collection.Id,
+                Visibility = collection.Visibility,
+                PublicId = collection.PublicId,
+                ForkedFromCollectionId = collection.ForkedFromCollectionId,
                 Name = collection.Name,
                 Cards = collection.Cards?.Select(MapCard).ToList() ?? [],
                 CreatedAt = collection.CreatedAt,

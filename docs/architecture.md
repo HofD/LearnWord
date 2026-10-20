@@ -125,3 +125,11 @@ User accepts selected cards
 The local default provider is `Fake`. OpenRouter can be enabled through environment variables without changing frontend code. The recommended starter model is `google/gemma-4-26b-a4b-it:free`, with the model kept configurable because free-model availability and quality can change.
 
 This feature is intentionally suited to the agentic workflow because it touches specs, backend contract design, provider abstraction, frontend UX, validation, tests, and final acceptance.
+
+## Social Collections
+
+Collection visibility and stable UUID share identity live alongside domain content in the words schema. Existing rows default to Private. The authenticated facade keeps ownership authoritative and projects explicit read-only DTOs for `/api/social/collections`; Public-only Explore and shared content use database pagination. Shared pages require sign-in, including Public/Unlisted links. Authors use safe pseudonymous labels because public profiles do not exist.
+
+Fork copies the active collection/card/word graph atomically in the domain database, resets review state and creates the existing collection/card ownership links in one identity transaction. A compensating delete handles identity write failure; simultaneous compensation failure is logged and leaves only a private unlinked orphan requiring operator cleanup. ForkedFromCollectionId is historical provenance without a foreign key so original deletion cannot invalidate copies. No subscriptions or live content synchronization are introduced.
+
+For Learner Model work, distinguish content identity from per-user learning state. SRS currently lives on privately owned Card rows; a fork intentionally creates new card identities and no inherited learner history. Keep ownership checks in the facade and learner calculations in the domain/service layers; never include learner state in social DTOs. Frontend analytics goals are existing client telemetry, not a durable backend learning-event ledger.

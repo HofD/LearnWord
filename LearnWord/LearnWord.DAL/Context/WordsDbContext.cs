@@ -1,4 +1,4 @@
-﻿using LearnWord.DAL.Models;
+using LearnWord.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -23,6 +23,10 @@ namespace LearnWord.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(SchemaName);
+            modelBuilder.Entity<Collection>().HasIndex(x => x.PublicId).IsUnique();
+            modelBuilder.Entity<Collection>().HasIndex(x => new { x.Visibility, x.Id });
+            modelBuilder.Entity<Collection>().Property(x => x.Visibility).HasDefaultValue(CollectionVisibility.Private);
+            modelBuilder.Entity<Collection>().Property(x => x.PublicId).HasDefaultValueSql("gen_random_uuid()");
             modelBuilder.Entity<Collection>().HasQueryFilter(x => x.DeletedAt == null);
             modelBuilder.Entity<Card>().HasQueryFilter(x => x.DeletedAt == null);
             modelBuilder.Entity<Word>().HasQueryFilter(x => x.DeletedAt == null);

@@ -365,7 +365,7 @@ Current behavior:
 - `404` if the collection is not linked to the user.
 - Calls internal collection delete, then removes the user link.
 - `200 OK` if both succeed.
-- `503` if the internal collection delete returns an unsuccessful HTTP status.
+- `502` if the internal collection delete returns an unsuccessful HTTP status.
 
 #### Cards For Review
 
@@ -398,7 +398,7 @@ Current behavior:
 - Returns cards due for review where `dueDate <= now`.
 - Newly created cards are due immediately.
 - If collection exists but has no cards, returns an empty array.
-- If collection ownership fails, `CollectionIdentityService` throws `UnauthorizedAccessException`; the controller currently does not map this to a typed error response.
+- If collection ownership fails, the facade raises `ForbiddenException`; API exception middleware returns 403.
 
 #### Generate AI Card Suggestions
 
@@ -485,7 +485,7 @@ Current behavior:
 - Creates the card in `LearnWord.WebApi`.
 - Creates a `CardIdentity` link between the created card and current user.
 - Returns `201 Created` with the created `CardDto`.
-- Current implementation does not explicitly verify that `collectionId` belongs to the user before creating the card.
+- Verifies that `collectionId` belongs to the current user before creating the card; foreign parent returns 403.
 
 #### Delete Card
 
@@ -790,3 +790,21 @@ Card review status:
 - adding/updating a word resets card review state.
 - deleting a word resets card review state when the card still contains active words.
 - deleting the last active word deletes the card.
+
+## Social Collections (Epic 1 contract)
+
+All social endpoints require existing bearer authentication, including shared reads and Explore. Anonymous requests receive 401. Ownership continues to use identitywords links; client-supplied owner ids are never accepted. Inaccessible resources return 404. Existing owner CRUD URLs remain unchanged.
+
+- Owner CollectionDto adds `visibility` (numeric enum: Private=0, Unlisted=1, Public=2), stable `publicId` (UUID), nullable `forkedFromCollectionId`.
+- `PUT /api/collections/{id}/visibility`, body `{ "visibility": 0|1|2 }`: owner only, returns updated CollectionDto; unknown enum values 400.
+- `GET /api/social/collections?page=1&pageSize=20&search=...`: Public only, paginated at database; pageSize 1..50; response `{ items: PublicCollectionSummary[], page, pageSize, totalCount }`. Search by name (no existing description/taxonomy).
+- `GET /api/social/collections/{publicId}?page=1&pageSize=50`: Public/Unlisted or owner Private; paginated content; response PublicCollectionDetails.
+- `POST /api/social/collections/{publicId}/fork`: creates independent Private collection and fresh cards/words with initial review state, records source integer id without an FK so source deletion is allowed. Returns owner CollectionDto. Own source returns 409 (UI links to editor).
+- PublicCollectionSummary: `{ publicId, name, author, cardsCount }`. PublicCollectionDetails adds `{ isOwner, ownerCollectionId, cards, page, pageSize, totalCount }`; ownerCollectionId is nullable and only populated for owner. Public cards contain only words (`value`, `transcription`, `translation`), no learning/review state or user identifiers.
+- Author uses a non-email pseudonymous display label derived from ownership; no full social profiles are introduced.
+- Shared identity is UUID independent of name, stable through visibility changes and rename. Existing rows migrate to Private and receive unique UUIDs.
+- Recheck visibility on shared reads/fork. Card creation must verify parent collection ownership, closing the existing facade gap.
+
+### Shared collection search
+
+`GET /api/social/collections/{publicId}` additionally accepts optional `search`. Omitted/empty/whitespace preserves previous results. Trimmed case-insensitive substring matching checks active card words' `value` or `translation` across the entire collection before pagination. A matched card includes all its active words; matching multiple words does not duplicate the card. `cardsCount` remains the full active collection count; `totalCount` is the matching-card count. Existing page bounds/order, read-only DTO and ownership/visibility rules remain unchanged. Search does not affect fork content (fork always copies the full accessible source).

@@ -1,0 +1,5 @@
+# Analyst plan
+
+User requests shared collection search to match card standard. Keep common PagerComponent/presentation, add optional search to existing GET through all backend layers and filter in database before paging. Query matches value/translation, normalized by trim+case, and counts cards not words. Total metadata separates full collection count from filtered result. No private fields, new endpoints, schema changes or client-wide download. Fork remains whole-source. Shared loading must keep search control/focus stable; read-only controls disabled while pending.
+
+Specialists: backend_social owns backend production plus focused search regressions; frontend_social owns shared component/HTTP/template plus focused UI/HTTP tests. Scopes disjoint, contract drafted first. Analyst owns specs/run docs, Docker fullstack builds, existing backend test script, full Angular suite/build and personal authenticated gateway/browser acceptance with a match beyond the first page, clear/no-results, translation, page-size and mobile. Existing run014/015 pending changes preserved.

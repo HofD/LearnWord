@@ -35,6 +35,13 @@ public class GatewayAuthBoundaryTests
         public override IEnumerable<object[]> GetData(MethodInfo testMethod)
         {
             yield return [new HttpRequestMessage(HttpMethod.Get, "/api/collections")];
+            yield return [new HttpRequestMessage(HttpMethod.Get, "/api/social/collections")];
+            yield return [new HttpRequestMessage(HttpMethod.Get, "/api/social/collections/11111111-1111-1111-1111-111111111111")];
+            yield return [new HttpRequestMessage(HttpMethod.Post, "/api/social/collections/11111111-1111-1111-1111-111111111111/fork")];
+            yield return [new HttpRequestMessage(HttpMethod.Put, "/api/collections/1/visibility")
+            {
+                Content = JsonContent.Create(new { visibility = 2 })
+            }];
             yield return [new HttpRequestMessage(HttpMethod.Post, "/api/cards")
             {
                 Content = JsonContent.Create(new { collectionId = 1, words = Array.Empty<object>() })

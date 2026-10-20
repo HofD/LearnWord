@@ -1,0 +1,5 @@
+# Analyst plan
+
+Approved visual/interaction follow-up to run014, not a backend contract change. Existing uncommitted run014 changes retained. One frontend specialist owns precise frontend components/styles/tests; analyst owns specs, Docker build/test coordination, browser final acceptance and reports. No backend specialist is needed because API cap50 and server pagination stay intact.
+
+Reuse presentation rather than passing public DTOs through owner editors. Extract established pager with configurable size options and external page events; keep owner client data filtering and social server requests in their existing containers. Adopt compact header status/dialog and dark content links, with Bootstrap-compatible accessible behavior. Verification: current Angular suite, production/dev build via Docker, gateway/social smoke as regression if useful, owner visibility cancel/save/share, foreign preview/fork, multipage catalog/shared views, desktop and 390px fit, neutral link colors and keyboard modal focus.

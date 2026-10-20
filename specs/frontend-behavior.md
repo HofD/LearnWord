@@ -514,3 +514,21 @@ Most domain HTTP services use this pattern:
 | Add word | `POST /api/cards/{cardId}/words` |
 | Get review cards | `GET /api/collections/{collectionId}/review` |
 | Submit review outcome | `POST /api/review/cards/{cardId}/review` |
+
+## Social Collections (Epic 1)
+
+Existing `/collections/:id` stays the authenticated owner editor. Add authenticated `/explore` and `/shared/collections/:publicId`. Explore calls paginated Public-only social API, supports search and previous/next pagination. Shared page shows name, safe author, count, read-only paginated words, empty/loading/error/unavailable states and authenticated fork. Owner gets an edit link instead of fork. Successful fork links to the new private collection. Owner editor offers Private/Unlisted/Public, clear current mode and Clipboard API share link for Unlisted/Public. Never show owner editing controls for shared foreign content. Existing RU/EN UI and visual conventions apply. Extend existing analytics with CollectionPublished, CollectionUnpublished, CollectionViewed, CollectionForked; emit only after successful operations.
+
+### Social UI consistency (review follow-up)
+
+Collection access moves to a compact saved-visibility trigger in the owner page heading; a dialog contains visibility settings. Public/Unlisted modes retain a direct share action in the heading. Dismissing/reopening resets unsaved selection to saved mode; failed save retains saved mode/link, and successful save updates both. Dialog supports keyboard dismissal/focus restoration and narrow screens. It is closed by default.
+
+Owner and shared pages reuse collection/card/word presentational elements without exposing owner controls or private fields on shared content. A common pager matches existing Cards controls: showing range/total, size selector, grouped previous/current-total/next, hidden navigation on one page, responsive layout. Owner paging/search stay client-side with 25/50/100; social requests use 25/50 within existing API cap50, resetting to page1 on size/search changes. Explore and shared-preview search run server-side across their whole datasets, never only across downloaded pages.
+
+Content links use neutral dark palette with visible hover/focus/visited states. Button-link and dark-navigation contrast are preserved.
+
+Docker-built Angular assets use hashed filenames in both development and production builds, so page refresh requests the current bundle without changing environment/API selection.
+
+### Shared collection search
+
+Shared collection pager contains the same input-only automatic card search control as the owner view, using existing RU/EN labels/placeholders and no Find button or Enter requirement. Typing applies trimmed whole-collection server search after approximately 300ms debounce; clearing restores immediately. The field stays editable and focused during debounce/requests. Superseded reads/timers are cancelled so stale results/errors cannot replace the latest query. Search resets page1; paging/size/retry preserve query; route changes reset state and cancel outstanding work. Pager shows matching ranges and Found N of cardsCount; zero matches use the existing neutral search empty state. Backend pagination and optional search API remain unchanged; fork still copies the full accessible source. Explore retains its separate existing submit search behavior.

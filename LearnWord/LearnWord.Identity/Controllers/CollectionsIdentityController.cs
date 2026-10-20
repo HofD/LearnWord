@@ -1,4 +1,4 @@
-﻿using LearnWord.BL.Models.Dto;
+using LearnWord.BL.Models.Dto;
 using LearnWord.Identity.Abstactions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +13,14 @@ namespace LearnWord.Identity.Controllers
         public CollectionsIdentityController(ICollectionIdentityService collectionIdentityService) 
         {
             this.collectionIdentityService = collectionIdentityService;
+        }
+
+        [HttpPut("{id}/visibility")]
+        public async Task<ActionResult<CollectionDto>> SetVisibility(int id, CollectionVisibilityDto request,
+            [FromServices] LearnWord.Identity.Services.SocialCollectionIdentityService socialService)
+        {
+            if (HttpContext.Items["UserId"]?.ToString() is not string userId) return Unauthorized();
+            return Ok(await socialService.SetVisibility(id, request.Visibility!.Value, userId));
         }
 
         [HttpGet("{id}")]

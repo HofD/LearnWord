@@ -16,6 +16,8 @@ builder.Services.AddDbContext<CollectionIdentityDbContext>(options =>
 // Add services to the container.
 builder.Services.AddTransient<JwtUtils>();
 builder.Services.AddTransient<CollectionIdentityRepository>();
+builder.Services.AddSingleton<ISocialCollectionsHttpService, SocialCollectionsHttpService>();
+builder.Services.AddTransient<SocialCollectionIdentityService>();
 builder.Services.AddSingleton<ICollectionsHttpService, CollectionsHttpService>();
 builder.Services.AddTransient<ICollectionIdentityService, CollectionIdentityService>();
 builder.Services.AddTransient<CardIdentityRepository>();

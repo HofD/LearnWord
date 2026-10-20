@@ -206,6 +206,29 @@ public class HttpUpstreamServiceTests
         Assert.Contains("404", exception.Message);
     }
 
+    [Theory]
+    [InlineData("  кот & dog+?/#% ")]
+    [InlineData(null)]
+    public async Task SocialCollectionsHttpService_Get_EncodesSearchAndPreservesPaging(string? search)
+    {
+        var publicId = Guid.NewGuid();
+        await using var server = await TestHttpServer.Start(async context =>
+        {
+            Assert.Equal("GET", context.Request.HttpMethod);
+            Assert.Equal($"/social/collections/{publicId}", context.Request.Url!.AbsolutePath);
+            Assert.Equal("2", context.Request.QueryString["page"]);
+            Assert.Equal("7", context.Request.QueryString["pageSize"]);
+            Assert.Equal(search ?? string.Empty, context.Request.QueryString["search"]);
+            Assert.Equal(3, context.Request.QueryString.Count);
+            await WriteJson(context.Response, new SocialCollectionPage { CollectionId = 17 });
+        });
+        var service = new SocialCollectionsHttpService(CreateConfiguration("CollectionsRoute", server.Url("/collections")));
+
+        var result = await service.Get(publicId, 2, 7, search);
+
+        Assert.Equal(17, result.CollectionId);
+    }
+
     private static IConfiguration CreateConfiguration(string routeKey, string routeValue)
     {
         return new ConfigurationBuilder()

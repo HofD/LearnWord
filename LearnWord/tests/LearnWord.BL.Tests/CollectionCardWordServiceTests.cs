@@ -14,6 +14,26 @@ namespace LearnWord.BL.Tests;
 public class CollectionCardWordServiceTests
 {
     [Fact]
+    public async Task CollectionService_NewCollectionsArePrivateWithDistinctStablePublicIds()
+    {
+        await using var fixture = await TestWordsDatabase.Create();
+        var service = fixture.CreateCollectionService();
+
+        var first = await service.Add(new CollectionCreateDto { Name = "Same name" });
+        var second = await service.Add(new CollectionCreateDto { Name = "Same name" });
+        var renamed = await service.Rename(first.Id, new CollectionRenameDto { Name = "Changed" });
+        var fetched = await service.Get(first.Id);
+
+        Assert.Equal(CollectionVisibility.Private, first.Visibility);
+        Assert.Equal(CollectionVisibility.Private, second.Visibility);
+        Assert.NotEqual(Guid.Empty, first.PublicId);
+        Assert.NotEqual(first.PublicId, second.PublicId);
+        Assert.Equal(first.PublicId, renamed.PublicId);
+        Assert.Equal(first.PublicId, fetched.PublicId);
+        Assert.Null(first.ForkedFromCollectionId);
+    }
+
+    [Fact]
     public async Task CollectionService_AddGetRenameListAndRemove_CoversCollectionLifecycle()
     {
         await using var fixture = await TestWordsDatabase.Create();

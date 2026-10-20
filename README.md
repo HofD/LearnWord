@@ -25,6 +25,7 @@ Key scenario:
 - JWT authentication with refresh tokens, email confirmation, and password reset.
 - AI card generation from source text with a fake local provider and configurable OpenRouter provider.
 - Spaced repetition review with due-card selection and four outcome grades.
+- Social Collections: private, link-only and discoverable collections, authenticated Explore and independent private copies.
 - PostgreSQL-backed local Docker environment.
 - Current behavior specs for backend and frontend contracts.
 - Role-specific agent instructions for system analysis, backend development, backend QA, and frontend UI work.

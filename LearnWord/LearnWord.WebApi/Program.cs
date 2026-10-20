@@ -27,6 +27,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 
 builder.Services.AddTransient<CollectionRepository>();
+builder.Services.AddTransient<SocialCollectionRepository>();
+builder.Services.AddTransient<SocialCollectionService>();
 builder.Services.AddTransient<ICollectionService, CollectionService>();
 builder.Services.AddTransient<CardRepository>();
 builder.Services.AddTransient<ICardService, CardService>();

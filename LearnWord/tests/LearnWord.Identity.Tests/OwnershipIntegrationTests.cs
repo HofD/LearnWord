@@ -17,6 +17,25 @@ public class OwnershipIntegrationTests
     private const string OtherUser = "user-other";
 
     [Fact]
+    public async Task CollectionService_OwnerCanReadRenameAndRemove_AndListsOnlyOwnedCollections()
+    {
+        await using var fixture = await TestIdentityDatabase.Create();
+        await fixture.SeedCollectionLink(10, CurrentUser);
+        await fixture.SeedCollectionLink(11, OtherUser);
+        var service = fixture.CreateCollectionService(new RecordingCollectionsHttpService());
+
+        var collection = await service.Get(10, CurrentUser);
+        var renamed = await service.Rename(10, new CollectionRenameDto { Name = "Owner edit" }, CurrentUser);
+        var list = await service.GetAll(CurrentUser);
+        var removed = await service.Remove(10, CurrentUser);
+
+        Assert.Equal(10, collection!.Id);
+        Assert.Equal("Owner edit", renamed!.Name);
+        Assert.Equal(10, Assert.Single(list.Collections).Id);
+        Assert.True(removed);
+    }
+
+    [Fact]
     public async Task CollectionService_ForeignCollection_ReturnsNullAndDoesNotCallUpstream()
     {
         await using var fixture = await TestIdentityDatabase.Create();

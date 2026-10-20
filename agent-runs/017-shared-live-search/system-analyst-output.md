@@ -1,0 +1,3 @@
+# Analyst correction
+
+Previous run016 copied manual Explore submit UX, which differs from owner card search. User explicitly requests automatic input behavior. Keep established whole-source search API and server paging; change only shared frontend triggering/pending lifecycle and presentation. One frontend specialist owns exact shared TS/HTML/tests. Analyst owns specs and final Docker/full frontend suite/browser checks. No backend production/test changes planned. Verify auto query, rapid edits, editable input, clear, cancellation and shared access/fork guard states; no broad backend suite rerun for trigger-only change.
