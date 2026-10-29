@@ -51,5 +51,13 @@
   },
   "migration": "20261029000000_AddAiCoach",
   "livePaidProviderTested": false,
-  "productionDeployed": false
+  "productionDeployed": false,
+  "promptV2FollowUp": {
+    "backendPassed": 339,
+    "backendFailed": 0,
+    "backendSkipped": 0,
+    "gatewayGroupsPassed": 6,
+    "promptVersion": "coach-v2",
+    "liveProviderTested": false
+  }
 }

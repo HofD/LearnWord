@@ -20,6 +20,29 @@ public class CoachServiceTests
             OptionsFactory.Create(new AiCoachOptions { Enabled = enabled }), NullLogger<CoachService>.Instance);
 
     [Fact]
+    public async Task NewPromptVersionDoesNotReuseOldNoneAndKeepsHistoricalAnalysis()
+    {
+        await using var db = await CoachTestDatabase.Create();
+        var (_, session) = await db.Seed();
+        var old = new CoachAnalysis { Id = Guid.NewGuid(), SessionId = session.Id, CollectionId = session.CollectionId,
+            CreatedAt = DateTimeOffset.UtcNow, UpdatedAt = DateTimeOffset.UtcNow, Status = "Completed", Decision = "None",
+            Generation = 1, PromptVersion = "coach-v1" };
+        db.Context.CoachAnalyses.Add(old);
+        await db.Context.SaveChangesAsync();
+        var provider = new RecordingProvider();
+        var service = Service(db, provider);
+        var result = await service.Analyze(session.Id, new());
+        Assert.Equal("coach-v2", result.PromptVersion);
+        Assert.NotEqual(old.Id, result.Id);
+        Assert.Equal("Intervention", result.Decision);
+        Assert.Equal(1, provider.Calls);
+        Assert.Equal(result.Id, (await service.Analyze(session.Id, new())).Id);
+        Assert.Equal(1, provider.Calls);
+        Assert.Equal(2, await db.Context.CoachAnalyses.CountAsync());
+        Assert.Equal("None", (await db.Context.CoachAnalyses.SingleAsync(a => a.Id == old.Id)).Decision);
+    }
+
+    [Fact]
     public async Task CompletedAnalysisIsDurableAndDoesNotPayForRepeatedGeneration()
     {
         await using var db = await CoachTestDatabase.Create();

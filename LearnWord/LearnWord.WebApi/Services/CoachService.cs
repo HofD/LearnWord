@@ -36,7 +36,8 @@ public class CoachService
             var session = await RequireSession(sessionId);
             if (!session.CompletedAt.HasValue) throw new ConflictException("Complete the session first.", "coach_session_incomplete");
             analysis = await db.CoachAnalyses.SingleOrDefaultAsync(a => a.SessionId == sessionId && a.PromptVersion == CoachLimits.PromptVersion)
-                ?? new CoachAnalysis { Id = Guid.NewGuid(), SessionId = sessionId, CollectionId = session.CollectionId, CreatedAt = now, Language = request.Language };
+                ?? new CoachAnalysis { Id = Guid.NewGuid(), SessionId = sessionId, CollectionId = session.CollectionId, CreatedAt = now, Language = request.Language,
+                    PromptVersion = CoachLimits.PromptVersion, SchemaVersion = CoachLimits.SchemaVersion };
             if (analysis.Generation > 0)
             {
                 if (analysis.Status == "Completed" || analysis.Status == "Pending" && analysis.UpdatedAt.AddSeconds(CoachLimits.LeaseSeconds) > now
@@ -236,7 +237,8 @@ public class CoachService
     { if (db.Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL") await db.Database.ExecuteSqlInterpolatedAsync($"SELECT 1 FROM words.\"Cards\" WHERE \"Id\" = {id} FOR UPDATE"); }
     private static CoachAnalysisDto Disabled(LearningSession session) => new()
     {
-        SessionId = session.Id, Status = "Disabled", Decision = "None", CreatedAt = session.CompletedAt ?? session.StartedAt
+        SessionId = session.Id, Status = "Disabled", Decision = "None",
+        PromptVersion = CoachLimits.PromptVersion, SchemaVersion = CoachLimits.SchemaVersion, CreatedAt = session.CompletedAt ?? session.StartedAt
     };
     private static ConflictException Closed() => new("Intervention is not available for this action.", "coach_intervention_closed");
     private static string SafeProvenance(string value) => (value ?? "").Length <= 200 ? value ?? "" : value[..200];

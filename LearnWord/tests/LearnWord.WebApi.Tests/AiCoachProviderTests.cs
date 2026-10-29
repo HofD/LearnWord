@@ -25,6 +25,27 @@ public class AiCoachProviderTests
     }
 
     [Fact]
+    public async Task OpenRouter_RepeatedDifficultyDoesNotRequireExactWrongAnswerEvidence()
+    {
+        var context = CoachOutputValidatorTests.Context();
+        context.Cards[0].CurrentLearnerState.MasteryScore = .21m;
+        context.Cards[0].RecentAttempts.Add(new CoachAttemptContext { Id = Guid.NewGuid(), Outcome = "Hard", LearningRevision = 2 });
+        context.Cards[0].CurrentRevisionEvidenceCount = 3;
+        var output = CoachOutputValidatorTests.Serialize(CoachOutputValidatorTests.Result());
+        var handler = new Handler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(Envelope(output)) });
+        var result = CoachOutputValidator.ParseAndValidate(await Provider(handler).Analyze(context, default), context);
+        Assert.Equal("Intervention", result.Decision);
+        using var doc = JsonDocument.Parse(handler.RequestBody!);
+        var system = doc.RootElement.GetProperty("messages")[0].GetProperty("content").GetString()!;
+        Assert.Contains("NOT a prerequisite", system);
+        Assert.Contains("two Again and one Hard", system);
+        Assert.Contains("do not force a recommendation", system);
+        Assert.Contains("can still warrant None", system);
+        Assert.Contains("Do not expose numerical mastery scores", system);
+        Assert.Contains("Never guess confusion", system);
+    }
+
+    [Fact]
     public async Task OpenRouter_MissingKeyDoesNotCallNetworkAndDoesNotSilentlyFabricateAdvice()
     {
         var handler = new Handler(_ => throw new InvalidOperationException("Unexpected network call"));

@@ -163,3 +163,6 @@ Screenshots under [screenshots](screenshots/), including desktop RU, mobile less
 ## Review branches
 
 Saved on user request after acceptance, with one local feature branch per nested repository, both named `feature/epic-3a-ai-coach`. Backend main remains at `57f7df9`; frontend main remains at `3fd5789`. Frontend commit: `1b5e511` — Add optional post-session AI Coach experience. Backend commit contains the Coach implementation, migration, tests, specification and delivery evidence, including this report. No push, PR creation or merge was performed as part of this save.
+
+
+Prompt clarification follow-up: [coach-v2 changes and verification](prompt-v2-followup.md), full backend suite339 passed. Earlier counts above record original Epic3A acceptance.
