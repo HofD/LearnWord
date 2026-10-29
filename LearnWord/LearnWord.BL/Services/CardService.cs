@@ -12,12 +12,14 @@ namespace LearnWord.BL.Services
         private readonly CardRepository cardRepository;
         private readonly ObjectMapper mapper;
         private readonly ISpacedRepetitionScheduler scheduler;
+        private readonly LearningService learning;
 
-        public CardService(CardRepository cardRepository, ObjectMapper mapper, ISpacedRepetitionScheduler scheduler)
+        public CardService(CardRepository cardRepository, ObjectMapper mapper, ISpacedRepetitionScheduler scheduler, LearningService? learning = null)
         {
             this.cardRepository = cardRepository;
             this.mapper = mapper;
             this.scheduler = scheduler;
+            this.learning = learning ?? new LearningService(cardRepository.Learning, mapper, new LearnerStateCalculator());
         }
         public async Task<CardDto> Add(CardCreateDto createDto)
         {
@@ -29,6 +31,9 @@ namespace LearnWord.BL.Services
         }
         public async Task<CardDto> Reset(int id)
         {
+            var learning = cardRepository.Learning;
+            await using var tx = learning.Context.Database.CurrentTransaction == null
+                ? await learning.BeginMutation(id) : null;
             var card = await cardRepository.FindById(id, false);
 
             if (card == null)
@@ -38,30 +43,13 @@ namespace LearnWord.BL.Services
 
             scheduler.Reset(card, DateTimeOffset.UtcNow);
             await cardRepository.SaveChangesAsync();
-
+            if (tx != null) await tx.CommitAsync();
             return mapper.Map<CardDto>(card);
         }
 
-        public async Task<CardDto> Review(int id, ReviewCardRequest request)
+        public Task<CardDto> Review(int id, ReviewCardRequest request)
         {
-            if (request == null || !Enum.TryParse<ReviewOutcome>(request.Outcome, ignoreCase: false, out var outcome))
-            {
-                throw new BadRequestException(
-                    "Outcome must be one of Again, Hard, Good, or Easy.",
-                    "invalid_review_outcome");
-            }
-
-            var card = await cardRepository.FindById(id);
-
-            if (card == null)
-            {
-                throw new NotFoundException($"Card {id} not found.", "card_not_found");
-            }
-
-            scheduler.ApplyReview(card, outcome, DateTimeOffset.UtcNow);
-            await cardRepository.SaveChangesAsync();
-
-            return mapper.Map<CardDto>(card);
+            return learning.Review(id, request, scheduler);
         }
     }
 }

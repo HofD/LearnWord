@@ -17,6 +17,7 @@ namespace LearnWord.DAL.Models
         public int IntervalDays { get; set; }
         public decimal EaseFactor { get; set; }
         public int ReviewCount { get; set; }
+        public int LearningRevision { get; set; }
         public DateTimeOffset? LastReviewedAt { get; set; }
         public DateTimeOffset? ModifiedAt { get; set; }
         public DateTimeOffset? DeletedAt { get; set; }

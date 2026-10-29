@@ -133,3 +133,9 @@ Collection visibility and stable UUID share identity live alongside domain conte
 Fork copies the active collection/card/word graph atomically in the domain database, resets review state and creates the existing collection/card ownership links in one identity transaction. A compensating delete handles identity write failure; simultaneous compensation failure is logged and leaves only a private unlinked orphan requiring operator cleanup. ForkedFromCollectionId is historical provenance without a foreign key so original deletion cannot invalidate copies. No subscriptions or live content synchronization are introduced.
 
 For Learner Model work, distinguish content identity from per-user learning state. SRS currently lives on privately owned Card rows; a fork intentionally creates new card identities and no inherited learner history. Keep ownership checks in the facade and learner calculations in the domain/service layers; never include learner state in social DTOs. Frontend analytics goals are existing client telemetry, not a durable backend learning-event ledger.
+
+## Private learning history and deterministic model
+
+Epic 2 adds learning attempts, derived card state and sessions around the existing Card scheduler in the words database. Review persistence can therefore update current scheduling, append evidence and update model/session counters in one local transaction. Identity remains the ownership authority; collection-scoped plans and summaries and card history never pass through social DTOs.
+
+Scheduling answers when to review. The learner model summarizes demonstrated recall and difficulty for bounded due/weak/new recommendations. It remains deterministic and rebuildable from evidence and current Card data; legacy SRS is inferred conservatively without creating historical events. See [Learner Model v1](../specs/learner-model.md) for contracts, formula, reset policy and limitations.

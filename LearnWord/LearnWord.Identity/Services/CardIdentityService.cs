@@ -11,15 +11,17 @@ namespace LearnWord.Identity.Services
         private readonly ICardHttpService cardHttpService;
         private readonly CardIdentityRepository repository;
         private readonly CollectionIdentityRepository collectionIdentityRepository;
+        private readonly LearningIdentityService? learning;
 
         public CardIdentityService(
             ICardHttpService cardHttpService,
             CardIdentityRepository repository,
-            CollectionIdentityRepository collectionIdentityRepository)
+            CollectionIdentityRepository collectionIdentityRepository, LearningIdentityService? learning = null)
         {
             this.cardHttpService = cardHttpService;
             this.repository = repository;
             this.collectionIdentityRepository = collectionIdentityRepository;
+            this.learning = learning;
         }
         public async Task<CardDto> Add(CardCreateDto cardCreateDto, string userId)
         {
@@ -35,7 +37,11 @@ namespace LearnWord.Identity.Services
         public async Task<CardDto> Review(int id, ReviewCardRequest request, string userId)
         {
             await CheckCardIdentity(id, userId);
-
+            if (request?.SessionId is Guid sessionId)
+            {
+                if (learning == null) throw new InvalidOperationException("Learning ownership service is unavailable.");
+                await learning.Session(sessionId, userId);
+            }
             return await cardHttpService.Review(id, request);
         }
 

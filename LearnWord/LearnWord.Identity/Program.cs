@@ -21,6 +21,8 @@ builder.Services.AddTransient<SocialCollectionIdentityService>();
 builder.Services.AddSingleton<ICollectionsHttpService, CollectionsHttpService>();
 builder.Services.AddTransient<ICollectionIdentityService, CollectionIdentityService>();
 builder.Services.AddTransient<CardIdentityRepository>();
+builder.Services.AddSingleton<ILearningHttpService, LearningHttpService>();
+builder.Services.AddTransient<LearningIdentityService>();
 builder.Services.AddSingleton<ICardHttpService, CardHttpService>();
 builder.Services.AddTransient<ICardIdentityService, CardIdentityService>();
 builder.Services.AddSingleton<IWordHttpService, WordHttpService>();

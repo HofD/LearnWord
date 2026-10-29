@@ -61,6 +61,8 @@ namespace LearnWord.Migrations.Migrations
                     b.Property<DateTimeOffset?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("LearningRevision").HasColumnType("integer");
+
                     b.Property<int>("ReviewCount")
                         .HasColumnType("integer");
 
@@ -70,6 +72,7 @@ namespace LearnWord.Migrations.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CollectionId");
+                    b.HasIndex("CollectionId", "DueDate", "Id");
 
                     b.ToTable("Cards", "words");
                 });
@@ -149,6 +152,93 @@ namespace LearnWord.Migrations.Migrations
 
                     b.ToTable("Words", "words");
                 });
+
+            modelBuilder.Entity("LearnWord.DAL.Models.LearningAttempt", b =>
+            {
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<int>("CardId").HasColumnType("integer");
+                b.Property<Guid?>("SessionId").HasColumnType("uuid");
+                b.Property<Guid?>("RequestId").HasColumnType("uuid");
+                b.Property<int>("LearningRevision").HasColumnType("integer");
+                b.Property<int>("Outcome").HasColumnType("integer");
+                b.Property<DateTimeOffset>("ReviewedAt").HasColumnType("timestamp with time zone");
+                b.Property<int>("PreviousIntervalDays").HasColumnType("integer");
+                b.Property<int>("NewIntervalDays").HasColumnType("integer");
+                b.Property<decimal>("PreviousEaseFactor").HasColumnType("numeric");
+                b.Property<decimal>("NewEaseFactor").HasColumnType("numeric");
+                b.Property<DateTimeOffset>("PreviousDueDate").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset>("NewDueDate").HasColumnType("timestamp with time zone");
+                b.Property<int?>("ResponseTimeMs").HasColumnType("integer");
+                b.HasKey("Id");
+                b.HasIndex("CardId", "ReviewedAt");
+                b.HasIndex("CardId", "RequestId").IsUnique();
+                b.HasIndex("SessionId", "CardId").IsUnique();
+                b.HasIndex("ReviewedAt");
+                b.ToTable("LearningAttempts", "words");
+            });
+
+            modelBuilder.Entity("LearnWord.DAL.Models.LearnerCardState", b =>
+            {
+                b.Property<int>("CardId").HasColumnType("integer");
+                b.Property<int>("LearningRevision").HasColumnType("integer");
+                b.Property<int>("ModelVersion").HasColumnType("integer");
+                b.Property<string>("Source").HasColumnType("text").IsRequired();
+                b.Property<decimal>("MasteryScore").HasColumnType("numeric");
+                b.Property<decimal>("DifficultyScore").HasColumnType("numeric");
+                b.Property<int>("AttemptsCount").HasColumnType("integer");
+                b.Property<int>("SuccessfulAttempts").HasColumnType("integer");
+                b.Property<int>("FailedAttempts").HasColumnType("integer");
+                b.Property<int>("ConsecutiveSuccesses").HasColumnType("integer");
+                b.Property<int>("ConsecutiveFailures").HasColumnType("integer");
+                b.Property<decimal>("OutcomePoints").HasColumnType("numeric");
+                b.Property<int?>("LastOutcome").HasColumnType("integer");
+                b.Property<DateTimeOffset?>("LastAttemptAt").HasColumnType("timestamp with time zone");
+                b.Property<int>("Status").HasColumnType("integer");
+                b.HasKey("CardId");
+                b.HasIndex("Status");
+                b.ToTable("LearnerCardStates", "words");
+            });
+
+            modelBuilder.Entity("LearnWord.DAL.Models.LearningSession", b =>
+            {
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<int>("CollectionId").HasColumnType("integer");
+                b.Property<DateTimeOffset>("StartedAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset?>("CompletedAt").HasColumnType("timestamp with time zone");
+                b.Property<int>("PlannedCardsCount").HasColumnType("integer");
+                b.Property<int>("CompletedCardsCount").HasColumnType("integer");
+                b.Property<int>("SuccessfulReviews").HasColumnType("integer");
+                b.Property<int>("FailedReviews").HasColumnType("integer");
+                b.HasKey("Id");
+                b.HasIndex("CollectionId", "StartedAt");
+                b.ToTable("LearningSessions", "words");
+            });
+
+            modelBuilder.Entity("LearnWord.DAL.Models.LearningSessionCard", b =>
+            {
+                b.Property<Guid>("SessionId").HasColumnType("uuid");
+                b.Property<int>("CardId").HasColumnType("integer");
+                b.Property<int>("Position").HasColumnType("integer");
+                b.Property<int>("LearningRevision").HasColumnType("integer");
+                b.HasKey("SessionId", "CardId");
+                b.HasIndex("CardId");
+                b.ToTable("LearningSessionCards", "words");
+            });
+
+            modelBuilder.Entity("LearnWord.DAL.Models.LearningAttempt", b => {
+                b.HasOne("LearnWord.DAL.Models.Card", null).WithMany().HasForeignKey("CardId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("LearnWord.DAL.Models.LearningSession", null).WithMany().HasForeignKey("SessionId").OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity("LearnWord.DAL.Models.LearnerCardState", b => {
+                b.HasOne("LearnWord.DAL.Models.Card", null).WithOne().HasForeignKey("LearnWord.DAL.Models.LearnerCardState", "CardId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("LearnWord.DAL.Models.LearningSession", b => {
+                b.HasOne("LearnWord.DAL.Models.Collection", null).WithMany().HasForeignKey("CollectionId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("LearnWord.DAL.Models.LearningSessionCard", b => {
+                b.HasOne("LearnWord.DAL.Models.Card", null).WithMany().HasForeignKey("CardId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("LearnWord.DAL.Models.LearningSession", null).WithMany("Cards").HasForeignKey("SessionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
 
             modelBuilder.Entity("LearnWord.DAL.Models.Card", b =>
                 {

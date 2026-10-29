@@ -9,6 +9,7 @@ namespace LearnWord.DAL.Repositories
 {
     public class CardRepository : RepositoryBase
     {
+        public LearningRepository Learning => new LearningRepository(dbContext);
         public CardRepository(WordsDbContext dbContext) : base(dbContext)
         {
         }

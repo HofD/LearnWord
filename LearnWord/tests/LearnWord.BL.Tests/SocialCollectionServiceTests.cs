@@ -100,6 +100,10 @@ public class SocialCollectionServiceTests
         await db.Context.SaveChangesAsync();
         var originalWordId = originalCard.Words[0].Id;
         db.Context.ChangeTracker.Clear();
+        // Evidence and derived state belong only to the source owned Card.
+        await new CardService(new CardRepository(db.Context), new ObjectMapper(), new SpacedRepetitionScheduler())
+            .Review(originalCard.Id, new LearnWord.BL.Models.Dto.ReviewCardRequest { Outcome = "Good" });
+        db.Context.ChangeTracker.Clear();
         var before = DateTimeOffset.UtcNow;
 
         var result = await db.Service.Fork(source.PublicId);
@@ -115,6 +119,11 @@ public class SocialCollectionServiceTests
         Assert.Equal(source.Id, clone.ForkedFromCollectionId);
         Assert.NotEqual(originalCard.Id, card.Id);
         Assert.NotEqual(originalWordId, word.Id);
+        Assert.True(await db.Context.Set<LearningAttempt>().AnyAsync(a => a.CardId == originalCard.Id));
+        Assert.True(await db.Context.Set<LearnerCardState>().AnyAsync(a => a.CardId == originalCard.Id));
+        Assert.False(await db.Context.Set<LearningAttempt>().AnyAsync(a => a.CardId == card.Id));
+        Assert.False(await db.Context.Set<LearnerCardState>().AnyAsync(a => a.CardId == card.Id));
+        Assert.False(await db.Context.Set<LearningSession>().AnyAsync(a => a.CollectionId == clone.Id));
         Assert.Equal(("cat", "[cat]", "кот"), (word.Value, word.Transcription, word.Translation));
         Assert.False(card.Learnt);
         Assert.Null(card.LearntAt);

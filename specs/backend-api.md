@@ -1,5 +1,7 @@
 # Backend API and Services Spec
 
+Epic 2 private learning contracts and deterministic model rules are described in [Learner Model v1](learner-model.md). They extend the authenticated review API without changing its existing outcome vocabulary or Card scheduling fields. Social DTOs remain content-only.
+
 This document fixes the current backend behavior for the Learn Word system.
 
 ## Topology

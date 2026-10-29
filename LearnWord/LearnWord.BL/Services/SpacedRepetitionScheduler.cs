@@ -58,6 +58,7 @@ namespace LearnWord.BL.Services
 
         public void Reset(Card card, DateTimeOffset resetAt)
         {
+            card.LearningRevision += 1;
             card.Learnt = false;
             card.LearntAt = null;
             card.ShowedAt = null;

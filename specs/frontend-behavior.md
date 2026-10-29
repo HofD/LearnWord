@@ -2,6 +2,18 @@
 
 This document fixes the current Angular frontend behavior for Learn Word.
 
+## Today's Learning (Epic 2)
+
+The existing owned collection page includes a compact Today's Learning panel with due/weak/new plan counts, estimated minutes and Start. It also shows Strong/Learning/Weak/New knowledge counts, studied cards and attempts during the trailing seven days. Counts come from authenticated collection-scoped learning APIs; model scores are not displayed as precise predictions. Loading, empty and retryable error states use the current design language and RU/EN strings.
+
+Start opens the existing `/review/:collectionId?today=true` route and creates a persisted session from a fresh backend plan. Existing `/review/:collectionId` remains the compatible due-only route. Translation reveal, all card words, four outcome controls and SRS metadata remain. Progress advances after a successful acknowledged answer. Both routes record history, optionally sending a response duration bounded to ten minutes and a UUID requestId. Adaptive reviews also send sessionId.
+
+Submission is guarded in code and buttons are disabled while pending. A failed request retains its exact outcome, duration and requestId; Retry Answer resends that payload so ambiguous network failures cannot append duplicate attempts. Other outcomes remain disabled until that answer succeeds. Completion calls the idempotent session endpoint and shows actual reviewed/successful/need-more-work counts; completion failures have an explicit retry. Leaving the page may leave an abandoned session; no browser-unload completion is claimed.
+
+Returning to the collection reloads the private recommendation/summary. Persisted card add/delete and word add/edit/delete also refresh the panel through existing component output propagation. Social/shared/Explore views contain no learner panel or learner fields.
+
+See [Learner Model v1](learner-model.md) for API contracts and deterministic selection/status semantics.
+
 ## Application Setup
 
 The frontend is an Angular standalone-component application under `LearnWordWebApp/lw-app`.

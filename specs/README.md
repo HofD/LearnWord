@@ -6,6 +6,7 @@ These specs capture the current backend and frontend behavior so future changes 
 
 - [Backend API and Services](backend-api.md)
 - [Frontend Behavior](frontend-behavior.md)
+- [Learner Model v1](learner-model.md)
 - [Project Agents](../agents/README.md)
 
 ## Scope
