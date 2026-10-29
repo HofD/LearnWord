@@ -51,6 +51,7 @@ services:
       ASPNETCORE_HTTP_PORTS: 8080
       PUBLIC_PORT: ${LW_WEBAPI_PORT:-5003}
       ConnectionStrings__LwConnection: Host=postgres;Port=5432;Database=${LW_DB_NAME:-lwdb};Username=${LW_DB_USER:-lwuser};Password=${LW_DB_PASSWORD:-lwpassword}
+      AiCoach__Enabled: ${LW_AI_COACH_ENABLED:-true}
       AiCardGeneration__Provider: ${LW_AI_PROVIDER:-Fake}
       AiCardGeneration__MaxSourceTextLength: ${LW_AI_MAX_SOURCE_TEXT_LENGTH:-4000}
       AiCardGeneration__MaxCards: ${LW_AI_MAX_CARDS:-10}

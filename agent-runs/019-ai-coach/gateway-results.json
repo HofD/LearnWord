@@ -1,0 +1,11 @@
+{
+  "passed": 6,
+  "checks": [
+    "A: successful adaptive session, None result, durable cache and anonymous/foreign session isolation",
+    "B: repeated evidence produces bounded grounded lesson; accept/complete idempotent, SRS/evidence/state unchanged",
+    "C/E: server-side supplementary answers, correct/incorrect, duplicate/foreign protection, completion; no SRS/normal evidence/cache changes",
+    "Follow-up diagnostic uses first future ordinary current-revision attempt only",
+    "F: public/shared search content allowlist and fork with fresh learner state and no Coach leakage",
+    "D: edit invalidates old work, deleted content unavailable, deleted collection blocks Coach reads"
+  ]
+}

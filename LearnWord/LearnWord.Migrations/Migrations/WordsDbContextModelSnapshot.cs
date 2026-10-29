@@ -225,6 +225,76 @@ namespace LearnWord.Migrations.Migrations
                 b.ToTable("LearningSessionCards", "words");
             });
 
+            modelBuilder.Entity("LearnWord.DAL.Models.CoachAnalysis", b =>
+            {
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("SessionId").HasColumnType("uuid");
+                b.Property<int>("CollectionId").HasColumnType("integer");
+                b.Property<int>("SchemaVersion").HasColumnType("integer");
+                b.Property<int>("Generation").HasColumnType("integer");
+                b.Property<int>("RetryCount").HasColumnType("integer");
+                b.Property<DateTimeOffset>("CreatedAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset>("UpdatedAt").HasColumnType("timestamp with time zone");
+                b.Property<string>("Status").HasColumnType("text").IsRequired();
+                b.Property<string>("Decision").HasColumnType("text").IsRequired();
+                b.Property<string>("Language").HasColumnType("text").IsRequired();
+                b.Property<string>("Provider").HasColumnType("text").IsRequired();
+                b.Property<string>("Model").HasColumnType("text").IsRequired();
+                b.Property<string>("PromptVersion").HasColumnType("text").IsRequired();
+                b.Property<string>("Summary").HasColumnType("text").IsRequired();
+                b.Property<string>("ObservationsJson").HasColumnType("text").IsRequired();
+                b.Property<string>("FailureCode").HasColumnType("text");
+                b.HasKey("Id");
+                b.HasIndex("SessionId", "PromptVersion").IsUnique();
+                b.HasIndex("CollectionId");
+                b.ToTable("CoachAnalyses", "words");
+            });
+            modelBuilder.Entity("LearnWord.DAL.Models.CoachIntervention", b =>
+            {
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("AnalysisId").HasColumnType("uuid");
+                b.Property<int>("CardId").HasColumnType("integer");
+                b.Property<int>("LearningRevision").HasColumnType("integer");
+                b.Property<DateTimeOffset>("CreatedAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset?>("StartedAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset?>("CompletedAt").HasColumnType("timestamp with time zone");
+                b.Property<string>("Type").HasColumnType("text").IsRequired();
+                b.Property<string>("Title").HasColumnType("text").IsRequired();
+                b.Property<string>("Status").HasColumnType("text").IsRequired();
+                b.Property<string>("PayloadJson").HasColumnType("text").IsRequired();
+                b.HasKey("Id");
+                b.HasIndex("AnalysisId");
+                b.HasIndex("CardId", "LearningRevision", "CompletedAt");
+                b.ToTable("CoachInterventions", "words");
+            });
+            modelBuilder.Entity("LearnWord.DAL.Models.InterventionAttempt", b =>
+            {
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("InterventionId").HasColumnType("uuid");
+                b.Property<Guid>("ExerciseId").HasColumnType("uuid");
+                b.Property<int>("CardId").HasColumnType("integer");
+                b.Property<DateTimeOffset>("SubmittedAt").HasColumnType("timestamp with time zone");
+                b.Property<bool>("Correct").HasColumnType("boolean");
+                b.Property<int?>("ResponseTimeMs").HasColumnType("integer");
+                b.Property<string>("OptionId").HasColumnType("text").IsRequired();
+                b.HasKey("Id");
+                b.HasIndex("InterventionId", "ExerciseId").IsUnique();
+                b.HasIndex("CardId");
+                b.ToTable("InterventionAttempts", "words");
+            });
+            modelBuilder.Entity("LearnWord.DAL.Models.CoachAnalysis", b => {
+                b.HasOne("LearnWord.DAL.Models.LearningSession", null).WithMany().HasForeignKey("SessionId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("LearnWord.DAL.Models.Collection", null).WithMany().HasForeignKey("CollectionId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("LearnWord.DAL.Models.CoachIntervention", b => {
+                b.HasOne("LearnWord.DAL.Models.CoachAnalysis", null).WithMany().HasForeignKey("AnalysisId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("LearnWord.DAL.Models.Card", null).WithMany().HasForeignKey("CardId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("LearnWord.DAL.Models.InterventionAttempt", b => {
+                b.HasOne("LearnWord.DAL.Models.CoachIntervention", null).WithMany().HasForeignKey("InterventionId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("LearnWord.DAL.Models.Card", null).WithMany().HasForeignKey("CardId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+
             modelBuilder.Entity("LearnWord.DAL.Models.LearningAttempt", b => {
                 b.HasOne("LearnWord.DAL.Models.Card", null).WithMany().HasForeignKey("CardId").OnDelete(DeleteBehavior.Restrict).IsRequired();
                 b.HasOne("LearnWord.DAL.Models.LearningSession", null).WithMany().HasForeignKey("SessionId").OnDelete(DeleteBehavior.Restrict);

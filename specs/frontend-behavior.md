@@ -544,3 +544,7 @@ Docker-built Angular assets use hashed filenames in both development and product
 ### Shared collection search
 
 Shared collection pager contains the same input-only automatic card search control as the owner view, using existing RU/EN labels/placeholders and no Find button or Enter requirement. Typing applies trimmed whole-collection server search after approximately 300ms debounce; clearing restores immediately. The field stays editable and focused during debounce/requests. Superseded reads/timers are cancelled so stale results/errors cannot replace the latest query. Search resets page1; paging/size/retry preserve query; route changes reset state and cancel outstanding work. Pager shows matching ranges and Found N of cardsCount; zero matches use the existing neutral search empty state. Backend pagination and optional search API remain unchanged; fork still copies the full accessible source. Explore retains its separate existing submit search behavior.
+
+## AI Coach (Epic 3A)
+
+After successful adaptive-session completion, a separate compact Coach block may load without blocking deterministic summary. None/Disabled stays hidden; noncritical provider failures have localized retry. Lessons and RecognitionChoice practice require explicit acceptance, use plain structured text, server validation and separate completion. Practice has correct/incorrect semantics and never calls the SRS review API. Revision/deletion conflicts remove unavailable actions. EN/RU and mobile keyboard/focus behavior follow [AI Coach](ai-coach.md).

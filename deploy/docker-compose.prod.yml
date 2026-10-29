@@ -21,6 +21,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_HTTP_PORTS: 8080
       ConnectionStrings__LwConnection: Host=${LW_DB_HOST:-192.168.0.6};Port=${LW_DB_PORT:-5432};Database=${LW_DB_NAME:-lwdb};Username=${LW_DB_USER:?Set LW_DB_USER in .env};Password=${LW_DB_PASSWORD:?Set LW_DB_PASSWORD in .env}
+      AiCoach__Enabled: ${LW_AI_COACH_ENABLED:-true}
       AiCardGeneration__Provider: ${LW_AI_PROVIDER:-Fake}
       AiCardGeneration__MaxSourceTextLength: ${LW_AI_MAX_SOURCE_TEXT_LENGTH:-4000}
       AiCardGeneration__MaxCards: ${LW_AI_MAX_CARDS:-10}

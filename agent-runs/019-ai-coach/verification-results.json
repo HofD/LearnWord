@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-29",
+  "backend": {
+    "passed": 337,
+    "failed": 0,
+    "skipped": 0,
+    "projects": {
+      "IdentityService.Authorization.Tests": 7,
+      "IdentityService.WebApi.Tests": 26,
+      "LearnWord.Api.E2E.Tests": 14,
+      "LearnWord.ApiMiddleware.Tests": 6,
+      "LearnWord.BL.Tests": 79,
+      "LearnWord.DAL.Tests": 7,
+      "LearnWord.Identity.DAL.Tests": 6,
+      "LearnWord.Identity.Tests": 66,
+      "LearnWord.WebApi.Tests": 126
+    }
+  },
+  "frontend": {
+    "passed": 91,
+    "failed": 0,
+    "productionBuild": "passed",
+    "initialBundleKB": 527.04
+  },
+  "gateway": {
+    "passed": 6,
+    "checks": [
+      "A: successful adaptive session, None result, durable cache and anonymous/foreign session isolation",
+      "B: repeated evidence produces bounded grounded lesson; accept/complete idempotent, SRS/evidence/state unchanged",
+      "C/E: server-side supplementary answers, correct/incorrect, duplicate/foreign protection, completion; no SRS/normal evidence/cache changes",
+      "Follow-up diagnostic uses first future ordinary current-revision attempt only",
+      "F: public/shared search content allowlist and fork with fresh learner state and no Coach leakage",
+      "D: edit invalidates old work, deleted content unavailable, deleted collection blocks Coach reads"
+    ]
+  },
+  "previousGateway": {
+    "learnerGroups": 5,
+    "socialGroups": 6
+  },
+  "providerRuntime": [
+    "unavailable",
+    "missing-key",
+    "disabled",
+    "retry"
+  ],
+  "originalCardSrs": {
+    "rows": 189,
+    "afterMigration": "identical",
+    "afterAcceptance": "identical",
+    "sha256": "a7b318b8861010b8c9d782bb7b516154b1f269a44a3d8b07afb3708409327bc3"
+  },
+  "migration": "20261029000000_AddAiCoach",
+  "livePaidProviderTested": false,
+  "productionDeployed": false
+}

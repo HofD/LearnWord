@@ -23,6 +23,8 @@ builder.Services.AddTransient<ICollectionIdentityService, CollectionIdentityServ
 builder.Services.AddTransient<CardIdentityRepository>();
 builder.Services.AddSingleton<ILearningHttpService, LearningHttpService>();
 builder.Services.AddTransient<LearningIdentityService>();
+builder.Services.AddSingleton<ICoachHttpService, CoachHttpService>();
+builder.Services.AddTransient<CoachIdentityService>();
 builder.Services.AddSingleton<ICardHttpService, CardHttpService>();
 builder.Services.AddTransient<ICardIdentityService, CardIdentityService>();
 builder.Services.AddSingleton<IWordHttpService, WordHttpService>();

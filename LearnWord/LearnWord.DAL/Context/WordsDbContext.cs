@@ -14,6 +14,9 @@ namespace LearnWord.DAL
         public DbSet<LearnerCardState> LearnerCardStates { get; set; }
         public DbSet<LearningSession> LearningSessions { get; set; }
         public DbSet<LearningSessionCard> LearningSessionCards { get; set; }
+        public DbSet<CoachAnalysis> CoachAnalyses { get; set; }
+        public DbSet<CoachIntervention> CoachInterventions { get; set; }
+        public DbSet<InterventionAttempt> InterventionAttempts { get; set; }
         #endregion
 
         protected readonly IConfiguration Configuration;
@@ -50,9 +53,28 @@ namespace LearnWord.DAL
             modelBuilder.Entity<LearningSessionCard>().HasKey(x => new { x.SessionId, x.CardId });
             modelBuilder.Entity<LearningSessionCard>().HasOne<LearningSession>().WithMany(x => x.Cards).HasForeignKey(x => x.SessionId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<LearningSessionCard>().HasOne<Card>().WithMany().HasForeignKey(x => x.CardId).OnDelete(DeleteBehavior.Restrict);
+            ConfigureCoach(modelBuilder);
             //modelBuilder.ApplyUtcDateTimeConverter();
 
             //modelBuilder.ApplyConfiguration(new DeviceConfiguration());
+        }
+
+        public static void ConfigureCoach(ModelBuilder modelBuilder)
+        {
+            foreach (var name in new[] { "Status", "Decision", "Language", "Provider", "Model", "PromptVersion", "Summary", "ObservationsJson" })
+                modelBuilder.Entity<CoachAnalysis>().Property<string>(name).IsRequired();
+            foreach (var name in new[] { "Type", "Title", "Status", "PayloadJson" })
+                modelBuilder.Entity<CoachIntervention>().Property<string>(name).IsRequired();
+            modelBuilder.Entity<InterventionAttempt>().Property(x => x.OptionId).IsRequired();
+            modelBuilder.Entity<CoachAnalysis>().HasIndex(x => new { x.SessionId, x.PromptVersion }).IsUnique();
+            modelBuilder.Entity<CoachAnalysis>().HasOne<LearningSession>().WithMany().HasForeignKey(x => x.SessionId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<CoachAnalysis>().HasOne<Collection>().WithMany().HasForeignKey(x => x.CollectionId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<CoachIntervention>().HasOne<CoachAnalysis>().WithMany().HasForeignKey(x => x.AnalysisId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<CoachIntervention>().HasOne<Card>().WithMany().HasForeignKey(x => x.CardId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<CoachIntervention>().HasIndex(x => new { x.CardId, x.LearningRevision, x.CompletedAt });
+            modelBuilder.Entity<InterventionAttempt>().HasOne<CoachIntervention>().WithMany().HasForeignKey(x => x.InterventionId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<InterventionAttempt>().HasOne<Card>().WithMany().HasForeignKey(x => x.CardId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<InterventionAttempt>().HasIndex(x => new { x.InterventionId, x.ExerciseId }).IsUnique();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)

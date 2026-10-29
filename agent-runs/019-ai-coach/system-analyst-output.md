@@ -1,0 +1,9 @@
+# Coordination and audit
+
+Repository baseline: both nested working trees clean at start; Epic 2 already committed. Read AGENTS, agent roster/roles, README, learner model/backend/frontend specs, Epic 2 delivery artifacts and verification, AI generation provider/configuration/service, Identity facade and transport, DAL context, planner/calculator/review/session, Social acceptance script, deployment scripts. Specialists audit implementation details in owned areas.
+
+Architecture: separate Coach domain contract/provider over existing OpenRouter configuration; provider remains in WebApi; ownership enforced in Identity before invoking expensive generation or mutations. Additive tables; no changes to deterministic scheduler/calculator or social DTOs. Separate analyze request after deterministic session completion, no job infrastructure. Bounded revision-aware context and validated structured provider input/output. RecognitionChoice only in this slice. Durable server-generated IDs, secret expected answers, separate practice evidence. Lifecycle and follow-up metrics read-only relative to learner state.
+
+Contract published in specs/ai-coach.md before assignments. Repository's explicit role routing applied: backend specialist owns production backend/migration, frontend specialist owns Angular/tests, QA specialist owns backend automated tests. Root owns contract/specs, gateway acceptance, Docker orchestration, personally executed browser acceptance and final review. No overlapping production ownership.
+
+Verification plan: Docker local-up, all nine backend projects via container test runner, Jasmine and Angular production build in existing frontend-tests image, real PostgreSQL migration and unchanged original SRS snapshot, authenticated gateway scenarios with two users, previous Epic 2/Social scripts, desktop/390px EN/RU browser flows including lessons, supplementary feedback and noncritical failure.

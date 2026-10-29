@@ -192,3 +192,8 @@ To find what owns a port on the server:
 ```bash
 ss -ltnp 'sport = :8080'
 ```
+
+
+## AI Coach
+
+Epic 3A uses the existing `LW_AI_PROVIDER` and `LW_AI_OPENROUTER_*` settings for a separate private advisory provider. Set `LW_AI_COACH_ENABLED=false` to suppress analysis and automatic Coach UI without affecting normal learning or AI card drafts. The flag is wired in local and production Compose; no production rollout was performed for this feature. Local default Fake requires no key. Missing OpenRouter key produces a noncritical Coach configuration failure. See [AI Coach spec](../specs/ai-coach.md) for bounded context, privacy, caching and retry semantics.

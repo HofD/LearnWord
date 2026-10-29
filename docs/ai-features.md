@@ -154,3 +154,8 @@ Automated tests should not require OpenRouter. Use a fake provider to verify:
 - successful fake generation returns draft suggestions;
 - duplicate suggestions already present in the target collection are filtered after provider generation;
 - malformed provider output is rejected or sanitized.
+
+
+## Personal AI Coach (Epic 3A)
+
+A private optional advisory layer over completed adaptive sessions. It selects bounded current-revision evidence, validates structured observations and offers short lessons or separate recognition practice. None is a normal result. Coach never modifies SRS, mastery, learner aggregates or normal attempts. Existing OpenRouter configuration is reused; Fake supports local verification, missing credentials and provider failure remain noncritical. See [full contract, privacy and limitations](../specs/ai-coach.md) and [delivery acceptance](../agent-runs/019-ai-coach/final-acceptance.md).
