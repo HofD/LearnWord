@@ -10,6 +10,9 @@ public class CoachController : ControllerBase
     public CoachController(CoachService service) { this.service = service; }
     [HttpPost("sessions/{sessionId:guid}/coach-analysis")]
     public Task<CoachAnalysisDto> Analyze(Guid sessionId, [FromBody] AnalyzeCoachRequest request) => service.Analyze(sessionId, request);
+    [HttpGet("sessions/{sessionId:guid}/coach-diagnostics")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public Task<CoachDiagnosticsDto> Diagnostics(Guid sessionId) => service.Diagnostics(sessionId);
     [HttpGet("sessions/{sessionId:guid}/coach-analysis")]
     public Task<CoachAnalysisDto> Analysis(Guid sessionId) => service.Analysis(sessionId);
     [HttpGet("interventions/{id:guid}")]

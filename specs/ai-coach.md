@@ -66,3 +66,6 @@ No browser session/intervention history/resume navigation is added; reload follo
 ## Prompt v2 clarification (2026-10-29)
 
 Repeated current-revision Again/Hard outcomes can justify an optional meaning recap or practice without exact wrong-answer evidence. Missing choices forbid invented confusion/psychological explanations, not all intervention. Two Again plus one Hard on Weak is an explicit eligible example, not a mandatory intervention rule. None remains valid where no useful grounded action exists. Summary should be brief, human-facing and omit numerical mastery/internal labels/cognitive diagnoses. `coach-v2` has a new session/prompt cache key: existing v1 analyses remain historical; a new explicit analyze request can produce v2 once and then reuse it. No automatic historical regeneration or paid batch reanalysis.
+
+
+See [private read-only Coach diagnostics](coach-diagnostics.md) for captured metadata, legacy reconstruction and JSON download.

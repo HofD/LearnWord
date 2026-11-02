@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using LearnWord.BL.Models.Dto;
 using LearnWord.BL.Models.Errors;
@@ -48,22 +49,35 @@ public class CoachService
             else db.CoachAnalyses.Add(analysis);
             analysis.Status = "Pending";
             analysis.Generation++; analysis.UpdatedAt = now; analysis.FailureCode = null;
+            analysis.DiagnosticJson = null; // Never expose an earlier retry as the current generation snapshot.
             analysis.Provider = SafeProvenance(provider.Provider); analysis.Model = SafeProvenance(provider.Model);
             await db.SaveChangesAsync(); await claim.CommitAsync();
         }
         var generation = analysis.Generation;
+        var elapsed = Stopwatch.StartNew();
+        CoachDiagnosticsDto? diagnostic = null;
         try
         {
-            var context = await contextBuilder.Build(sessionId, analysis.Language);
+            var built = await contextBuilder.BuildWithDiagnostics(sessionId, analysis.Language);
+            var context = built.Context;
+            var inputCharacters = JsonSerializer.Serialize(context, CoachOutputValidator.Json).Length;
+            diagnostic = new CoachDiagnosticsDto { SessionId = sessionId, AnalysisId = analysis.Id, Mode = "CapturedAtAnalysis", CapturedAt = Now(),
+                Context = built.DiagnosticsContext, Analysis = DiagnosticAnalysis(analysis, "Pending"), ProviderCalled = false, InputCharacters = inputCharacters };
+            // Persist the selected evidence metadata before invoking the provider. The generation fence
+            // prevents an interrupted/superseded worker from replacing the current retry's snapshot.
+            if (!await CaptureDiagnostic(analysis.Id, generation, diagnostic)) return await Analysis(sessionId);
             CoachAnalysisResult result;
             if (context.Cards.Count == 0) result = new CoachAnalysisResult { Decision = "None" };
             else
             {
-                if (JsonSerializer.Serialize(context, CoachOutputValidator.Json).Length > CoachLimits.PromptCharacters - 8000)
+                if (inputCharacters > CoachLimits.PromptCharacters - 8000)
                     throw new UpstreamServiceException("AI Coach context is too large.", "coach_context_too_large");
+                diagnostic.ProviderCalled = true;
+                if (!await CaptureDiagnostic(analysis.Id, generation, diagnostic)) return await Analysis(sessionId);
                 using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(90));
                 var output = await provider.Analyze(context, timeout.Token).WaitAsync(timeout.Token);
-                result = CoachOutputValidator.ParseAndValidate(output, context);
+                diagnostic.OutputCharacters = output?.Length;
+                result = CoachOutputValidator.ParseAndValidate(output!, context);
             }
             db.ChangeTracker.Clear();
             await using var save = await db.Database.BeginTransactionAsync();
@@ -88,7 +102,11 @@ public class CoachService
                     LearningRevision = i.LearningRevision, Type = i.Type, Title = i.Title, CreatedAt = Now(), PayloadJson = JsonSerializer.Serialize(i, CoachOutputValidator.Json) });
             }
             current.Status = "Completed"; current.UpdatedAt = Now();
+            diagnostic.Analysis = DiagnosticAnalysis(current, diagnostic.ProviderCalled == true ? "Provider" : "NoCandidates");
+            diagnostic.DurationMs = elapsed.ElapsedMilliseconds;
+            current.DiagnosticJson = SerializeDiagnostic(diagnostic);
             await db.SaveChangesAsync(); await save.CommitAsync();
+            LogDiagnostic(diagnostic);
             return await MapAnalysis(current);
         }
         catch (Exception ex) when (ex is UpstreamServiceException or HttpRequestException or OperationCanceledException)
@@ -100,8 +118,19 @@ public class CoachService
             await using var fail = await db.Database.BeginTransactionAsync();
             await Lock("CoachAnalyses", analysis.Id);
             var current = await db.CoachAnalyses.SingleAsync(a => a.Id == analysis.Id);
-            if (current.Generation == generation && current.Status == "Pending") { current.Status = "Failed"; current.FailureCode = code; current.UpdatedAt = Now(); await db.SaveChangesAsync(); }
-            await fail.CommitAsync(); return await MapAnalysis(current);
+            if (current.Generation == generation && current.Status == "Pending")
+            {
+                current.Status = "Failed"; current.FailureCode = code; current.UpdatedAt = Now();
+                if (diagnostic != null)
+                {
+                    diagnostic.Analysis = DiagnosticAnalysis(current, "Failed"); diagnostic.DurationMs = elapsed.ElapsedMilliseconds;
+                    current.DiagnosticJson = SerializeDiagnostic(diagnostic);
+                }
+                await db.SaveChangesAsync();
+            }
+            await fail.CommitAsync();
+            if (diagnostic != null && current.Generation == generation) LogDiagnostic(diagnostic);
+            return await MapAnalysis(current);
         }
     }
     public async Task<CoachAnalysisDto> Analysis(Guid sessionId)
@@ -112,6 +141,55 @@ public class CoachService
             ?? throw new NotFoundException("Coach analysis not found.", "coach_analysis_not_found");
         return await MapAnalysis(a);
     }
+    public async Task<CoachDiagnosticsDto> Diagnostics(Guid sessionId)
+    {
+        await RequireSession(sessionId);
+        // Prefer the current prompt's record, otherwise the latest historical analysis. GET never creates
+        // or upgrades an analysis and never invokes a provider, even when the feature is disabled.
+        var analyses = db.CoachAnalyses.AsNoTracking().Where(a => a.SessionId == sessionId);
+        var analysis = await analyses.SingleOrDefaultAsync(a => a.PromptVersion == CoachLimits.PromptVersion)
+            ?? await analyses.OrderByDescending(a => a.CreatedAt).ThenByDescending(a => a.Id).FirstOrDefaultAsync();
+        if (analysis?.DiagnosticJson is string stored)
+            return JsonSerializer.Deserialize<CoachDiagnosticsDto>(stored, CoachOutputValidator.Json)!;
+        var built = await contextBuilder.BuildWithDiagnostics(sessionId, analysis?.Language ?? "en", requireCompleted: false);
+        return new CoachDiagnosticsDto { SessionId = sessionId, AnalysisId = analysis?.Id, Mode = "ReconstructedNow", CapturedAt = Now(), Context = built.DiagnosticsContext,
+            Analysis = analysis == null ? new CoachDiagnosticAnalysisDto { Status = options.Enabled ? "NotRequested" : "Disabled", DecisionSource = options.Enabled ? "LegacyUnknown" : "Disabled" }
+                : DiagnosticAnalysis(analysis, analysis.Status switch { "Failed" => "Failed", "Pending" => "Pending", "Disabled" => "Disabled", _ => "LegacyUnknown" }) };
+    }
+    private async Task<bool> CaptureDiagnostic(Guid analysisId, int generation, CoachDiagnosticsDto diagnostic)
+    {
+        db.ChangeTracker.Clear();
+        await using var tx = await db.Database.BeginTransactionAsync();
+        await Lock("CoachAnalyses", analysisId);
+        var current = await db.CoachAnalyses.SingleAsync(a => a.Id == analysisId);
+        if (current.Generation != generation || current.Status != "Pending") { await tx.CommitAsync(); return false; }
+        current.DiagnosticJson = SerializeDiagnostic(diagnostic);
+        await db.SaveChangesAsync(); await tx.CommitAsync(); return true;
+    }
+    private const int MaxDiagnosticCharacters = 48000;
+    private static string SerializeDiagnostic(CoachDiagnosticsDto diagnostic)
+    {
+        var json = JsonSerializer.Serialize(diagnostic, CoachOutputValidator.Json);
+        // All fields are already bounded; keep the durable payload hard-bounded even if metadata grows.
+        while (json.Length > MaxDiagnosticCharacters && diagnostic.Context.Cards.Any(c => c.RecentAttempts.Count > 0))
+        {
+            diagnostic.Truncated = true;
+            foreach (var card in diagnostic.Context.Cards.Where(c => c.RecentAttempts.Count > 0)) card.RecentAttempts.RemoveAt(card.RecentAttempts.Count - 1);
+            json = JsonSerializer.Serialize(diagnostic, CoachOutputValidator.Json);
+        }
+        if (json.Length > MaxDiagnosticCharacters) throw new UpstreamServiceException("Coach diagnostic exceeds its safe storage limit.", "coach_diagnostic_too_large");
+        return json;
+    }
+    private static CoachDiagnosticAnalysisDto DiagnosticAnalysis(CoachAnalysis a, string source) => new()
+    {
+        Status = a.Status, Decision = a.Decision, DecisionSource = source, Provider = a.Provider, Model = a.Model,
+        PromptVersion = a.PromptVersion, SchemaVersion = a.SchemaVersion, FailureCode = a.FailureCode,
+        Generation = a.Generation, RetryCount = a.RetryCount
+    };
+    private void LogDiagnostic(CoachDiagnosticsDto d) => logger.LogInformation(
+        "Coach generation completed: AnalysisId={AnalysisId} SessionId={SessionId} Generation={Generation} DecisionSource={DecisionSource} Decision={Decision} CandidateCount={CandidateCount} ProviderCalled={ProviderCalled} DurationMs={DurationMs} InputCharacters={InputCharacters} OutputCharacters={OutputCharacters} FailureCode={FailureCode}",
+        d.AnalysisId, d.SessionId, d.Analysis.Generation, d.Analysis.DecisionSource, d.Analysis.Decision, d.Context.CandidateCount,
+        d.ProviderCalled, d.DurationMs, d.InputCharacters, d.OutputCharacters, d.Analysis.FailureCode);
     public async Task<int> Scope(Guid id)
     {
         var i = await RequireIntervention(id);

@@ -1,0 +1,10 @@
+{
+  "passed": 5,
+  "checks": [
+    "Single: deterministic None captured, text-free, owner-only and read-only",
+    "Repeated Again: provider path captured, text-free, owner-only and read-only",
+    "Captured snapshot remains exact after later normal review and content revision",
+    "Repeated Hard: provider path captured, text-free, owner-only and read-only",
+    "Captured snapshot remains exact after later normal review and content revision"
+  ]
+}

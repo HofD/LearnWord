@@ -14,6 +14,8 @@ public class CoachIdentityService
     { await CheckSession(id, userId); return await upstream.Analyze(id, request); }
     public async Task<CoachAnalysisDto> Analysis(Guid id, string userId)
     { await CheckSession(id, userId); return await upstream.Analysis(id); }
+    public async Task<CoachDiagnosticsDto> Diagnostics(Guid id, string userId)
+    { await CheckSession(id, userId); return await upstream.Diagnostics(id); }
     public async Task<CoachInterventionDto> Intervention(Guid id, string userId)
     { await CheckIntervention(id, userId); return await upstream.Intervention(id); }
     public async Task<CoachInterventionDto> Transition(Guid id, string action, string userId)

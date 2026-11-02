@@ -812,3 +812,6 @@ All social endpoints require existing bearer authentication, including shared re
 `GET /api/social/collections/{publicId}` additionally accepts optional `search`. Omitted/empty/whitespace preserves previous results. Trimmed case-insensitive substring matching checks active card words' `value` or `translation` across the entire collection before pagination. A matched card includes all its active words; matching multiple words does not duplicate the card. `cardsCount` remains the full active collection count; `totalCount` is the matching-card count. Existing page bounds/order, read-only DTO and ownership/visibility rules remain unchanged. Search does not affect fork content (fork always copies the full accessible source).
 
 Epic 3A private advisory contracts are described in [AI Coach](ai-coach.md); supplementary answers never mutate Card SRS, LearningAttempt or LearnerCardState.
+
+
+Private read-only Coach diagnostics: GET `/api/learning/sessions/{sessionId}/coach-diagnostics`; see [contract/privacy](coach-diagnostics.md).

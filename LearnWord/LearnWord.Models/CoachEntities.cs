@@ -22,6 +22,7 @@ public class CoachAnalysis
     public string? FailureCode { get; set; }
     public string Summary { get; set; } = "";
     public string ObservationsJson { get; set; } = "[]";
+    public string? DiagnosticJson { get; set; }
 }
 public class CoachIntervention
 {

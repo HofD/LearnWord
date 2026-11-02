@@ -243,6 +243,7 @@ namespace LearnWord.Migrations.Migrations
                 b.Property<string>("PromptVersion").HasColumnType("text").IsRequired();
                 b.Property<string>("Summary").HasColumnType("text").IsRequired();
                 b.Property<string>("ObservationsJson").HasColumnType("text").IsRequired();
+                b.Property<string>("DiagnosticJson").HasColumnType("text");
                 b.Property<string>("FailureCode").HasColumnType("text");
                 b.HasKey("Id");
                 b.HasIndex("SessionId", "PromptVersion").IsUnique();

@@ -22,8 +22,10 @@ public class CoachIdentityServiceTests
         await using var fixture = await Fixture.Create();
         await Assert.ThrowsAsync<NotFoundException>(() => fixture.Service.Analyze(fixture.SessionId, new(), "visitor"));
         await Assert.ThrowsAsync<NotFoundException>(() => fixture.Service.Analysis(fixture.SessionId, "visitor"));
+        await Assert.ThrowsAsync<NotFoundException>(() => fixture.Service.Diagnostics(fixture.SessionId, "visitor"));
         Assert.Equal(0, fixture.Coach.ContentOrMutationCalls);
-        Assert.Equal(2, fixture.Learning.SessionCalls);
+        Assert.Equal(3, fixture.Learning.SessionCalls);
+        Assert.Equal(0, fixture.Coach.DiagnosticsCalls);
     }
 
     [Fact]
@@ -64,6 +66,7 @@ public class CoachIdentityServiceTests
         var controller = new CoachIdentityController(fixture.Service) { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
         Assert.IsType<UnauthorizedResult>((await controller.Analyze(fixture.SessionId, new())).Result);
         Assert.IsType<UnauthorizedResult>((await controller.Analysis(fixture.SessionId)).Result);
+        Assert.IsType<UnauthorizedResult>((await controller.Diagnostics(fixture.SessionId)).Result);
         Assert.IsType<UnauthorizedResult>((await controller.Intervention(fixture.InterventionId)).Result);
         Assert.IsType<UnauthorizedResult>((await controller.Accept(fixture.InterventionId)).Result);
         Assert.IsType<UnauthorizedResult>((await controller.Dismiss(fixture.InterventionId)).Result);
@@ -72,6 +75,28 @@ public class CoachIdentityServiceTests
         Assert.Equal(0, fixture.Coach.ContentOrMutationCalls);
         Assert.Equal(0, fixture.Coach.ScopeCalls);
         Assert.Equal(0, fixture.Learning.SessionCalls);
+        Assert.Equal(0, fixture.Coach.DiagnosticsCalls);
+    }
+
+    [Fact]
+    public async Task OwnedDiagnosticsOnlyForwardTheAuthorizedSessionAndNeverGenerateOrMutate()
+    {
+        await using var fixture = await Fixture.Create();
+        var result = await fixture.Service.Diagnostics(fixture.SessionId, "owner");
+        Assert.Equal(fixture.SessionId, result.SessionId);
+        Assert.Equal(1, fixture.Learning.SessionCalls);
+        Assert.Equal(1, fixture.Coach.DiagnosticsCalls);
+        Assert.Equal(0, fixture.Coach.ContentOrMutationCalls);
+        Assert.Equal(0, fixture.Coach.ScopeCalls);
+    }
+
+    [Fact]
+    public void DiagnosticControllerRouteExplicitlyDisablesCachingOfPrivateEvidence()
+    {
+        var policy = Assert.Single(typeof(CoachIdentityController).GetMethod(nameof(CoachIdentityController.Diagnostics))!
+            .GetCustomAttributes(typeof(ResponseCacheAttribute), inherit: true).Cast<ResponseCacheAttribute>());
+        Assert.True(policy.NoStore);
+        Assert.Equal(ResponseCacheLocation.None, policy.Location);
     }
 
     private sealed class Fixture : IAsyncDisposable
@@ -101,11 +126,13 @@ public class CoachIdentityServiceTests
     {
         public int ContentOrMutationCalls { get; private set; }
         public int ScopeCalls { get; private set; }
+        public int DiagnosticsCalls { get; private set; }
         public string? Language { get; private set; }
         public string? Action { get; private set; }
         public (Guid, Guid, string, int?) AnswerPayload { get; private set; }
         public Task<CoachAnalysisDto> Analyze(Guid sessionId, AnalyzeCoachRequest request) { ContentOrMutationCalls++; Language = request.Language; return Task.FromResult(new CoachAnalysisDto { SessionId = sessionId }); }
         public Task<CoachAnalysisDto> Analysis(Guid sessionId) { ContentOrMutationCalls++; return Task.FromResult(new CoachAnalysisDto { SessionId = sessionId }); }
+        public Task<CoachDiagnosticsDto> Diagnostics(Guid sessionId) { DiagnosticsCalls++; return Task.FromResult(new CoachDiagnosticsDto { SessionId = sessionId }); }
         public Task<int> Scope(Guid id) { ScopeCalls++; return Task.FromResult(10); }
         public Task<CoachInterventionDto> Intervention(Guid id) { ContentOrMutationCalls++; return Task.FromResult(new CoachInterventionDto { Id = id }); }
         public Task<CoachInterventionDto> Transition(Guid id, string action) { ContentOrMutationCalls++; Action = action; return Task.FromResult(new CoachInterventionDto { Id = id }); }

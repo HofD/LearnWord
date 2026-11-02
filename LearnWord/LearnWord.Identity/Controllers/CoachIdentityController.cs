@@ -12,6 +12,10 @@ public class CoachIdentityController : ControllerBase
     [HttpPost("sessions/{sessionId:guid}/coach-analysis")]
     public async Task<ActionResult<CoachAnalysisDto>> Analyze(Guid sessionId, [FromBody] AnalyzeCoachRequest request)
         => UserId is string u ? Ok(await service.Analyze(sessionId, request, u)) : Unauthorized();
+    [HttpGet("sessions/{sessionId:guid}/coach-diagnostics")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<ActionResult<CoachDiagnosticsDto>> Diagnostics(Guid sessionId)
+        => UserId is string u ? Ok(await service.Diagnostics(sessionId, u)) : Unauthorized();
     [HttpGet("sessions/{sessionId:guid}/coach-analysis")]
     public async Task<ActionResult<CoachAnalysisDto>> Analysis(Guid sessionId)
         => UserId is string u ? Ok(await service.Analysis(sessionId, u)) : Unauthorized();

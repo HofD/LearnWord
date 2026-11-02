@@ -606,6 +606,24 @@
       "UpstreamHttpMethod": [
         "POST"
       ]
+    },
+    {
+      "DownstreamPathTemplate": "/learning/sessions/{sessionId}/coach-diagnostics",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "UpstreamPathTemplate": "/api/learning/sessions/{sessionId}/coach-diagnostics",
+      "UpstreamHttpMethod": [
+        "GET"
+      ]
     }
   ],
   "GlobalConfiguration": {

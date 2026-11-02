@@ -11,6 +11,7 @@ public class CoachHttpService : UpstreamHttpService<CoachHttpService>, ICoachHtt
     }
     public Task<CoachAnalysisDto> Analyze(Guid id, AnalyzeCoachRequest request) => Post<CoachAnalysisDto>($"sessions/{id}/coach-analysis", request);
     public Task<CoachAnalysisDto> Analysis(Guid id) => Get<CoachAnalysisDto>($"sessions/{id}/coach-analysis");
+    public Task<CoachDiagnosticsDto> Diagnostics(Guid id) => Get<CoachDiagnosticsDto>($"sessions/{id}/coach-diagnostics");
     public Task<int> Scope(Guid id) => Get<int>($"interventions/{id}/scope");
     public Task<CoachInterventionDto> Intervention(Guid id) => Get<CoachInterventionDto>($"interventions/{id}");
     public Task<CoachInterventionDto> Transition(Guid id, string action) => Post<CoachInterventionDto>($"interventions/{id}/{action}", new { });

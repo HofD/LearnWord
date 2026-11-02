@@ -548,3 +548,6 @@ Shared collection pager contains the same input-only automatic card search contr
 ## AI Coach (Epic 3A)
 
 After successful adaptive-session completion, a separate compact Coach block may load without blocking deterministic summary. None/Disabled stays hidden; noncritical provider failures have localized retry. Lessons and RecognitionChoice practice require explicit acceptance, use plain structured text, server validation and separate completion. Practice has correct/incorrect semantics and never calls the SRS review API. Revision/deletion conflicts remove unavailable actions. EN/RU and mobile keyboard/focus behavior follow [AI Coach](ai-coach.md).
+
+
+Private debug page `/coach-diagnostics/:sessionId` exports metadata with an explicit captured/reconstructed label; it performs GET only. Completion link is hidden unless `coachDebug=true`. See [Coach diagnostics](coach-diagnostics.md).

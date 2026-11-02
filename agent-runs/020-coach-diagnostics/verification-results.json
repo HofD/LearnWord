@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-02",
+  "backend": {
+    "passed": 366,
+    "failed": 0,
+    "skipped": 0,
+    "projects": {
+      "IdentityService.Authorization.Tests": 7,
+      "IdentityService.WebApi.Tests": 26,
+      "LearnWord.Api.E2E.Tests": 14,
+      "LearnWord.ApiMiddleware.Tests": 6,
+      "LearnWord.BL.Tests": 79,
+      "LearnWord.DAL.Tests": 7,
+      "LearnWord.Identity.DAL.Tests": 6,
+      "LearnWord.Identity.Tests": 68,
+      "LearnWord.WebApi.Tests": 153
+    }
+  },
+  "frontend": {
+    "passed": 105,
+    "failed": 0,
+    "productionBuild": "passed"
+  },
+  "gateway": {
+    "passed": 5,
+    "checks": [
+      "Single: deterministic None captured, text-free, owner-only and read-only",
+      "Repeated Again: provider path captured, text-free, owner-only and read-only",
+      "Captured snapshot remains exact after later normal review and content revision",
+      "Repeated Hard: provider path captured, text-free, owner-only and read-only",
+      "Captured snapshot remains exact after later normal review and content revision"
+    ]
+  },
+  "previousCoachGatewayGroups": 6,
+  "legacyAfterMigration": "ReconstructedNow",
+  "newSnapshot": "CapturedAtAnalysis",
+  "actualBrowserDownload": "parsed JSON, no content marker",
+  "migration": "20261102000000_AddCoachDiagnostics",
+  "paidProviderTested": false,
+  "productionDeployed": false
+}

@@ -10,6 +10,7 @@ internal sealed class CoachTestDatabase : IAsyncDisposable
 {
     private readonly SqliteConnection connection;
     public WordsDbContext Context { get; }
+    public int SaveCalls => ((TestContext)Context).SaveCalls;
     public DateTimeOffset Now { get; } = new(2026, 10, 29, 9, 0, 0, TimeSpan.Zero);
     private CoachTestDatabase(SqliteConnection connection, WordsDbContext context)
     { this.connection = connection; Context = context; }
@@ -63,6 +64,9 @@ internal sealed class CoachTestDatabase : IAsyncDisposable
 
     private sealed class TestContext(SqliteConnection connection) : WordsDbContext(null!)
     {
+        public int SaveCalls { get; private set; }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        { SaveCalls++; return base.SaveChangesAsync(cancellationToken); }
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite(connection);
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

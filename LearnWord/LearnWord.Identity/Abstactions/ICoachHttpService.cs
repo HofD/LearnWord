@@ -4,6 +4,7 @@ public interface ICoachHttpService
 {
     Task<CoachAnalysisDto> Analyze(Guid sessionId, AnalyzeCoachRequest request);
     Task<CoachAnalysisDto> Analysis(Guid sessionId);
+    Task<CoachDiagnosticsDto> Diagnostics(Guid sessionId);
     Task<int> Scope(Guid id);
     Task<CoachInterventionDto> Intervention(Guid id);
     Task<CoachInterventionDto> Transition(Guid id, string action);
