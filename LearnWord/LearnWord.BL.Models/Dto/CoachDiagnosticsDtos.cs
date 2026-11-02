@@ -14,6 +14,8 @@ public class CoachDiagnosticsDto
     public int? InputCharacters { get; set; }
     public int? OutputCharacters { get; set; }
     public long? DurationMs { get; set; }
+    public CoachProviderResponseDiagnosticsDto? ProviderResponse { get; set; }
+    public CoachOutputFormatDiagnosticsDto? OutputFormat { get; set; }
     public bool Truncated { get; set; }
 }
 public class CoachDiagnosticAnalysisDto
@@ -30,6 +32,8 @@ public class CoachDiagnosticAnalysisDto
     public string? ValidationCode { get; set; }
     public string? ValidationPath { get; set; }
     public int? ProviderHttpStatus { get; set; }
+    public long? JsonLineNumber { get; set; }
+    public long? JsonBytePositionInLine { get; set; }
     public int Generation { get; set; }
     public int RetryCount { get; set; }
 }
@@ -66,4 +70,24 @@ public class CoachDiagnosticAttemptDto
     public DateTimeOffset ReviewedAt { get; set; }
     public int? ResponseTimeMs { get; set; }
     public int LearningRevision { get; set; }
+}
+
+// Only bounded numbers and controlled values, never provider prose or raw content.
+public class CoachProviderResponseDiagnosticsDto
+{
+    public int? HttpStatus { get; init; }
+    public string? FinishReason { get; init; }
+    public int? PromptTokens { get; init; }
+    public int? CompletionTokens { get; init; }
+    public int? TotalTokens { get; init; }
+    public int? ReasoningTokens { get; init; }
+}
+public class CoachOutputFormatDiagnosticsDto
+{
+    public bool StartsWithJsonObject { get; init; }
+    public bool StartsWithJsonArray { get; init; }
+    public bool EndsWithJsonObject { get; init; }
+    public bool EndsWithJsonArray { get; init; }
+    public bool StartsWithCodeFence { get; init; }
+    public bool EndsWithCodeFence { get; init; }
 }

@@ -1,0 +1,122 @@
+[
+  {
+    "case": "fenced",
+    "status": "Failed",
+    "providerResponse": {
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 123,
+      "completionTokens": 45,
+      "totalTokens": 168,
+      "reasoningTokens": 0
+    },
+    "outputFormat": {
+      "startsWithJsonObject": false,
+      "startsWithJsonArray": false,
+      "endsWithJsonObject": false,
+      "endsWithJsonArray": false,
+      "startsWithCodeFence": true,
+      "endsWithCodeFence": true
+    },
+    "jsonLineNumber": 0,
+    "jsonBytePositionInLine": 0,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "length",
+    "status": "Failed",
+    "providerResponse": {
+      "httpStatus": 200,
+      "finishReason": "length",
+      "promptTokens": 123,
+      "completionTokens": 3000,
+      "totalTokens": 3123,
+      "reasoningTokens": 2800
+    },
+    "outputFormat": {
+      "startsWithJsonObject": true,
+      "startsWithJsonArray": false,
+      "endsWithJsonObject": false,
+      "endsWithJsonArray": false,
+      "startsWithCodeFence": false,
+      "endsWithCodeFence": false
+    },
+    "jsonLineNumber": 0,
+    "jsonBytePositionInLine": 106,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "prefix",
+    "status": "Failed",
+    "providerResponse": {
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 123,
+      "completionTokens": 45,
+      "totalTokens": 168,
+      "reasoningTokens": 0
+    },
+    "outputFormat": {
+      "startsWithJsonObject": false,
+      "startsWithJsonArray": false,
+      "endsWithJsonObject": true,
+      "endsWithJsonArray": false,
+      "startsWithCodeFence": false,
+      "endsWithCodeFence": false
+    },
+    "jsonLineNumber": 0,
+    "jsonBytePositionInLine": 0,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "syntax",
+    "status": "Failed",
+    "providerResponse": {
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 123,
+      "completionTokens": 45,
+      "totalTokens": 168,
+      "reasoningTokens": 0
+    },
+    "outputFormat": {
+      "startsWithJsonObject": true,
+      "startsWithJsonArray": false,
+      "endsWithJsonObject": true,
+      "endsWithJsonArray": false,
+      "startsWithCodeFence": false,
+      "endsWithCodeFence": false
+    },
+    "jsonLineNumber": 4,
+    "jsonBytePositionInLine": 17,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "valid",
+    "status": "Completed",
+    "providerResponse": {
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 123,
+      "completionTokens": 45,
+      "totalTokens": 168,
+      "reasoningTokens": 0
+    },
+    "outputFormat": {
+      "startsWithJsonObject": true,
+      "startsWithJsonArray": false,
+      "endsWithJsonObject": true,
+      "endsWithJsonArray": false,
+      "startsWithCodeFence": false,
+      "endsWithCodeFence": false
+    },
+    "jsonLineNumber": null,
+    "jsonBytePositionInLine": null,
+    "private": true,
+    "normalStateUnchanged": true
+  }
+]

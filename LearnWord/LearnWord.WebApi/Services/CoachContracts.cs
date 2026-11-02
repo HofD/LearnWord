@@ -92,3 +92,5 @@ public class CoachExerciseResult
     [JsonRequired]
     public string Explanation { get; set; } = "";
 }
+
+public sealed record CoachProviderResponse(string Content, CoachProviderResponseDiagnosticsDto? ProviderResponse = null);

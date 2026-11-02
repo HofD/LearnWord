@@ -1,0 +1,13 @@
+{
+  "passed": 416,
+  "failed": 0,
+  "skipped": 0,
+  "projects": 9,
+  "webApiTests": 203,
+  "newResponseMetadataCases": 24,
+  "dockerStartup": "passed",
+  "gatewayResponseCases": 5,
+  "diagnosticsRegressionGroups": 5,
+  "paidCalls": 0,
+  "nugetFallback": "read-only existing cache"
+}

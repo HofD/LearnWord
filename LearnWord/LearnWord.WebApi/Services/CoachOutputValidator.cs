@@ -16,7 +16,12 @@ public static class CoachOutputValidator
             var schema = JsonSerializer.SerializeToElement(OpenRouterAiCoachProvider.ResponseSchema());
             Shape(document.RootElement, schema, "$");
         }
-        catch (JsonException) { throw CoachFailure.Invalid("json_malformed", "$"); }
+        catch (JsonException ex)
+        {
+            var failure = CoachFailure.Invalid("json_malformed", "$");
+            throw CoachFailure.WithDetails(failure, CoachFailure.Details(failure)! with {
+                JsonLineNumber = SafePosition(ex.LineNumber), JsonBytePositionInLine = SafePosition(ex.BytePositionInLine) });
+        }
         CoachAnalysisResult result;
         try { result = JsonSerializer.Deserialize<CoachAnalysisResult>(json, Json)!; }
         catch (JsonException) { throw CoachFailure.Invalid("schema_value_invalid", "$"); }
@@ -147,4 +152,5 @@ public static class CoachOutputValidator
         Check(!value.Any(c => char.IsControl(c) && c is not '\n' and not '\r' and not '\t'), "text_control_character", path);
     }
     private static void Check([DoesNotReturnIf(false)] bool condition, string code, string path) { if (!condition) throw CoachFailure.Invalid(code, path); }
+    private static long? SafePosition(long? position) => position is >= 0 and <= CoachLimits.ResponseCharacters * 8 ? position : null;
 }

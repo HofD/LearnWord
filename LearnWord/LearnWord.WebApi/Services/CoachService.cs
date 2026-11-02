@@ -75,7 +75,10 @@ public class CoachService
                 diagnostic.ProviderCalled = true;
                 if (!await CaptureDiagnostic(analysis.Id, generation, diagnostic)) return await Analysis(sessionId);
                 using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(90));
-                var output = await provider.Analyze(context, timeout.Token).WaitAsync(timeout.Token);
+                var response = await provider.AnalyzeWithDiagnostics(context, timeout.Token).WaitAsync(timeout.Token);
+                var output = response.Content;
+                diagnostic.ProviderResponse = response.ProviderResponse;
+                diagnostic.OutputFormat = OutputFormat(output);
                 diagnostic.OutputCharacters = output?.Length;
                 result = CoachOutputValidator.ParseAndValidate(output!, context);
             }
@@ -128,7 +131,10 @@ public class CoachService
                     diagnostic.Analysis.FailureStage = details?.FailureStage;
                     diagnostic.Analysis.ValidationCode = details?.ValidationCode;
                     diagnostic.Analysis.ValidationPath = details?.ValidationPath;
-                    diagnostic.Analysis.ProviderHttpStatus = details?.ProviderHttpStatus;
+                    diagnostic.Analysis.ProviderHttpStatus = details?.ProviderHttpStatus ?? diagnostic.ProviderResponse?.HttpStatus;
+                    diagnostic.Analysis.JsonLineNumber = details?.JsonLineNumber;
+                    diagnostic.Analysis.JsonBytePositionInLine = details?.JsonBytePositionInLine;
+                    diagnostic.ProviderResponse ??= details?.ProviderResponse;
                     diagnostic.DurationMs = elapsed.ElapsedMilliseconds;
                     current.DiagnosticJson = SerializeDiagnostic(diagnostic);
                 }
@@ -172,6 +178,14 @@ public class CoachService
         current.DiagnosticJson = SerializeDiagnostic(diagnostic);
         await db.SaveChangesAsync(); await tx.CommitAsync(); return true;
     }
+    private static CoachOutputFormatDiagnosticsDto OutputFormat(string? content)
+    {
+        var text = (content ?? "").AsSpan().Trim();
+        return new() {
+            StartsWithJsonObject = text.StartsWith("{"), StartsWithJsonArray = text.StartsWith("["),
+            EndsWithJsonObject = text.EndsWith("}"), EndsWithJsonArray = text.EndsWith("]"),
+            StartsWithCodeFence = text.StartsWith("```"), EndsWithCodeFence = text.EndsWith("```") };
+    }
     private const int MaxDiagnosticCharacters = 48000;
     private static string SerializeDiagnostic(CoachDiagnosticsDto diagnostic)
     {
@@ -193,9 +207,11 @@ public class CoachService
         Generation = a.Generation, RetryCount = a.RetryCount
     };
     private void LogDiagnostic(CoachDiagnosticsDto d) => logger.LogInformation(
-        "Coach generation completed: AnalysisId={AnalysisId} SessionId={SessionId} Generation={Generation} DecisionSource={DecisionSource} Decision={Decision} CandidateCount={CandidateCount} ProviderCalled={ProviderCalled} DurationMs={DurationMs} InputCharacters={InputCharacters} OutputCharacters={OutputCharacters} FailureCode={FailureCode}",
+        "Coach generation completed: AnalysisId={AnalysisId} SessionId={SessionId} Generation={Generation} DecisionSource={DecisionSource} Decision={Decision} CandidateCount={CandidateCount} ProviderCalled={ProviderCalled} DurationMs={DurationMs} InputCharacters={InputCharacters} OutputCharacters={OutputCharacters} FailureCode={FailureCode} FinishReason={FinishReason} PromptTokens={PromptTokens} CompletionTokens={CompletionTokens} TotalTokens={TotalTokens} ReasoningTokens={ReasoningTokens} JsonLineNumber={JsonLineNumber} JsonBytePositionInLine={JsonBytePositionInLine}",
         d.AnalysisId, d.SessionId, d.Analysis.Generation, d.Analysis.DecisionSource, d.Analysis.Decision, d.Context.CandidateCount,
-        d.ProviderCalled, d.DurationMs, d.InputCharacters, d.OutputCharacters, d.Analysis.FailureCode);
+        d.ProviderCalled, d.DurationMs, d.InputCharacters, d.OutputCharacters, d.Analysis.FailureCode, d.ProviderResponse?.FinishReason,
+        d.ProviderResponse?.PromptTokens, d.ProviderResponse?.CompletionTokens, d.ProviderResponse?.TotalTokens, d.ProviderResponse?.ReasoningTokens,
+        d.Analysis.JsonLineNumber, d.Analysis.JsonBytePositionInLine);
     public async Task<int> Scope(Guid id)
     {
         var i = await RequireIntervention(id);
