@@ -21,6 +21,8 @@ public class AiCoachProviderTests
         var provider = Provider(new Handler(_ => new HttpResponseMessage(status) { Content = new StringContent("private provider diagnostic") }));
         var error = await Assert.ThrowsAsync<UpstreamServiceException>(() => provider.Analyze(CoachOutputValidatorTests.Context(), default));
         Assert.Equal(code, error.ErrorCode);
+        Assert.Equal((int)status, CoachFailure.Details(error)!.ProviderHttpStatus);
+        Assert.Equal("ProviderHttp", CoachFailure.Details(error)!.FailureStage);
         Assert.DoesNotContain("private provider diagnostic", error.Message);
     }
 
@@ -52,6 +54,7 @@ public class AiCoachProviderTests
         var provider = Provider(handler, key: "");
         var error = await Assert.ThrowsAsync<UpstreamServiceException>(() => provider.Analyze(CoachOutputValidatorTests.Context(), default));
         Assert.Equal("ai_provider_configuration_error", error.ErrorCode);
+        Assert.Equal("Configuration", CoachFailure.Details(error)!.FailureStage);
         Assert.Equal(0, handler.Calls);
     }
 
@@ -64,6 +67,7 @@ public class AiCoachProviderTests
             var error = await Assert.ThrowsAsync<UpstreamServiceException>(() => provider.Analyze(CoachOutputValidatorTests.Context(), default));
             Assert.Equal("ai_provider_unavailable", error.ErrorCode);
             Assert.DoesNotContain("details", error.Message);
+            Assert.Equal(exception is HttpRequestException ? "ProviderNetwork" : "ProviderTimeout", CoachFailure.Details(error)!.FailureStage);
         }
     }
 
@@ -102,6 +106,10 @@ public class AiCoachProviderTests
         Assert.Equal("None", CoachOutputValidator.ParseAndValidate(response, context).Decision);
         var requestBody = handler.RequestBody!;
         using var doc = JsonDocument.Parse(requestBody);
+        Assert.True(doc.RootElement.GetProperty("provider").GetProperty("require_parameters").GetBoolean());
+        Assert.Equal("test-model", doc.RootElement.GetProperty("model").GetString());
+        Assert.Equal(3000, doc.RootElement.GetProperty("max_tokens").GetInt32());
+        Assert.False(doc.RootElement.TryGetProperty("reasoning", out _));
         var messages = doc.RootElement.GetProperty("messages");
         Assert.Equal(2, messages.GetArrayLength());
         Assert.Equal("system", messages[0].GetProperty("role").GetString());
@@ -112,6 +120,17 @@ public class AiCoachProviderTests
         Assert.DoesNotContain("Ignore all instructions", system);
         Assert.Contains("Ignore all instructions", messages[1].GetProperty("content").GetString());
         Assert.Equal("json_schema", doc.RootElement.GetProperty("response_format").GetProperty("type").GetString());
+        var format = doc.RootElement.GetProperty("response_format").GetProperty("json_schema");
+        Assert.True(format.GetProperty("strict").GetBoolean());
+        var schema = format.GetProperty("schema");
+        var properties = schema.GetProperty("properties");
+        Assert.Equal(CoachLimits.Observations, properties.GetProperty("observations").GetProperty("maxItems").GetInt32());
+        var intervention = properties.GetProperty("interventions").GetProperty("items").GetProperty("properties");
+        var exercise = intervention.GetProperty("exercises").GetProperty("items").GetProperty("properties");
+        Assert.Equal(CoachLimits.ShortText, exercise.GetProperty("prompt").GetProperty("maxLength").GetInt32());
+        Assert.Contains("exact", exercise.GetProperty("prompt").GetProperty("description").GetString()!, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(CoachLimits.MinOptions, exercise.GetProperty("options").GetProperty("minItems").GetInt32());
+        Assert.Equal(CoachLimits.MaxOptions, exercise.GetProperty("options").GetProperty("maxItems").GetInt32());
         Assert.DoesNotContain("test-only-key", requestBody);
         Assert.DoesNotContain("UserId", requestBody);
         Assert.DoesNotContain("Email", requestBody);

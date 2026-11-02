@@ -225,6 +225,86 @@ public class CoachDiagnosticsTests
     }
 
     [Fact]
+    public async Task ExactValidationFailureIsStoredReadOnlyAndSuccessfulRetryClearsItWithoutLearningMutations()
+    {
+        await using var db = await CoachTestDatabase.Create();
+        var (_, session) = await db.Seed(value: "PRIVATE_CARD_VALUE");
+        var provider = new DiagnosticProvider();
+        provider.BeforeResponse = context => {
+            var card = Assert.Single(context.Cards);
+            var output = CoachOutputValidatorTests.Result(practice: true);
+            var observation = output.Observations[0];
+            observation.CardId = card.CardId; observation.LearningRevision = card.LearningRevision;
+            observation.EvidenceAttemptIds = card.RecentAttempts.Select(a => a.Id).ToList();
+            var intervention = output.Interventions[0];
+            intervention.CardId = card.CardId; intervention.LearningRevision = card.LearningRevision;
+            intervention.Exercises[0].Prompt = "PRIVATE_INVALID_QUESTION";
+            provider.Response = CoachOutputValidatorTests.Serialize(output);
+            return Task.CompletedTask;
+        };
+        var service = Service(db, provider);
+        var learningBefore = await LearningSnapshot(db);
+        var failed = await service.Analyze(session.Id, new());
+        Assert.Equal("Failed", failed.Status);
+        var diagnostic = await service.Diagnostics(session.Id);
+        Assert.Equal("OutputValidation", diagnostic.Analysis.FailureStage);
+        Assert.Equal("exercise_prompt_mismatch", diagnostic.Analysis.ValidationCode);
+        Assert.Equal("$.interventions[0].exercises[0].prompt", diagnostic.Analysis.ValidationPath);
+        Assert.Null(diagnostic.Analysis.ProviderHttpStatus);
+        var captured = Json(diagnostic);
+        foreach (var excluded in new[] { "PRIVATE_INVALID_QUESTION", "PRIVATE_CARD_VALUE", "в конце концов", "correctOptionId" })
+            Assert.DoesNotContain(excluded, captured);
+        db.Context.ChangeTracker.Clear();
+        var saves = db.SaveCalls;
+        Assert.Equal(captured, Json(await service.Diagnostics(session.Id)));
+        Assert.Equal(saves, db.SaveCalls);
+        Assert.Equal(learningBefore, await LearningSnapshot(db));
+        Assert.Empty(await db.Context.Set<CoachIntervention>().ToListAsync());
+        var row = await db.Context.Set<CoachAnalysis>().SingleAsync();
+        row.UpdatedAt = DateTimeOffset.UtcNow.AddMinutes(-5);
+        await db.Context.SaveChangesAsync();
+        provider.BeforeResponse = null; provider.Response = null;
+        Assert.Equal("Completed", (await service.Analyze(session.Id, new())).Status);
+        var success = await service.Diagnostics(session.Id);
+        Assert.Null(success.Analysis.FailureStage);
+        Assert.Null(success.Analysis.ValidationCode);
+        Assert.Null(success.Analysis.ValidationPath);
+        Assert.Null(success.Analysis.ProviderHttpStatus);
+        Assert.Equal(2, provider.Calls);
+        Assert.Equal(learningBefore, await LearningSnapshot(db));
+    }
+
+    [Fact]
+    public async Task ProviderHttpFailureMetadataSurvivesStoredSnapshotWithoutProviderBody()
+    {
+        await using var db = await CoachTestDatabase.Create();
+        var (_, session) = await db.Seed();
+        var provider = new DiagnosticProvider { Failure = CoachFailure.WithDetails(
+            new UpstreamServiceException("PRIVATE_HTTP_BODY", "ai_provider_unavailable"),
+            new CoachFailureDetails("ProviderHttp", ProviderHttpStatus: 503)) };
+        var service = Service(db, provider);
+        await service.Analyze(session.Id, new());
+        db.Context.ChangeTracker.Clear();
+        var diagnostic = await service.Diagnostics(session.Id);
+        Assert.Equal("ProviderHttp", diagnostic.Analysis.FailureStage);
+        Assert.Equal(503, diagnostic.Analysis.ProviderHttpStatus);
+        Assert.Null(diagnostic.Analysis.ValidationCode);
+        Assert.Null(diagnostic.Analysis.ValidationPath);
+        Assert.DoesNotContain("PRIVATE_HTTP_BODY", Json(diagnostic));
+    }
+
+    [Fact]
+    public void OldDiagnosticJsonDeserializesWithoutInventingFailureDetails()
+    {
+        var legacy = JsonSerializer.Deserialize<CoachDiagnosticsDto>(
+            """{"analysis":{"status":"Failed","failureCode":"ai_provider_invalid_response"}}""", CoachOutputValidator.Json)!;
+        Assert.Null(legacy.Analysis.FailureStage);
+        Assert.Null(legacy.Analysis.ValidationCode);
+        Assert.Null(legacy.Analysis.ValidationPath);
+        Assert.Null(legacy.Analysis.ProviderHttpStatus);
+    }
+
+    [Fact]
     public async Task LegacySnapshotReconstructionIsExplicitReadOnlyAndNeverTriggersProvider()
     {
         await using var db = await CoachTestDatabase.Create();

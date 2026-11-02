@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "failureStage": "OutputValidation",
+  "validationCode": "exercise_prompt_mismatch",
+  "validationPath": "$.interventions[0].exercises[0].prompt",
+  "private": true,
+  "normalStateUnchanged": true
+}

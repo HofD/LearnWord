@@ -814,4 +814,4 @@ All social endpoints require existing bearer authentication, including shared re
 Epic 3A private advisory contracts are described in [AI Coach](ai-coach.md); supplementary answers never mutate Card SRS, LearningAttempt or LearnerCardState.
 
 
-Private read-only Coach diagnostics: GET `/api/learning/sessions/{sessionId}/coach-diagnostics`; see [contract/privacy](coach-diagnostics.md).
+Private read-only Coach diagnostics: GET `/api/learning/sessions/{sessionId}/coach-diagnostics`; new captured failures include nullable safe `analysis.failureStage`, `validationCode`, `validationPath`, `providerHttpStatus` (older snapshots leave null). See [contract/privacy](coach-diagnostics.md).

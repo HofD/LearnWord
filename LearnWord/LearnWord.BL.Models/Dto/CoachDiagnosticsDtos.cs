@@ -26,6 +26,10 @@ public class CoachDiagnosticAnalysisDto
     public string PromptVersion { get; set; } = "";
     public int SchemaVersion { get; set; }
     public string? FailureCode { get; set; }
+    public string? FailureStage { get; set; }
+    public string? ValidationCode { get; set; }
+    public string? ValidationPath { get; set; }
+    public int? ProviderHttpStatus { get; set; }
     public int Generation { get; set; }
     public int RetryCount { get; set; }
 }

@@ -71,7 +71,7 @@ public class CoachService
             else
             {
                 if (inputCharacters > CoachLimits.PromptCharacters - 8000)
-                    throw new UpstreamServiceException("AI Coach context is too large.", "coach_context_too_large");
+                    throw CoachFailure.WithDetails(new UpstreamServiceException("AI Coach context is too large.", "coach_context_too_large"), new("ContextSize"));
                 diagnostic.ProviderCalled = true;
                 if (!await CaptureDiagnostic(analysis.Id, generation, diagnostic)) return await Analysis(sessionId);
                 using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(90));
@@ -90,7 +90,7 @@ public class CoachService
             {
                 await LockCard(c.CardId);
                 if (!await db.Cards.AnyAsync(card => card.Id == c.CardId && card.LearningRevision == c.LearningRevision && card.Collection.DeletedAt == null))
-                    throw new UpstreamServiceException("Coach context changed during analysis.", "coach_context_stale");
+                    throw CoachFailure.WithDetails(new UpstreamServiceException("Coach context changed during analysis.", "coach_context_stale"), new("ContextRevalidation"));
             }
             current.Decision = result.Decision; current.Summary = result.Summary;
             // Keep validated grounding internally; public DTO intentionally removes attempt identifiers.
@@ -113,7 +113,8 @@ public class CoachService
         {
             var code = ex is UpstreamServiceException api ? api.ErrorCode : "ai_provider_unavailable";
             // Never log untrusted output, card content, auth headers or provider error bodies.
-            logger.LogWarning("Coach analysis {AnalysisId} generation {Generation} failed with {FailureCode}.", analysis.Id, generation, code);
+            var details = CoachFailure.Details(ex) ?? (ex is OperationCanceledException ? new CoachFailureDetails("AnalysisTimeout") : ex is HttpRequestException ? new CoachFailureDetails("ProviderNetwork") : null);
+            logger.LogWarning("Coach analysis {AnalysisId} generation {Generation} failed with {FailureCode}; stage={FailureStage} rule={ValidationCode} path={ValidationPath} HTTP={ProviderHttpStatus}.", analysis.Id, generation, code, details?.FailureStage, details?.ValidationCode, details?.ValidationPath, details?.ProviderHttpStatus);
             db.ChangeTracker.Clear();
             await using var fail = await db.Database.BeginTransactionAsync();
             await Lock("CoachAnalyses", analysis.Id);
@@ -123,7 +124,12 @@ public class CoachService
                 current.Status = "Failed"; current.FailureCode = code; current.UpdatedAt = Now();
                 if (diagnostic != null)
                 {
-                    diagnostic.Analysis = DiagnosticAnalysis(current, "Failed"); diagnostic.DurationMs = elapsed.ElapsedMilliseconds;
+                    diagnostic.Analysis = DiagnosticAnalysis(current, "Failed");
+                    diagnostic.Analysis.FailureStage = details?.FailureStage;
+                    diagnostic.Analysis.ValidationCode = details?.ValidationCode;
+                    diagnostic.Analysis.ValidationPath = details?.ValidationPath;
+                    diagnostic.Analysis.ProviderHttpStatus = details?.ProviderHttpStatus;
+                    diagnostic.DurationMs = elapsed.ElapsedMilliseconds;
                     current.DiagnosticJson = SerializeDiagnostic(diagnostic);
                 }
                 await db.SaveChangesAsync();
@@ -177,7 +183,7 @@ public class CoachService
             foreach (var card in diagnostic.Context.Cards.Where(c => c.RecentAttempts.Count > 0)) card.RecentAttempts.RemoveAt(card.RecentAttempts.Count - 1);
             json = JsonSerializer.Serialize(diagnostic, CoachOutputValidator.Json);
         }
-        if (json.Length > MaxDiagnosticCharacters) throw new UpstreamServiceException("Coach diagnostic exceeds its safe storage limit.", "coach_diagnostic_too_large");
+        if (json.Length > MaxDiagnosticCharacters) throw CoachFailure.WithDetails(new UpstreamServiceException("Coach diagnostic exceeds its safe storage limit.", "coach_diagnostic_too_large"), new("DiagnosticSize"));
         return json;
     }
     private static CoachDiagnosticAnalysisDto DiagnosticAnalysis(CoachAnalysis a, string source) => new()

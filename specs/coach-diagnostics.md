@@ -1,6 +1,6 @@
 # Private Coach diagnostics
 
-Adds read-only observability to Epic3A without changing prompt coach-v2, provider result schema1, candidate selection, normal SRS or learner evidence. A model decision None remains valid. Diagnostics distinguish selection/pipeline facts, not internal model reasoning.
+Adds read-only observability to Epic3A with prompt coach-v3, unchanged provider result schema1, candidate selection, normal SRS and learner evidence. A model decision None remains valid. Diagnostics distinguish selection/pipeline facts, not internal model reasoning.
 
 ## Use
 
@@ -30,3 +30,11 @@ Lazy authenticated route supports EN/RU, loading/error/GET retry, explicit captu
 ## Limits
 
 Legacy production records cannot retroactively acquire an exact original input; this page provides labelled reconstruction. Captured metadata intentionally omits content, so linguistic teaching-quality investigations may still require the owner to share selected card text separately. Model summary/raw output are not retained in diagnostic export and no model chain-of-thought is requested or claimed. Existing AI result API still exposes its validated user-facing summary. No admin-wide data access, telemetry service, automatic replay or forced intervention is introduced.
+
+## Precise failure diagnostics (coach-v3)
+
+New captured failures add nullable `analysis.failureStage`, `validationCode`, `validationPath` and `providerHttpStatus`. The existing `failureCode` and ordinary Coach error UI remain compatible. Older stored/reconstructed snapshots cannot recover the exact rejection rule and leave these fields null. A new explicit analysis after upgrade uses the v3 cache key; GET diagnostics never retries a paid request.
+
+Validation paths refer only to known schema fields and bounded array indexes. Unknown field names map to their containing known object. Neither exception messages nor model values/property names are copied into these fields. Structured logs use the same safe metadata. `exercise_prompt_mismatch` identifies a prompt that is not a literal supplied word value; `exercise_answer_mismatch` identifies a correct option that does not match the translation paired with that exact value. These are distinct from JSON/schema, evidence, reference and limit errors. Transport/configuration/envelope failures are identified separately where known; a numeric provider HTTP rejection status may be retained without its body.
+
+The Coach request requires structured-output parameter support through `provider.require_parameters=true`. The prompt and schema clarify literal word prompts, paired translations, evidence eligibility, and lesson/exercise alternatives. The flag does not replace semantic validation or guarantee a useful intervention. Model selection, card generation, reasoning and token budgets are unchanged. Raw model output remains unretained, so an old `ai_provider_invalid_response` cannot retroactively be attributed to a particular rule.

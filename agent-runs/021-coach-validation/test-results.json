@@ -1,0 +1,11 @@
+{
+  "passed": 392,
+  "failed": 0,
+  "skipped": 0,
+  "projects": 9,
+  "dockerStartup": "passed",
+  "gatewayValidation": "passed",
+  "diagnosticsRegressionGroups": 5,
+  "coachRegressionGroups": 6,
+  "paidCalls": 0
+}

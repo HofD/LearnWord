@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using LearnWord.BL.Models.Dto;
 using LearnWord.BL.Models.Errors;
 using LearnWord.WebApi.Options;
@@ -75,6 +76,31 @@ public class ConfiguredAiCardGenerationProviderTests
 
         Assert.Equal(429, exception.StatusCode);
         Assert.Equal("ai_provider_rate_limited", exception.ErrorCode);
+    }
+
+    [Fact]
+    public async Task CardGeneratorRequestDoesNotAcquireCoachSpecificRoutingParameters()
+    {
+        var handler = new CaptureRequestHandler();
+        var options = OptionsFactory.Create(new AiCardGenerationOptions { OpenRouter = new OpenRouterOptions {
+            ApiKey = "test-key", Model = "card-model", BaseUrl = "https://example.test/chat" } });
+        var provider = new OpenRouterAiCardGenerationProvider(new HttpClient(handler), options,
+            new NoopLogger<OpenRouterAiCardGenerationProvider>());
+        await provider.GenerateCards(new AiCardGenerationRequest { SourceText = "alpha", MaxCards = 1 }, default);
+        using var request = JsonDocument.Parse(handler.Body!);
+        Assert.False(request.RootElement.TryGetProperty("provider", out _));
+        Assert.Equal("card-model", request.RootElement.GetProperty("model").GetString());
+    }
+
+    private sealed class CaptureRequestHandler : HttpMessageHandler
+    {
+        public string? Body { get; private set; }
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            Body = await request.Content!.ReadAsStringAsync(cancellationToken);
+            return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(
+                JsonSerializer.Serialize(new { choices = new[] { new { message = new { content = "{\"cards\":[]}" } } } })) };
+        }
     }
 
     private sealed class ThrowingHttpMessageHandler : HttpMessageHandler

@@ -4,7 +4,7 @@ namespace LearnWord.WebApi.Services;
 
 public static class CoachLimits
 {
-    public const string PromptVersion = "coach-v2";
+    public const string PromptVersion = "coach-v3";
     public const int SchemaVersion = 1, Cards = 5, RecentAttempts = 6, Words = 4,
         Observations = 5, Interventions = 3, Exercises = 4, Examples = 3, Tips = 3,
         PromptCharacters = 24000, ResponseCharacters = 16000, Title = 120, Prose = 800,

@@ -40,7 +40,7 @@ Context reads use a PostgreSQL repeatable-read snapshot. Only actual session mem
 
 The output validator rejects unknown JSON members and missing required structured fields, exact enum mismatches, unknown revisions/cards/attempts, repeated observation card IDs, duplicate card/type interventions, invalid options/solutions, nulls, control characters and size violations. Machine grounding gates: RepeatedFailure >=2 referenced Again; RepeatedHard >=2 referenced Hard; SlowRecall >=2 referenced durations >=15000ms; LowMastery current score <.4 with >=2 observations; WeakAfterMultipleAttempts current Weak with >=2 observations; RecentRegression referenced success preceding referenced Again. Recognition prompt must exactly match a supplied source value and its correct option that same source's supplied translation. Generated exercise/intervention IDs are assigned by the backend. Semantic quality of prose/examples/distractors remains a provider limitation.
 
-`CoachLimits` centralizes limits. Prompt `coach-v2`, schema 1, provider maximum 3000 output tokens, timeout clamped 1–90 seconds and total service timeout 90 seconds. Request JSON including schema/system text is capped at 24000 characters; output content 16000, HTTP response envelope 128000 bytes. Lists/prose limits above are validated independently of token settings.
+`CoachLimits` centralizes limits. Prompt `coach-v3`, schema 1, provider maximum 3000 output tokens, timeout clamped 1–90 seconds and total service timeout 90 seconds. Request JSON including schema/system text is capped at 24000 characters; output content 16000, HTTP response envelope 128000 bytes. Lists/prose limits above are validated independently of token settings.
 
 ## Durable lifecycle and concurrent requests
 
@@ -69,3 +69,9 @@ Repeated current-revision Again/Hard outcomes can justify an optional meaning re
 
 
 See [private read-only Coach diagnostics](coach-diagnostics.md) for captured metadata, legacy reconstruction and JSON download.
+
+### coach-v3 contract and routing
+
+RecognitionChoice `prompt` must exactly equal one supplied `currentContent.value`, including its original spelling. For value `eventually`, output `eventually`, rather than a question such as `What does eventually mean?`. Its correct option must match the translation paired with that same value (existing trimmed case-insensitive answer comparison remains). An explanation or micro-lesson has a lesson and no exercises; extra practice has exercises and a null lesson. Evidence IDs and observation gates still apply; None is still permitted. The schema describes these constraints and mirrors compatible existing text/list bounds.
+
+Only the Coach OpenRouter request adds `provider.require_parameters=true` to require support for the requested structured output. The model, 3000-token budget, reasoning and card-generation request remain unchanged. v3 creates a new cache entry only on explicit analyze; v1/v2 results remain historical. Failure diagnostics expose safe rule codes/known JSON paths; see [diagnostic contract](coach-diagnostics.md).

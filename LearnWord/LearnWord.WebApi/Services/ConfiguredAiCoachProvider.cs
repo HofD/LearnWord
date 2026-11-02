@@ -14,5 +14,5 @@ public class ConfiguredAiCoachProvider : IAiCoachProvider
     public string Model => options.Provider.Equals("Fake", StringComparison.OrdinalIgnoreCase) ? fake.Model : openRouter.Model;
     public Task<string> Analyze(CoachSessionContext context, CancellationToken cancellationToken)
         => options.Provider.ToLowerInvariant() switch { "fake" => fake.Analyze(context, cancellationToken), "openrouter" => openRouter.Analyze(context, cancellationToken),
-            _ => throw new UpstreamServiceException("AI Coach provider is disabled or not configured.", "ai_provider_configuration_error") };
+            _ => throw CoachFailure.WithDetails(new UpstreamServiceException("AI Coach provider is disabled or not configured.", "ai_provider_configuration_error"), new("Configuration")) };
 }
