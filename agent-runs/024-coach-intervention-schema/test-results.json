@@ -1,0 +1,13 @@
+{
+  "passed": 462,
+  "failed": 0,
+  "skipped": 0,
+  "projects": 9,
+  "webApiTests": 249,
+  "newSchemaCases": 21,
+  "gatewayCases": 10,
+  "fakeEvalRuns": 18,
+  "paidCalls": 0,
+  "promptVersion": "coach-v4",
+  "dtoSchemaVersion": 1
+}

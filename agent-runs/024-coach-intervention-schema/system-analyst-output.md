@@ -1,0 +1,9 @@
+# Scope and acceptance
+
+User approved exact next repair after real Gemma baseline:5 of7 contract failures mixed lessons and practice. Provider schema allowed this combination while local semantic validator rejected it. Fix wire schema to reflect existing contract, not normalize/accept mixed output. Explicit one-observation-per-card instruction addresses another measured failure; uniqueness remains semantic because JSON Schema uniqueItems does not enforce property-key uniqueness.
+
+Backend specialist owns response schema/local safe branch selection/prompt-version/cache/focused tests; root owns docs and Docker/evaluation/gateway acceptance. Preserve DTOschema1, Gemma/model selection/card generator, budgets, None and historical data. Newpromptv4 invalidates only explicit current cache lookup, not history; no automatic replay. Schema union alone does not guarantee endpoint compliance (OpenRouter docs note provider enforcement varies); live model improvement must be measured again by user using same harness. No paid or production call by root.
+
+Acceptance: valid Explanation/MicroLesson/ExtraPractice andNone; reject both mixed directions, missing/null lesson, empty practice, unknown/missing/malicious types and keys safely; keep duplicate-observation semantic check. Independently validate exact outgoing schema using existing Ajv in local frontend-test Docker image and deliberate reply variants, then verify actual gateway behavior/private diagnostic codes and unchanged learner state. Fake behavior harness self-check and full Docker script; no frontend implementation required.
+
+Source checked: https://openrouter.ai/docs/guides/features/structured-outputs (endpoint-specific support, require_parameters, strict behavior and provider feature limitations). No live model result claimed before actual run.

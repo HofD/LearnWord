@@ -1,0 +1,9 @@
+# Backend intervention schema alignment
+
+Added discriminated anyOf intervention alternatives to actual OpenRouter response schema: Explanation/MicroLesson require a lesson object and empty exercises; ExtraPractice requires null lesson and1..4 exercises. Shared exercise limits/grounding descriptions, strict objects and required public fields remain. Explicit prompt/observations/cardId descriptions require one observation per card and combine multiple supported reasons; same-card lesson/practice are separate interventions. Cross-item cardId uniqueness remains a semantic validator rule, not a misleading uniqueItems claim.
+
+Shape selects only a known server-owned intervention branch by its type enum, validates null explicitly, and rejects unknown/missing/wrong-kind discriminator at fixed paths. Existing diagnostic codes/paths retained for lesson_required, lesson_has_exercises, practice_has_lesson and practice_requires_exercises. Safe unknown/duplicate fields and exercise.id compatibility remain. No validator weakening, response repair, model/budget/card-generator changes. PromptVersion coach-v4; schemaVersion1/public DTO unchanged; historical v3 cache retained.
+
+Added21 focused cases: all3valid types, lesson/practice mixing, samecard separate interventions,13invalid/required/unknown/type/bounds mutations, duplicate observation reasons, wire schema alternatives and explicit uniqueness guidance. Updated real request assertions and cache test (oldv3/currentv4).
+
+Static git diff --check passed. No host dotnet, paid calls, external provider calls, test process or commit run by specialist. Root owns Docker build/fullscript/gateway/evaluation self-check and specs/final acceptance. Residual risk: live model adherence improvement remains unmeasured until the same automated18-run benchmark is executed after this revision; schema support/enforcement depends on endpoint.

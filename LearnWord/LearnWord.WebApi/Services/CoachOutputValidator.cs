@@ -103,11 +103,20 @@ public static class CoachOutputValidator
     {
         if (schema.TryGetProperty("anyOf", out var alternatives))
         {
-            if (value.ValueKind == JsonValueKind.Null) return;
-            schema = alternatives[0];
+            // Alternatives are server-owned intervention objects, selected only by their known type enum.
+            // Do not try branches and swallow errors: that would hide a malformed selected alternative.
+            Check(value.ValueKind == JsonValueKind.Object, "schema_type_invalid", path);
+            Check(value.TryGetProperty("type", out var discriminator), "schema_required_missing", path + ".type");
+            Check(discriminator.ValueKind == JsonValueKind.String, "schema_type_invalid", path + ".type");
+            JsonElement? selected = null;
+            foreach (var alternative in alternatives.EnumerateArray())
+                if (alternative.GetProperty("properties").GetProperty("type").GetProperty("enum")
+                    .EnumerateArray().Any(t => t.GetString() == discriminator.GetString())) selected = alternative;
+            Check(selected.HasValue, "enum_invalid", path + ".type");
+            schema = selected.Value;
         }
         var type = schema.GetProperty("type").GetString();
-        Check(type switch { "object" => value.ValueKind == JsonValueKind.Object, "array" => value.ValueKind == JsonValueKind.Array, "string" => value.ValueKind == JsonValueKind.String, "integer" => value.ValueKind == JsonValueKind.Number && value.TryGetInt32(out _), _ => false }, "schema_type_invalid", path);
+        Check(type switch { "object" => value.ValueKind == JsonValueKind.Object, "array" => value.ValueKind == JsonValueKind.Array, "string" => value.ValueKind == JsonValueKind.String, "integer" => value.ValueKind == JsonValueKind.Number && value.TryGetInt32(out _), "null" => value.ValueKind == JsonValueKind.Null, _ => false }, "schema_type_invalid", path);
         if (type == "object")
         {
             var fields = schema.GetProperty("properties"); var seen = new HashSet<string>(StringComparer.Ordinal);
@@ -122,6 +131,19 @@ public static class CoachOutputValidator
             }
             foreach (var name in schema.GetProperty("required").EnumerateArray())
                 Check(value.TryGetProperty(name.GetString()!, out _), "schema_required_missing", path + "." + name.GetString());
+            if (fields.TryGetProperty("lesson", out var lessonSchema) && fields.TryGetProperty("exercises", out var exercisesSchema))
+            {
+                // Keep established diagnostic rules while enforcing these same constraints in the wire schema.
+                var practice = lessonSchema.GetProperty("type").GetString() == "null";
+                Check(!practice || value.GetProperty("lesson").ValueKind == JsonValueKind.Null, "practice_has_lesson", path + ".lesson");
+                Check(practice || value.GetProperty("lesson").ValueKind != JsonValueKind.Null, "lesson_required", path + ".lesson");
+                var exercises = value.GetProperty("exercises");
+                if (exercises.ValueKind == JsonValueKind.Array)
+                {
+                    Check(practice || exercises.GetArrayLength() == 0, "lesson_has_exercises", path + ".exercises");
+                    Check(!practice || exercises.GetArrayLength() > 0, "practice_requires_exercises", path + ".exercises");
+                }
+            }
             foreach (var field in fields.EnumerateObject())
                 if (value.TryGetProperty(field.Name, out var child)) Shape(child, field.Value, path + "." + field.Name);
         }

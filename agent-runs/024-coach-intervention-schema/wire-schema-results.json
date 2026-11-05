@@ -1,0 +1,46 @@
+{
+  "validator": "Ajv from existing local test Docker image",
+  "source": "exact JSON schema received in actual Coach HTTP request",
+  "cases": [
+    {
+      "case": "lesson",
+      "schemaValid": true
+    },
+    {
+      "case": "explanation",
+      "schemaValid": true
+    },
+    {
+      "case": "practice",
+      "schemaValid": true
+    },
+    {
+      "case": "mixed",
+      "schemaValid": false
+    },
+    {
+      "case": "practiceLesson",
+      "schemaValid": false
+    },
+    {
+      "case": "duplicate",
+      "schemaValid": true
+    },
+    {
+      "case": "nullLesson",
+      "schemaValid": false
+    },
+    {
+      "case": "emptyPractice",
+      "schemaValid": false
+    },
+    {
+      "case": "unknownType",
+      "schemaValid": false
+    },
+    {
+      "case": "none",
+      "schemaValid": true
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "case": "lesson",
+    "status": "Completed",
+    "validationCode": null,
+    "validationPath": null,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "explanation",
+    "status": "Completed",
+    "validationCode": null,
+    "validationPath": null,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "practice",
+    "status": "Completed",
+    "validationCode": null,
+    "validationPath": null,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "mixed",
+    "status": "Failed",
+    "validationCode": "lesson_has_exercises",
+    "validationPath": "$.interventions[0].exercises",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "practiceLesson",
+    "status": "Failed",
+    "validationCode": "practice_has_lesson",
+    "validationPath": "$.interventions[0].lesson",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "duplicate",
+    "status": "Failed",
+    "validationCode": "observation_duplicate_card",
+    "validationPath": "$.observations[1].cardId",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "nullLesson",
+    "status": "Failed",
+    "validationCode": "lesson_required",
+    "validationPath": "$.interventions[0].lesson",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "emptyPractice",
+    "status": "Failed",
+    "validationCode": "practice_requires_exercises",
+    "validationPath": "$.interventions[0].exercises",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "unknownType",
+    "status": "Failed",
+    "validationCode": "enum_invalid",
+    "validationPath": "$.interventions[0].type",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "none",
+    "status": "Completed",
+    "validationCode": null,
+    "validationPath": null,
+    "private": true,
+    "normalStateUnchanged": true
+  }
+]
