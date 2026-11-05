@@ -14,6 +14,8 @@ public sealed class EvaluationReport
 {
     public string Mode { get; init; } = "FakeSelfCheck";
     public string PromptVersion { get; init; } = CoachLimits.PromptVersion;
+    public string? ReasoningEffort { get; init; }
+    public int MaxOutputTokens => Evaluation.MaxOutputTokens;
     public int PlannedRuns { get; init; }
     public bool Cancelled { get; set; }
     public IReadOnlyList<string> Models { get; init; } = [];
@@ -36,6 +38,7 @@ public sealed class EvaluationReport
 }
 public static class Evaluation
 {
+    public const int MaxOutputTokens = 3000;
     public static EvaluationResult Score(EvaluationCase test, string model, int repeat, string content, long durationMs = 0,
         CoachProviderResponseDiagnosticsDto? metadata = null)
     {
@@ -53,11 +56,13 @@ public static class Evaluation
     }
     public static async Task<EvaluationReport> Run(IReadOnlyList<string> models, int repeats, bool live,
         Func<string, IAiCoachProvider> providerFactory, CancellationToken cancellationToken = default,
-        Action<EvaluationProgress>? progress = null)
+        Action<EvaluationProgress>? progress = null, string? reasoningEffort = null)
     {
+        EvaluationOptions.ValidateReasoningEffort(reasoningEffort);
+        if (!live && reasoningEffort != null) throw new ArgumentException();
         var cases = Fixtures.All();
         if (models.Count is < 1 or > 3 || repeats is < 1 or > 5 || models.Count * repeats * cases.Count > EvaluationOptions.MaximumCalls) throw new ArgumentException();
-        var report = new EvaluationReport { Mode = live ? "LiveModelEvaluation" : "FakeSelfCheck", PlannedRuns = models.Count * repeats * cases.Count, Models = models, RunsPerModel = repeats * cases.Count };
+        var report = new EvaluationReport { Mode = live ? "LiveModelEvaluation" : "FakeSelfCheck", PlannedRuns = models.Count * repeats * cases.Count, Models = models, RunsPerModel = repeats * cases.Count, ReasoningEffort = reasoningEffort };
         foreach (var model in models)
         {
             var provider = providerFactory(model);

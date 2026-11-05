@@ -1,0 +1,7 @@
+# Controlled GLM reasoning experiment
+
+User-run GLM-v4 baseline11/18 vs Gemma-v4 7/18. GLM3 failures endedlength at3000 output tokens: two empty replies with3000 reasoning tokens each, one malformed partial JSON after2874 reasoning tokens. Known reasoning total18209/24089 output tokens. Remaining failures: duplicate observation, prompt mismatch, empty explanation and missedhelp. Do not claim that effort control will fix them or that live behavior has improved before a new run.
+
+User approved adding requested reasoning.effort=low to the evaluation runner while keeping global max_tokens3000, model/schema/promptv4/fixtures/timeouts constant. Production application configuration/provider code and card generation remain unchanged. Backend specialist owns eval-only adapter/options/report + focused tests, root docs and Docker acceptance. Key absent from root environment: no root paid run planned. No deployment, push or main merge.
+
+Primary references verified in immediately preceding investigation: https://docs.z.ai/guides/capabilities/thinking and https://huggingface.co/zai-org/GLM-5.3-Flash (mandatory thinking, low/high/max; native defaultmax). https://openrouter.ai/docs/guides/best-practices/reasoning-tokens (reasoning.effort, shared output budget and empty content on length). Requested effort metadata is not proof that every upstream endpoint applied it; compare observed usage too.

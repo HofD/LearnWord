@@ -1,0 +1,30 @@
+{
+  "mode": "LiveModelEvaluation",
+  "promptVersion": "coach-v4",
+  "models": [
+    "z-ai/glm-5.3-flash"
+  ],
+  "plannedRuns": 18,
+  "completedRuns": 18,
+  "passed": 11,
+  "missedHelp": 1,
+  "contractFailures": 4,
+  "providerFailures": 2,
+  "exitCode": 1,
+  "requestedReasoningEffort": null,
+  "requestMaxOutputTokens": 3000,
+  "knownTokenTotals": {
+    "promptTokens": 24208,
+    "completionTokens": 24089,
+    "reasoningTokens": 18209
+  },
+  "failureCounts": {
+    "json_malformed": 1,
+    "observation_duplicate_card": 1,
+    "ProviderContentEmpty": 2,
+    "null": 1,
+    "exercise_prompt_mismatch": 1,
+    "text_empty": 1
+  },
+  "lengthTerminatedRuns": 3
+}

@@ -44,3 +44,19 @@ Keep mode, code revision and result JSON with a comparison. Never present Fake r
 
 
 The v3 Gemma baseline completed18 runs with8passes (all6 controls,2/12 repeated-difficulty cases),5 lesson/practice mix errors,1 duplicate-card observation,1 malformed JSON,1 oversized content and1 timeout, plus1 missed_help. This is recorded as bounded evidence under agent-runs/023-coach-behavior-eval/gemma-baseline-summary.json, not a general model ranking. After the v4 schema alignment, rerun the same live command with `--output gemma-v4.json`; it should print Prompt=coach-v4. Keep the previous gemma.json for comparison. No new key setup or manual study sessions are needed.
+
+## Controlled reasoning effort comparison
+
+The GLM-v4 user baseline passed11/18. Three failures hit the3000-token output cap while spending all or nearly all tokens on reasoning. For a controlled follow-up, request lower reasoning effort and keep the same promptv4, schema, fixtures, timeout and3000-token cap:
+
+```sh
+./LearnWord/tests/run-coach-eval.sh --live --model z-ai/glm-5.3-flash --reasoning-effort low --repeat 3 --output glm-v4-low.json
+```
+
+The wrapper prompts for a hidden API key when needed, then makes18 sequential calls with immediate progress. It writes reports/glm-v4-low.json alongside the existing reports/glm-v4.json. No production model/configuration or card-generation setting is changed. The runner still uses the production provider/prompt/schema/validator; an evaluation-only HTTP adapter adds only reasoning.effort and rechecks the final request size. No JSON repair, response filtering or token-limit increase.
+
+Allowed explicit values are low, high and max. The selected effort applies to every model passed in the command; choose models supporting that effort. Omit the flag to preserve the original request with no reasoning property and provider-default behavior. Explicit reasoning in Fake mode is rejected rather than implying it exercised an external request. Report/console record the requested reasoningEffort and maxOutputTokens3000; missing/null effort on old/default reports means unspecified, not reasoning disabled. Requested settings are not upstream confirmation: inspect observed reasoningTokens and finishReason too.
+
+GLM-5.3-Flash thinking is mandatory, with low/high/max effort controls. Low is not a hard token allocation or a promise that every case finishes within3000 tokens. [Z.ai thinking documentation](https://docs.z.ai/guides/capabilities/thinking), [model-author notes](https://huggingface.co/zai-org/GLM-5.3-Flash). Reasoning counts against the same output cap; excluding reasoning text does not free the token budget. [OpenRouter reasoning documentation](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
+
+Compare the new report with the11/18 default baseline, including three length-related failures, duplicate observation, source-word prompt mismatch, empty explanation and one missed_help. A lower effort is a hypothesis, not a verified fix; structural/behavioral passing still does not establish full teaching quality. No real-model result is inferred from offline request-capture tests.

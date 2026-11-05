@@ -1,0 +1,13 @@
+{
+  "passed": 475,
+  "failed": 0,
+  "skipped": 0,
+  "projects": 9,
+  "webApiTests": 262,
+  "newEffortCases": 13,
+  "fakeSelfCheckRuns": 18,
+  "maxOutputTokens": 3000,
+  "productionSettingsChanged": false,
+  "paidCalls": 0,
+  "liveLowQualityMeasured": false
+}
