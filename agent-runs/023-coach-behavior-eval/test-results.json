@@ -1,0 +1,13 @@
+{
+  "passed": 439,
+  "failed": 0,
+  "skipped": 0,
+  "projects": 9,
+  "webApiTests": 226,
+  "evaluationTestsAdded": 23,
+  "fakeSelfCheckRuns": 18,
+  "fakeSelfCheckExit": 0,
+  "missingKeyLiveExit": 2,
+  "liveCalls": 0,
+  "liveQualityMeasured": false
+}

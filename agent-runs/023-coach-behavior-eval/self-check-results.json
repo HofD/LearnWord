@@ -1,0 +1,31 @@
+{
+  "mode": "FakeSelfCheck",
+  "promptVersion": "coach-v3",
+  "plannedRuns": 18,
+  "cancelled": false,
+  "models": [
+    "Fake"
+  ],
+  "runsPerModel": 18,
+  "modelSummaries": [
+    {
+      "model": "Fake",
+      "plannedRuns": 18,
+      "completedRuns": 18,
+      "passed": 18,
+      "missedHelp": 0,
+      "unexpectedHelp": 0,
+      "contractFailures": 0,
+      "providerFailures": 0,
+      "evaluationErrors": 0
+    }
+  ],
+  "completedRuns": 18,
+  "passed": 18,
+  "missedHelp": 0,
+  "unexpectedHelp": 0,
+  "contractFailures": 0,
+  "providerFailures": 0,
+  "evaluationErrors": 0,
+  "exitCode": 0
+}

@@ -1,0 +1,7 @@
+# Evaluation scope
+
+User rejects manual production-session checks and requests an automated test. Implement repeatable standalone evaluation against the real production provider/prompt/schema and validator, with synthetic contexts and benchmark expectations. None remains legal production output; the benchmark can still fail it as missed_help for repeated failures. Never confuse Fake self-check with a real model result or structural validity with teaching quality.
+
+Backend/QA specialist owns standalone .NET console, Docker wrapper and automated scorer tests. Root owns instructions/spec, final Docker runs and review-branch commit. No production model/prompt/validator/schema/budget changes or data migration. Explicit live mode and environment-only key; no automatic paid calls during build/unit suite. Sequential bounded calls, sanitized reports and nonzero failure status allow CI use without manual grading. Cases include strong controls, isolated failure, repeatedAgain, EN/RU, priorAgain+Hard and same-card multiword grounding.
+
+Acceptance: Fake end-to-end harness self-check exits0; unit fake alwaysNone response fails repeated-evidence quality expectation despite valid JSON; malformed/ungrounded responses fail contract; automatic aggregation and safe reports tested; badargs/missinglivekey blocked before network. Full Docker test script; existing app/DB do not need redevelopment or a human reviewing cards. A live quality verdict requires an actual authorized provider run and must remain explicitly unmeasured otherwise.

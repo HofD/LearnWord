@@ -1,0 +1,43 @@
+# Automated Coach behavior test
+
+Run from the backend repository root (the directory containing deploy/, LearnWord/ and this docs/). Requires Docker; no browser, test learner account, database exports or installed host .NET SDK. The harness references the actual current OpenRouterAiCoachProvider, SystemPrompt/schema and CoachOutputValidator. Production code and learning state are not modified.
+
+## One-command harness self-check
+
+```sh
+./LearnWord/tests/run-coach-eval.sh
+```
+
+Default mode FakeSelfCheck makes no network model call. It checks the complete fixture/scorer/report pipeline (6 cases ×3 repeats=18 runs). A pass here is not a Gemma result. The script uses .NET SDK8 in Docker and optionally mounts an existing host NuGet package cache read-only; package restoration may need network when dependencies are missing.
+
+## Actual model test
+
+Provide LEARNWORD_COACH_EVAL_API_KEY through your shell/secret manager, then run:
+
+```sh
+./LearnWord/tests/run-coach-eval.sh --live --model google/gemma-4-26b-a4b-it --repeat 3 --output gemma.json
+```
+
+This makes18 sequential OpenRouter calls with the current production coach-v3 prompt, schema and3000 output-token cap. --live is explicit opt-in to API usage/billing. No key is accepted in arguments or loaded automatically from dotenv/config files. Without the key or required --model, the program rejects configuration before any model request. Do not paste a key into a command or commit it. Nothing is sent to the LearnWord production database or an actual user's session.
+
+To compare models, repeat --model with the exact OpenRouter model IDs. The same contexts/repetitions are used for every model. Repeats1..5, at most3 models, at most60 planned calls; configurations exceeding bounds fail before requests. No automatic retries, parallel calls or model fallback. Pin the code revision when comparing results across prompt changes; this harness always follows the checked-out production prompt, rather than carrying a second diverging prompt. No prompt change is included in this delivery.
+
+## Automatic verdict
+
+Fixed synthetic contexts, stable IDs/timestamps, EN/RU and a same-card multiword case. Observed learner states are computed using production LearnerStateCalculator, with consistent counters/source/latest outcomes and newest-first recent evidence:
+
+- Successful reviews: expect None.
+- Single Again with no repeated evidence: expect None.
+- Six Again, repeated Again in Russian, repeated Again on a multiword card, and Hard after five Again: expect grounded help.
+
+The production API still permits None. Evaluation expectations are a benchmark policy for helpfulness, not a change to API validation.
+
+Every reply is validated by the real output validator first. A None with a supportive summary still counts as missed_help in a repeated-evidence case. A summary alone is not an intervention. Outcomes distinguish pass, missed_help, unexpected_help, contract_failure (malformed JSON, unsupported evidence/references, incorrect source-word/translation grounding or bounds), provider_failure and evaluation_error. The automated verdict does not prove prose translation quality or teaching effectiveness; it tests abstention behavior, recorded grounding and existing validation rules.
+
+Exit0 means every planned run passed; exit1 means benchmark/provider/contract failure or incomplete evaluation; exit2 means configuration/report failure; cancellation exits130. Failures are not dropped from denominators or hidden by valid JSON. This can be called from CI; ordinary unit tests never call OpenRouter.
+
+## Report
+
+The script prints per-case outcomes and aggregate counts, and writes sanitized JSON to agent-runs/023-coach-behavior-eval/reports/ (default coach-eval-report.json; --output accepts a JSON filename). Override the host report directory with LEARNWORD_COACH_EVAL_REPORT_DIR. Results include mode, prompt version, model/case/repeat, planned/completed runs, contract/behavior result, timing, safe validation code/path and allowlisted provider finish/token metadata. No key, raw response, prompt/card text or provider error body is written. Local reports are ignored by Git; reviewed delivery evidence is stored separately.
+
+Keep mode, code revision and result JSON with a comparison. Never present Fake results as real model quality. If interrupted, use the cancelled/incomplete verdict; do not treat partial successes as a pass. Downloading an old production diagnostic is not needed for this test.

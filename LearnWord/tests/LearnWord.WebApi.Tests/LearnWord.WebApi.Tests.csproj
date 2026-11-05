@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\LearnWord.WebApi\LearnWord.WebApi.csproj" />
+    <ProjectReference Include="..\..\tools\LearnWord.CoachEval\LearnWord.CoachEval.csproj" />
   </ItemGroup>
 
 </Project>

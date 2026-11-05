@@ -1,0 +1,11 @@
+# Automated Coach evaluation harness
+
+Added tools/LearnWord.CoachEval (.NET8 console), tests/run-coach-eval.sh Docker wrapper, and CoachBehaviorEvaluationTests in the existing WebApi test project. Reuses actual current provider prompt/schema/validator; no production edits. Six fixed synthetic contexts cover success, true single Again, six Again, repeated difficulty RU, multiword and latestHard afterfiveAgain. Current-revision stable evidence uses newest-first order and fixed identifiers/timestamps.
+
+Default FakeSelfCheck is explicitly not model-quality evidence. Live requires --live, explicit model(s) and LEARNWORD_COACH_EVAL_API_KEY, no dotenv/key arguments. Bounded1..5repeats, up to3models, maximum60planned sequential calls, no automatic retries. Planned runs print before calls. Report contains case/model/verdict/contract validity/safe failure metadata/provider finish+usage/latency, totals and per-model denominators; never words/rawoutputs/provider errors/keys. Output restricts .json basename under configured reportdir. Missing key/badargs/unwritable directory exit2 before network, benchmark fail1, cancellation130; incomplete cannotpass.
+
+Tests specifically prove valid alwaysNone produces missed_help and fails, summary is insufficient, malformed/reference/paired-translation errors use actual validator, grounded unexpected advice distinct, provider failures count in denominators, invalid/live/bound settings gate calls, and fixtures repeat safely. Docker/script verification owned by root; no tests/livecalls run by this agent. Static git diff --check and bash -n pass.
+
+Commands from backend repository: ./LearnWord/tests/run-coach-eval.sh; live: ./LearnWord/tests/run-coach-eval.sh --live --model google/gemma-4-26b-a4b-it --repeat3 (use separate --repeat 3 arguments). Default report agent-runs/023-coach-behavior-eval/reports/coach-eval-report.json. Set LEARNWORD_COACH_EVAL_REPORT_DIR for another host directory; --output gemma.json chooses basename.
+
+Limit: automated abstention/evidence/contract benchmark cannot establish semantic correctness/usefulness of all generated prose. Production still permits None; this is a regression criterion, not a new user-facing forced-intervention rule. Actual model result requires an explicitly opted-in live run.
