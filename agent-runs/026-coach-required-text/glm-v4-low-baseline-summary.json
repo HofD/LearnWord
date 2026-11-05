@@ -1,0 +1,29 @@
+{
+  "mode": "LiveModelEvaluation",
+  "promptVersion": "coach-v4",
+  "reasoningEffort": "low",
+  "maxOutputTokens": 3000,
+  "plannedRuns": 18,
+  "completedRuns": 18,
+  "passed": 16,
+  "missedHelp": 0,
+  "contractFailures": 2,
+  "providerFailures": 0,
+  "exitCode": 1,
+  "model": "z-ai/glm-5.3-flash",
+  "failures": [
+    {
+      "caseId": "six-again-en",
+      "repeat": 1,
+      "validationCode": "text_empty",
+      "validationPath": "$.observations[0].explanation"
+    },
+    {
+      "caseId": "multiword-again-en",
+      "repeat": 1,
+      "validationCode": "text_empty",
+      "validationPath": "$.observations[0].explanation"
+    }
+  ],
+  "knownReasoningTokens": 4913
+}

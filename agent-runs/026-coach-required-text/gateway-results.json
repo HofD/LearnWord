@@ -1,0 +1,98 @@
+[
+  {
+    "case": "validLesson",
+    "status": "Completed",
+    "validationCode": null,
+    "validationPath": null,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "emptyObservation",
+    "status": "Failed",
+    "validationCode": "text_empty",
+    "validationPath": "$.observations[0].explanation",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "blankObservation",
+    "status": "Failed",
+    "validationCode": "text_empty",
+    "validationPath": "$.observations[0].explanation",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "emptyEvidence",
+    "status": "Failed",
+    "validationCode": "text_empty",
+    "validationPath": "$.observations[0].evidenceSummary",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "emptyTitle",
+    "status": "Failed",
+    "validationCode": "text_empty",
+    "validationPath": "$.interventions[0].title",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "emptyLesson",
+    "status": "Failed",
+    "validationCode": "text_empty",
+    "validationPath": "$.interventions[0].lesson.explanation",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "emptyExample",
+    "status": "Failed",
+    "validationCode": "text_empty",
+    "validationPath": "$.interventions[0].lesson.examples[0].source",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "emptyTip",
+    "status": "Failed",
+    "validationCode": "text_empty",
+    "validationPath": "$.interventions[0].lesson.tips[0]",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "emptyOption",
+    "status": "Failed",
+    "validationCode": "text_empty",
+    "validationPath": "$.interventions[0].exercises[0].options[0].text",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "optionalExercise",
+    "status": "Completed",
+    "validationCode": null,
+    "validationPath": null,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "noneEmptySummary",
+    "status": "Completed",
+    "validationCode": null,
+    "validationPath": null,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "case": "interventionEmptySummary",
+    "status": "Failed",
+    "validationCode": "text_empty",
+    "validationPath": "$.summary",
+    "private": true,
+    "normalStateUnchanged": true
+  }
+]

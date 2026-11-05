@@ -18,7 +18,7 @@ Run the command below. In an interactive terminal, the script asks `OpenRouter A
 ./LearnWord/tests/run-coach-eval.sh --live --model google/gemma-4-26b-a4b-it --repeat 3 --output gemma.json
 ```
 
-This makes18 sequential OpenRouter calls with the current production coach-v4 prompt, schema and3000 output-token cap. --live is explicit opt-in to API usage/billing. No key is accepted in arguments or loaded automatically from dotenv/config files. Noninteractive execution without an environment key exits2 before Docker starts. Empty/cancelled interactive input also exits2 without requests. The console rejects a missing required --model before any model request. Do not paste a key into a command or commit it. Nothing is sent to the LearnWord production database or an actual user's session.
+This makes18 sequential OpenRouter calls with the current production coach-v5 prompt, schema and3000 output-token cap. --live is explicit opt-in to API usage/billing. No key is accepted in arguments or loaded automatically from dotenv/config files. Noninteractive execution without an environment key exits2 before Docker starts. Empty/cancelled interactive input also exits2 without requests. The console rejects a missing required --model before any model request. Do not paste a key into a command or commit it. Nothing is sent to the LearnWord production database or an actual user's session.
 
 To compare models, repeat --model with the exact OpenRouter model IDs. The same contexts/repetitions are used for every model. Repeats1..5, at most3 models, at most60 planned calls; configurations exceeding bounds fail before requests. No automatic retries, parallel calls or model fallback. Pin the code revision when comparing results across prompt changes; this harness always follows the checked-out production prompt, rather than carrying a second diverging prompt. The evaluation runner itself never edits the production prompt.
 
@@ -60,3 +60,14 @@ Allowed explicit values are low, high and max. The selected effort applies to ev
 GLM-5.3-Flash thinking is mandatory, with low/high/max effort controls. Low is not a hard token allocation or a promise that every case finishes within3000 tokens. [Z.ai thinking documentation](https://docs.z.ai/guides/capabilities/thinking), [model-author notes](https://huggingface.co/zai-org/GLM-5.3-Flash). Reasoning counts against the same output cap; excluding reasoning text does not free the token budget. [OpenRouter reasoning documentation](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
 
 Compare the new report with the11/18 default baseline, including three length-related failures, duplicate observation, source-word prompt mismatch, empty explanation and one missed_help. A lower effort is a hypothesis, not a verified fix; structural/behavioral passing still does not establish full teaching quality. No real-model result is inferred from offline request-capture tests.
+
+
+## Required-text follow-up (coach-v5)
+
+The user GLM-v4-low run passed16/18; both remaining failures were text_empty at observations[0].explanation, with no length/empty-provider failures. v5 adds explicit minimum lengths for mandatory text without changing the low-effort runner settings or3000-token cap. Repeat the same controlled live test with a distinct filename:
+
+```sh
+./LearnWord/tests/run-coach-eval.sh --live --model z-ai/glm-5.3-flash --reasoning-effort low --repeat 3 --output glm-v5-low.json
+```
+
+Startup should show Prompt=coach-v5 MaxOutputTokens=3000 ReasoningEffort=low. The key prompt and immediate progress work as before. Keep glm-v4-low.json to compare against16/18. This code change does not establish an improved live result until that run completes; minLength rules do not by themselves reject whitespace-only strings, which remain semantically checked. Legal empty None summaries and optional exercise explanations remain permitted.

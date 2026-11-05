@@ -26,13 +26,13 @@ public class CoachServiceTests
         var (_, session) = await db.Seed();
         var old = new CoachAnalysis { Id = Guid.NewGuid(), SessionId = session.Id, CollectionId = session.CollectionId,
             CreatedAt = DateTimeOffset.UtcNow, UpdatedAt = DateTimeOffset.UtcNow, Status = "Completed", Decision = "None",
-            Generation = 1, PromptVersion = "coach-v3" };
+            Generation = 1, PromptVersion = "coach-v4" };
         db.Context.CoachAnalyses.Add(old);
         await db.Context.SaveChangesAsync();
         var provider = new RecordingProvider();
         var service = Service(db, provider);
         var result = await service.Analyze(session.Id, new());
-        Assert.Equal("coach-v4", result.PromptVersion);
+        Assert.Equal("coach-v5", result.PromptVersion);
         Assert.NotEqual(old.Id, result.Id);
         Assert.Equal("Intervention", result.Decision);
         Assert.Equal(1, provider.Calls);

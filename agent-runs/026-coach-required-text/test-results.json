@@ -1,0 +1,12 @@
+{
+  "passed": 505,
+  "failed": 0,
+  "skipped": 0,
+  "projects": 9,
+  "webApiTests": 292,
+  "newRequiredTextCases": 30,
+  "gatewayCases": 12,
+  "fakeEvalRuns": 18,
+  "promptVersion": "coach-v5",
+  "paidCalls": 0
+}

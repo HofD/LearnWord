@@ -1,0 +1,54 @@
+{
+  "validator": "Ajv from existing local test Docker image",
+  "source": "exact outgoing Coach request schema",
+  "cases": [
+    {
+      "case": "validLesson",
+      "schemaValid": true
+    },
+    {
+      "case": "emptyObservation",
+      "schemaValid": false
+    },
+    {
+      "case": "blankObservation",
+      "schemaValid": true
+    },
+    {
+      "case": "emptyEvidence",
+      "schemaValid": false
+    },
+    {
+      "case": "emptyTitle",
+      "schemaValid": false
+    },
+    {
+      "case": "emptyLesson",
+      "schemaValid": false
+    },
+    {
+      "case": "emptyExample",
+      "schemaValid": false
+    },
+    {
+      "case": "emptyTip",
+      "schemaValid": false
+    },
+    {
+      "case": "emptyOption",
+      "schemaValid": false
+    },
+    {
+      "case": "optionalExercise",
+      "schemaValid": true
+    },
+    {
+      "case": "noneEmptySummary",
+      "schemaValid": true
+    },
+    {
+      "case": "interventionEmptySummary",
+      "schemaValid": true
+    }
+  ]
+}

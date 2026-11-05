@@ -157,6 +157,7 @@ public static class CoachOutputValidator
         else if (type == "string")
         {
             if (schema.TryGetProperty("enum", out var allowed)) Check(allowed.EnumerateArray().Any(a => a.GetString() == value.GetString()), "enum_invalid", path);
+            if (schema.TryGetProperty("minLength", out var min)) Check(value.GetString()!.Length >= min.GetInt32(), "text_empty", path);
             if (path.Contains(".evidenceAttemptIds[")) Check(value.TryGetGuid(out _), "schema_value_invalid", path);
             if (schema.TryGetProperty("maxLength", out var max)) Check(value.GetString()!.Length <= max.GetInt32(), "text_too_long", path);
         }

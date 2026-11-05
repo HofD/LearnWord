@@ -125,6 +125,10 @@ public class AiCoachProviderTests
         var schema = format.GetProperty("schema");
         var properties = schema.GetProperty("properties");
         Assert.Equal(CoachLimits.Observations, properties.GetProperty("observations").GetProperty("maxItems").GetInt32());
+        var observation = properties.GetProperty("observations").GetProperty("items").GetProperty("properties");
+        Assert.Equal(1, observation.GetProperty("explanation").GetProperty("minLength").GetInt32());
+        Assert.Equal(1, observation.GetProperty("evidenceSummary").GetProperty("minLength").GetInt32());
+        Assert.Equal(0, properties.GetProperty("summary").GetProperty("minLength").GetInt32());
         var alternatives = properties.GetProperty("interventions").GetProperty("items").GetProperty("anyOf");
         Assert.Equal(2, alternatives.GetArrayLength());
         Assert.Equal(0, alternatives[0].GetProperty("properties").GetProperty("exercises").GetProperty("maxItems").GetInt32());
@@ -133,6 +137,8 @@ public class AiCoachProviderTests
         var intervention = alternatives[1].GetProperty("properties");
         var exercise = intervention.GetProperty("exercises").GetProperty("items").GetProperty("properties");
         Assert.Equal(CoachLimits.ShortText, exercise.GetProperty("prompt").GetProperty("maxLength").GetInt32());
+        Assert.Equal(1, exercise.GetProperty("prompt").GetProperty("minLength").GetInt32());
+        Assert.Equal(0, exercise.GetProperty("explanation").GetProperty("minLength").GetInt32());
         Assert.Contains("exact", exercise.GetProperty("prompt").GetProperty("description").GetString()!, StringComparison.OrdinalIgnoreCase);
         Assert.Equal(CoachLimits.MinOptions, exercise.GetProperty("options").GetProperty("minItems").GetInt32());
         Assert.Equal(CoachLimits.MaxOptions, exercise.GetProperty("options").GetProperty("maxItems").GetInt32());

@@ -1,6 +1,6 @@
 # Private Coach diagnostics
 
-Adds read-only observability to Epic3A with current prompt coach-v4, unchanged provider result schema1, candidate selection, normal SRS and learner evidence. A model decision None remains valid. Diagnostics distinguish selection/pipeline facts, not internal model reasoning.
+Adds read-only observability to Epic3A with current prompt coach-v5, unchanged provider result schema1, candidate selection, normal SRS and learner evidence. A model decision None remains valid. Diagnostics distinguish selection/pipeline facts, not internal model reasoning.
 
 ## Use
 
@@ -53,3 +53,6 @@ The snapshot `truncated` flag still means diagnostic storage trimming only. `fin
 
 
 coach-v4 now sends mutually exclusive intervention schema alternatives, matching the existing lesson/practice semantic rules. The same failure codes/paths remain for mixed content. The prompt/description one-observation-per-card rule is still backed by semantic duplicate detection. Historical v3 diagnostic snapshots and evidence remain unchanged; new explicit generations use v4 cache provenance. Existing response metadata and parser diagnostics remain available.
+
+
+coach-v5 explicitly adds nonempty minima for mandatory text while retaining intended empty fields and semantic whitespace checks. Rejections still export text_empty plus the same known JSON field path; stored historical v4 snapshots are unchanged. No new diagnostic fields or migration.

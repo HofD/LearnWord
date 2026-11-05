@@ -1,0 +1,7 @@
+# Required Coach text bounds
+
+Text schema now emits minLength1 for mandatory text leaves while preserving maxima; explicit minLength0 remains for summary and exercise.explanation. Prompt describes meaningful nonblank evidence/action text and the two exceptions. Shape enforces minima with established text_empty/safe paths; semantic whitespace/control checks remain. No regex or conditional-schema additions. Prompt/cache version coach-v5, DTOschema1 unchanged, historical v4 cache regression updated.
+
+Added30 focused cases in CoachRequiredTextSchemaTests:12 required empty-string paths,9 whitespace-only cases,3 missing/null/type cases, plus allowed None summary, allowed empty practice explanation, conditional Intervention summary, empty optional lesson arrays, valid grounded one-character text and complete schema minima/exceptions audit. Existing actual-provider request test additionally asserts emitted minima. Production model, budgets, reasoning, card generator and CLI fixtures untouched.
+
+Static git diff --check passed. No build/test/live-provider process started by this specialist; root owns Docker startup/full runner, eval self-check and independent Ajv/gateway verification. Expected final total505/WebApi292 if all30 new cases pass against475 baseline. No commits made. minLength only prevents literal empty strings; whitespace-only rejection still depends on the unchanged semantic validator. Actual model improvement is unmeasured until the next live run.
