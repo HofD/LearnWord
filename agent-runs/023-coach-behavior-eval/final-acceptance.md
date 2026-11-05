@@ -39,3 +39,9 @@ From backend repository root, with evaluation key supplied by shell/secret manag
 ## Limits
 
 Live Gemma quality not measured here: evaluation API key absent from current process. Harness self-check and negative scorer tests are not a real-model benchmark result. This catches repeated abstention and contract/evidence/translation-pair errors; it cannot prove semantic prose quality or teaching efficacy. Synthetic contexts do not reproduce exact text of unretained production requests.
+
+## Follow-up: interactive key entry
+
+User requested a clear place to supply the key. Docker wrapper now prompts for hidden input on --live when no key environment variable exists; paste into the terminal prompt, never a script/source file. Existing environment key skips prompting; noninteractive missing key and empty/cancelled input exit2 before Docker/network. Console contract unchanged.
+
+Verified with synthetic key and disposable Docker-command stub (no external request): PTY hidden input not echoed, only environment passes the key, argv excludes key, environment bypass works, empty input and noninteractive absence exit2. bash -n and git diff --check passed. Full backend suite not repeated for this shell/input/documentation-only change; previous439 tests remain last full result.

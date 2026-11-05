@@ -12,13 +12,13 @@ Default mode FakeSelfCheck makes no network model call. It checks the complete f
 
 ## Actual model test
 
-Provide LEARNWORD_COACH_EVAL_API_KEY through your shell/secret manager, then run:
+Run the command below. In an interactive terminal, the script asks `OpenRouter API key (hidden):`; paste your key and press Enter. Characters are not displayed and the key is not saved to a file or placed in command history. An existing LEARNWORD_COACH_EVAL_API_KEY environment variable skips the prompt (use that for CI):
 
 ```sh
 ./LearnWord/tests/run-coach-eval.sh --live --model google/gemma-4-26b-a4b-it --repeat 3 --output gemma.json
 ```
 
-This makes18 sequential OpenRouter calls with the current production coach-v3 prompt, schema and3000 output-token cap. --live is explicit opt-in to API usage/billing. No key is accepted in arguments or loaded automatically from dotenv/config files. Without the key or required --model, the program rejects configuration before any model request. Do not paste a key into a command or commit it. Nothing is sent to the LearnWord production database or an actual user's session.
+This makes18 sequential OpenRouter calls with the current production coach-v3 prompt, schema and3000 output-token cap. --live is explicit opt-in to API usage/billing. No key is accepted in arguments or loaded automatically from dotenv/config files. Noninteractive execution without an environment key exits2 before Docker starts. Empty/cancelled interactive input also exits2 without requests. The console rejects a missing required --model before any model request. Do not paste a key into a command or commit it. Nothing is sent to the LearnWord production database or an actual user's session.
 
 To compare models, repeat --model with the exact OpenRouter model IDs. The same contexts/repetitions are used for every model. Repeats1..5, at most3 models, at most60 planned calls; configurations exceeding bounds fail before requests. No automatic retries, parallel calls or model fallback. Pin the code revision when comparing results across prompt changes; this harness always follows the checked-out production prompt, rather than carrying a second diverging prompt. No prompt change is included in this delivery.
 
