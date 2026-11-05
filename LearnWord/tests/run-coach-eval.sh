@@ -37,5 +37,6 @@ fi
 if [ -n "${LEARNWORD_COACH_EVAL_API_KEY:-}" ]; then
   docker_args+=(-e LEARNWORD_COACH_EVAL_API_KEY)
 fi
+printf '%s\n' 'Starting Docker and .NET build/restore; first launch may need dependency downloads. Model requests start after the Mode line.'
 exec docker "${docker_args[@]}" mcr.microsoft.com/dotnet/sdk:8.0 \
-  dotnet run --project /src/tools/LearnWord.CoachEval/LearnWord.CoachEval.csproj --no-launch-profile -- "$@"
+  dotnet run --project /src/tools/LearnWord.CoachEval/LearnWord.CoachEval.csproj --no-launch-profile --verbosity minimal -- "$@"

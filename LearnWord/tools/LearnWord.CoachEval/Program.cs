@@ -38,9 +38,14 @@ IAiCoachProvider Factory(string model) => options.Live
     ? new OpenRouterAiCoachProvider(http, Microsoft.Extensions.Options.Options.Create(new AiCardGenerationOptions {
         Provider = "OpenRouter", OpenRouter = new OpenRouterOptions { Model = model, ApiKey = key!, BaseUrl = "https://openrouter.ai/api/v1/chat/completions", TimeoutSeconds = 60 } }))
     : new FakeAiCoachProvider();
-var report = await Evaluation.Run(options.Models, options.Repeats, options.Live, Factory, cancelled.Token);
-foreach (var result in report.Results)
-    Console.WriteLine($"{result.Model} {result.CaseId} #{result.Repeat}: {result.Outcome}; contractValid={result.ContractValid} finish={result.ProviderResponse?.FinishReason ?? "unknown"} durationMs={result.DurationMs}");
+var report = await Evaluation.Run(options.Models, options.Repeats, options.Live, Factory, cancelled.Token, progress: update => {
+    var prefix = $"[{DateTimeOffset.UtcNow:HH:mm:ss} UTC] [{update.RunNumber}/{update.PlannedRuns}] {update.Model} {update.CaseId} #{update.Repeat}";
+    if (update.Result is not { } result)
+        Console.WriteLine($"{prefix}: starting (provider timeout 60s)");
+    else
+        Console.WriteLine($"{prefix}: {result.Outcome}; contractValid={result.ContractValid} finish={result.ProviderResponse?.FinishReason ?? "unknown"} durationMs={result.DurationMs} stage={result.FailureStage ?? "none"} rule={result.ValidationCode ?? "none"}");
+    Console.Out.Flush();
+});
 Console.WriteLine($"Completed={report.CompletedRuns}/{report.PlannedRuns} Passed={report.Passed} MissedHelp={report.MissedHelp} UnexpectedHelp={report.UnexpectedHelp} ContractFailures={report.ContractFailures} ProviderFailures={report.ProviderFailures} EvaluationErrors={report.EvaluationErrors} Cancelled={report.Cancelled}");
 foreach (var group in report.ModelSummaries)
     Console.WriteLine($"Model={group.Model} Completed={group.CompletedRuns}/{group.PlannedRuns} Passed={group.Passed} MissedHelp={group.MissedHelp} UnexpectedHelp={group.UnexpectedHelp} ContractFailures={group.ContractFailures} ProviderFailures={group.ProviderFailures} EvaluationErrors={group.EvaluationErrors}");

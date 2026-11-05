@@ -8,6 +8,7 @@ namespace LearnWord.CoachEval;
 public sealed record EvaluationResult(string CaseId, string Model, int Repeat, string Outcome, bool ContractValid,
     long DurationMs, CoachProviderResponseDiagnosticsDto? ProviderResponse = null,
     string? FailureStage = null, string? ValidationCode = null, string? ValidationPath = null);
+public sealed record EvaluationProgress(int RunNumber, int PlannedRuns, string Model, string CaseId, int Repeat, EvaluationResult? Result = null);
 public sealed record ModelEvaluationSummary(string Model, int PlannedRuns, int CompletedRuns, int Passed, int MissedHelp, int UnexpectedHelp, int ContractFailures, int ProviderFailures, int EvaluationErrors);
 public sealed class EvaluationReport
 {
@@ -51,7 +52,8 @@ public static class Evaluation
         }
     }
     public static async Task<EvaluationReport> Run(IReadOnlyList<string> models, int repeats, bool live,
-        Func<string, IAiCoachProvider> providerFactory, CancellationToken cancellationToken = default)
+        Func<string, IAiCoachProvider> providerFactory, CancellationToken cancellationToken = default,
+        Action<EvaluationProgress>? progress = null)
     {
         var cases = Fixtures.All();
         if (models.Count is < 1 or > 3 || repeats is < 1 or > 5 || models.Count * repeats * cases.Count > EvaluationOptions.MaximumCalls) throw new ArgumentException();
@@ -63,6 +65,8 @@ public static class Evaluation
             for (var repeat = 1; repeat <= repeats; repeat++)
             {
                 if (cancellationToken.IsCancellationRequested) { report.Cancelled = true; return report; }
+                var runNumber = report.CompletedRuns + 1;
+                progress?.Invoke(new(runNumber, report.PlannedRuns, model, test.Id, repeat));
                 var watch = Stopwatch.StartNew();
                 try
                 {
@@ -79,6 +83,7 @@ public static class Evaluation
                 }
                 catch (Exception)
                 { report.Results.Add(new(test.Id, model, repeat, "evaluation_error", false, watch.ElapsedMilliseconds)); }
+                progress?.Invoke(new(runNumber, report.PlannedRuns, model, test.Id, repeat, report.Results[^1]));
             }
         }
         return report;

@@ -1,0 +1,49 @@
+{
+  "source": "user-run reports/gemma.json",
+  "mode": "LiveModelEvaluation",
+  "promptVersion": "coach-v3",
+  "modelSummaries": [
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "plannedRuns": 18,
+      "completedRuns": 18,
+      "passed": 8,
+      "missedHelp": 1,
+      "unexpectedHelp": 0,
+      "contractFailures": 7,
+      "providerFailures": 2,
+      "evaluationErrors": 0
+    }
+  ],
+  "validationFailures": {
+    "lesson_has_exercises": 5,
+    "observation_duplicate_card": 1,
+    "json_malformed": 1
+  },
+  "responseTimeTotalSeconds": 256.115,
+  "cases": {
+    "successful-en": {
+      "pass": 3
+    },
+    "isolated-again-en": {
+      "pass": 3
+    },
+    "six-again-en": {
+      "provider_failure": 1,
+      "contract_failure": 1,
+      "pass": 1
+    },
+    "repeated-again-ru": {
+      "contract_failure": 2,
+      "missed_help": 1
+    },
+    "multiword-again-en": {
+      "contract_failure": 2,
+      "provider_failure": 1
+    },
+    "hard-after-again-en": {
+      "contract_failure": 2,
+      "pass": 1
+    }
+  }
+}

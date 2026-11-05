@@ -1,0 +1,10 @@
+{
+  "passed": 441,
+  "failed": 0,
+  "skipped": 0,
+  "projects": 9,
+  "webApiTests": 228,
+  "newProgressTests": 2,
+  "fakeWrapperRuns": 18,
+  "rootAdditionalLiveCalls": 0
+}

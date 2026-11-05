@@ -150,6 +150,48 @@ public class CoachBehaviorEvaluationTests
         await Assert.ThrowsAsync<ArgumentException>(() => Evaluation.Run(["Fake"], 0, false, _ => new Reply(None)));
     }
 
+    [Fact]
+    public async Task ProgressStartsBeforeProviderAndPublishesResultBeforeNextRequest()
+    {
+        using var cancelled = new CancellationTokenSource();
+        var events = new List<EvaluationProgress>();
+        var provider = new CheckingReply(() => {
+            Assert.Single(events);
+            Assert.Equal(1, events[0].RunNumber);
+            Assert.Null(events[0].Result);
+        });
+        var report = await Evaluation.Run(["model"], 1, true, _ => provider, cancelled.Token, progress: update => {
+            events.Add(update);
+            if (update.Result != null) cancelled.Cancel();
+        });
+        Assert.Equal(2, events.Count);
+        Assert.Equal("pass", events[1].Result!.Outcome);
+        Assert.Equal(1, report.CompletedRuns);
+        Assert.True(report.Cancelled);
+    }
+
+    [Fact]
+    public async Task FailedRequestsAlsoPublishImmediateProgressResults()
+    {
+        var events = new List<EvaluationProgress>();
+        var report = await Evaluation.Run(["model"], 1, true, _ => new Failing(), progress: events.Add);
+        Assert.Equal(12, events.Count);
+        for (var index = 0; index < 6; index++)
+        {
+            Assert.Null(events[index * 2].Result);
+            Assert.Equal(index + 1, events[index * 2].RunNumber);
+            Assert.Equal("provider_failure", events[index * 2 + 1].Result!.Outcome);
+        }
+        Assert.Equal(6, report.ProviderFailures);
+    }
+
+    private sealed class CheckingReply(Action check) : IAiCoachProvider
+    {
+        public string Provider => "Test"; public string Model => "test-model";
+        public Task<string> Analyze(CoachSessionContext context, CancellationToken cancellationToken)
+        { check(); return Task.FromResult(None); }
+    }
+
     private sealed class Reply(string response) : IAiCoachProvider
     {
         public string Provider => "Test"; public string Model => "test-model";
