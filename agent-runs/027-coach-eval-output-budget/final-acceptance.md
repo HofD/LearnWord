@@ -34,3 +34,13 @@ From backend repository root:
 ```
 
 Key prompted hidden; expect Prompt=coach-v5 MaxOutputTokens=5000 ReasoningEffort=low and18sequential calls. New file preserves prior DeepSeek14/18at3000 andGLM16/18at3000 (comparison-baselines.json). Inspect whether three length/empty failures disappear, remaining contract failures, latency and measured token usage. This is a configuration comparison with a different budget, not a same-budget model ranking. Do not keep changing the prompt after individual failures; select the best tested candidate using these results and label the small synthetic sample honestly. Reference price estimates are not actual billing or a universal price ceiling.
+
+## Completed user live run and final candidate selection
+
+User supplied completed DeepSeek5000report (18/18executed,notcancelled,promptv5,low,5000). Result16/18 vs14/18at3000;3empty-provider failures disappeared, but1length-ended malformedJSON remains and1duplicate intervention appears. Total response time239.366s, median10.3755s;completion36095tokens including29152reasoning. No further paid calls initiated by root.
+
+Compare GLM-v5-low3000:16/18,0length/provider failures,total134.77s,median6.7815s,completion12423 including5749reasoning. Relevant repeated-difficulty cases:GLM11/12 vsDeepSeek5000 10/12. Same aggregate pass count with lower latency/token consumption favors GLM for this project. Select z-ai/glm-5.3-flash,requestedreasoninglow,max_tokens3000,coach-v5 as the best tested baseline candidate. Stop this prompt/budget tuning series; no further automatic reruns.
+
+Recorded safe aggregates/failure identifiers in final-model-comparison.json; original ignored reports preserved. Requested/observed token counts do not determine exact billing because provider prices/caching/cost were not captured. This is a small synthetic comparison and both configurations still have2contract failures; it is not a claim of perfect reliability or linguistic teaching quality. Strict output validation remains necessary. Production application/card generator configuration was not changed or deployed; choosing/separating Coach configuration is a subsequent implementation task.
+
+Verification for this documentation/evidence update: JSON source metadata/counts checked, git diff --check passed. No code changed, no additional tests/build/paid calls needed;519 remains latest full-code test count.

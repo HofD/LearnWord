@@ -1,0 +1,131 @@
+{
+  "selection": {
+    "model": "z-ai/glm-5.3-flash",
+    "reasoningEffort": "low",
+    "maxOutputTokens": 3000,
+    "promptVersion": "coach-v5",
+    "productionSettingsChanged": false
+  },
+  "scope": "small synthetic benchmark; candidate selection, not proof of teaching quality or production reliability",
+  "results": [
+    {
+      "source": "glm-v5-low.json",
+      "model": "z-ai/glm-5.3-flash",
+      "promptVersion": "coach-v5",
+      "reasoningEffort": "low",
+      "maxOutputTokens": 3000,
+      "passed": 16,
+      "plannedRuns": 18,
+      "helpCasesPassed": 11,
+      "helpCasesTotal": 12,
+      "contractFailures": 2,
+      "providerFailures": 0,
+      "lengthTerminations": 0,
+      "responseSecondsTotal": 134.77,
+      "responseSecondsMedian": 6.7815,
+      "knownPromptTokens": 25525,
+      "knownCompletionTokens": 12423,
+      "knownReasoningTokens": 5749,
+      "failures": [
+        {
+          "caseId": "isolated-again-en",
+          "repeat": 1,
+          "validationCode": "intervention_requires_observations",
+          "failureStage": "OutputValidation",
+          "finishReason": "stop"
+        },
+        {
+          "caseId": "hard-after-again-en",
+          "repeat": 1,
+          "validationCode": "observation_evidence_insufficient",
+          "failureStage": "OutputValidation",
+          "finishReason": "stop"
+        }
+      ]
+    },
+    {
+      "source": "deepseek-v5-low.json",
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "promptVersion": "coach-v5",
+      "reasoningEffort": "low",
+      "maxOutputTokens": 3000,
+      "passed": 14,
+      "plannedRuns": 18,
+      "helpCasesPassed": 8,
+      "helpCasesTotal": 12,
+      "contractFailures": 1,
+      "providerFailures": 3,
+      "lengthTerminations": 3,
+      "responseSecondsTotal": 175.961,
+      "responseSecondsMedian": 8.9665,
+      "knownPromptTokens": 34589,
+      "knownCompletionTokens": 25909,
+      "knownReasoningTokens": 22372,
+      "failures": [
+        {
+          "caseId": "six-again-en",
+          "repeat": 1,
+          "validationCode": null,
+          "failureStage": "ProviderContentEmpty",
+          "finishReason": "length"
+        },
+        {
+          "caseId": "repeated-again-ru",
+          "repeat": 2,
+          "validationCode": "none_has_observations",
+          "failureStage": "OutputValidation",
+          "finishReason": "stop"
+        },
+        {
+          "caseId": "multiword-again-en",
+          "repeat": 2,
+          "validationCode": null,
+          "failureStage": "ProviderContentEmpty",
+          "finishReason": "length"
+        },
+        {
+          "caseId": "hard-after-again-en",
+          "repeat": 2,
+          "validationCode": null,
+          "failureStage": "ProviderContentEmpty",
+          "finishReason": "length"
+        }
+      ]
+    },
+    {
+      "source": "deepseek-v5-low-5000.json",
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "promptVersion": "coach-v5",
+      "reasoningEffort": "low",
+      "maxOutputTokens": 5000,
+      "passed": 16,
+      "plannedRuns": 18,
+      "helpCasesPassed": 10,
+      "helpCasesTotal": 12,
+      "contractFailures": 2,
+      "providerFailures": 0,
+      "lengthTerminations": 1,
+      "responseSecondsTotal": 239.366,
+      "responseSecondsMedian": 10.3755,
+      "knownPromptTokens": 31090,
+      "knownCompletionTokens": 36095,
+      "knownReasoningTokens": 29152,
+      "failures": [
+        {
+          "caseId": "six-again-en",
+          "repeat": 3,
+          "validationCode": "intervention_duplicate",
+          "failureStage": "OutputValidation",
+          "finishReason": "stop"
+        },
+        {
+          "caseId": "repeated-again-ru",
+          "repeat": 2,
+          "validationCode": "json_malformed",
+          "failureStage": "OutputValidation",
+          "finishReason": "length"
+        }
+      ]
+    }
+  ]
+}
