@@ -112,3 +112,27 @@ Coach reads only AiCoach options: Enabled,Provider,OpenRouter.BaseUrl/Model/ApiK
 Invalid Coach max-token/effort/key/base settings return sanitized noncritical ai_provider_configuration_error beforeHTTP; they do not stop application/card generation startup. Supported budgets3000/5000, effortslow/high/max (null/empty omission allowed for explicit provider-default evaluation). Selected release remains3000/low. Enabledfalse suppresses Coach only; Fake never calls a paid provider. No automatic retries/output repair are added.
 
 New cache/request provenance coach-v6 avoids reusing historical Gemma-v5 results for this release. The actual prompt text and DTOschema1 remain the tested v5 version. No new migration, historical records preserved, GET read-only. Cached completed results within a version still survive later config/model changes; new settings apply to new analyses, not automatic reanalysis. Eval factory explicitly omits production-default effort and uses3000 before its existing CLI adapter, preserving controlled benchmark semantics and flags. Details and environment mapping: [GLM release](../docs/coach-glm-release.md).
+
+### Deterministic candidate ranking v1
+
+All active collection/session members (bounded by `LearningService.SessionLimit`) pass the existing revision,
+minimum-two-current-attempts, session-problem and content checks before ranking. EF global soft-delete filters
+remain authoritative. A session has at most one attempt per card (existing invariant). Evidence is cut off at
+session completion; learner-state refresh uses that same time, retaining the existing cached-state semantics.
+
+The pure ranker uses the latest six current-revision attempts ordered by ReviewedAt then attempt Id.
+Exclusive category precedence: RepeatedFailure (>=2 Again), Regression (a successful Hard/Good/Easy followed
+chronologically by Again), WeakAgain (Weak state and session Again), RepeatedHard (>=2 Hard), RepeatedSlow
+(>=2 response times >=15000ms), Other. Categories do not stack. Within category: Again count descending,
+Hard count descending, mastery ascending, difficulty descending, positive session response time descending
+(missing/invalid measurements sort last), CardId ascending. This is a Coach selection heuristic, not a
+validated difficulty measurement. Old revisions and attempts outside the recent window cannot establish recurrence.
+
+Only the first five ranked eligible records enter the unchanged provider contract. Private diagnostics retain
+all bounded members; nullable SeverityCategory, SeverityRank (1-based across all eligible), and SeveritySignals
+explain the ordering. Ineligible rows have no ranking metadata. Included and CandidateLimit describe the cut.
+Old JSON snapshots deserialize with null ranking fields. Diagnostic row order remains CardId; SeverityRank
+expresses severity order. CandidateCount continues to mean selected count (<=5), not total eligible count.
+ContentOmittedCards and RevisionMismatchCards now cover all bounded members identically in model context
+and diagnostics, independent of when five slots fill; each rejected card increments only its applicable reason.
+No schema migration, prompt change, analysis cache invalidation, or automatic regeneration is introduced.

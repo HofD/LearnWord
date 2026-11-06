@@ -1,0 +1,411 @@
+{
+  "planned": 10,
+  "completed": 10,
+  "successful": 5,
+  "failed": 5,
+  "candidateCount": 5,
+  "revisionMismatchCards": 0,
+  "contentOmittedCards": 0,
+  "cards": [
+    {
+      "cardId": 334,
+      "severityCategory": "Other",
+      "severityRank": 6,
+      "severitySignals": {
+        "category": 5,
+        "againCount": 1,
+        "hardCount": 1,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.23333333333333334,
+        "difficultyScore": 0.575,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "CandidateLimit",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Hard",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.23333333333333334,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Hard",
+          "reviewedAt": "2026-11-06T13:21:21.34626+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.313107+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    },
+    {
+      "cardId": 335,
+      "severityCategory": "Other",
+      "severityRank": 7,
+      "severitySignals": {
+        "category": 5,
+        "againCount": 1,
+        "hardCount": 1,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.23333333333333334,
+        "difficultyScore": 0.575,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "CandidateLimit",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Hard",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.23333333333333334,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Hard",
+          "reviewedAt": "2026-11-06T13:21:21.35329+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.317813+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    },
+    {
+      "cardId": 336,
+      "severityCategory": "Other",
+      "severityRank": 8,
+      "severitySignals": {
+        "category": 5,
+        "againCount": 1,
+        "hardCount": 1,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.23333333333333334,
+        "difficultyScore": 0.575,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "CandidateLimit",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Hard",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.23333333333333334,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Hard",
+          "reviewedAt": "2026-11-06T13:21:21.360123+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.322507+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    },
+    {
+      "cardId": 337,
+      "severityCategory": "Other",
+      "severityRank": 9,
+      "severitySignals": {
+        "category": 5,
+        "againCount": 1,
+        "hardCount": 1,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.23333333333333334,
+        "difficultyScore": 0.575,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "CandidateLimit",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Hard",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.23333333333333334,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Hard",
+          "reviewedAt": "2026-11-06T13:21:21.366553+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.326954+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    },
+    {
+      "cardId": 338,
+      "severityCategory": "Other",
+      "severityRank": 10,
+      "severitySignals": {
+        "category": 5,
+        "againCount": 1,
+        "hardCount": 1,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.23333333333333334,
+        "difficultyScore": 0.575,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "CandidateLimit",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Hard",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.23333333333333334,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Hard",
+          "reviewedAt": "2026-11-06T13:21:21.373129+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.331056+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    },
+    {
+      "cardId": 339,
+      "severityCategory": "RepeatedFailure",
+      "severityRank": 1,
+      "severitySignals": {
+        "category": 0,
+        "againCount": 2,
+        "hardCount": 0,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.036303921568627454,
+        "difficultyScore": 1.0,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "Included",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Again",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.036303921568627454,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.383613+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.377725+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    },
+    {
+      "cardId": 340,
+      "severityCategory": "RepeatedFailure",
+      "severityRank": 2,
+      "severitySignals": {
+        "category": 0,
+        "againCount": 2,
+        "hardCount": 0,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.036303921568627454,
+        "difficultyScore": 1.0,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "Included",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Again",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.036303921568627454,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.394201+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.388351+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    },
+    {
+      "cardId": 341,
+      "severityCategory": "RepeatedFailure",
+      "severityRank": 3,
+      "severitySignals": {
+        "category": 0,
+        "againCount": 2,
+        "hardCount": 0,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.036303921568627454,
+        "difficultyScore": 1.0,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "Included",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Again",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.036303921568627454,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.405209+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.399301+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    },
+    {
+      "cardId": 342,
+      "severityCategory": "RepeatedFailure",
+      "severityRank": 4,
+      "severitySignals": {
+        "category": 0,
+        "againCount": 2,
+        "hardCount": 0,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.036303921568627454,
+        "difficultyScore": 1.0,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "Included",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Again",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.036303921568627454,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.415603+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.409828+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    },
+    {
+      "cardId": 343,
+      "severityCategory": "RepeatedFailure",
+      "severityRank": 5,
+      "severitySignals": {
+        "category": 0,
+        "againCount": 2,
+        "hardCount": 0,
+        "slowCount": 0,
+        "regression": false,
+        "masteryScore": 0.036303921568627454,
+        "difficultyScore": 1.0,
+        "responseTimeMs": null
+      },
+      "sessionRevision": 0,
+      "currentRevision": 0,
+      "selectionReason": "Included",
+      "currentRevisionEvidenceCount": 2,
+      "historicalRevisionEvidenceCount": 0,
+      "sessionOutcome": "Again",
+      "sessionResponseTimeMs": null,
+      "status": "Weak",
+      "masteryScore": 0.036303921568627454,
+      "source": "Observed",
+      "modelVersion": 1,
+      "recentAttempts": [
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.425966+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        },
+        {
+          "outcome": "Again",
+          "reviewedAt": "2026-11-06T13:21:21.420166+00:00",
+          "responseTimeMs": null,
+          "learningRevision": 0
+        }
+      ]
+    }
+  ]
+}

@@ -51,6 +51,9 @@ public class CoachDiagnosticContextDto
 public class CoachDiagnosticCardDto
 {
     public int CardId { get; set; }
+    public string? SeverityCategory { get; set; }
+    public int? SeverityRank { get; set; }
+    public CoachSeveritySignalsDto? SeveritySignals { get; set; }
     public int SessionRevision { get; set; }
     public int? CurrentRevision { get; set; }
     public string SelectionReason { get; set; } = "ContentUnavailable";
@@ -91,3 +94,7 @@ public class CoachOutputFormatDiagnosticsDto
     public bool StartsWithCodeFence { get; init; }
     public bool EndsWithCodeFence { get; init; }
 }
+
+public enum CoachSeverityCategory { RepeatedFailure, Regression, WeakAgain, RepeatedHard, RepeatedSlow, Other }
+public sealed record CoachSeveritySignalsDto(CoachSeverityCategory Category, int AgainCount, int HardCount,
+    int SlowCount, bool Regression, decimal MasteryScore, decimal DifficultyScore, int? ResponseTimeMs);
