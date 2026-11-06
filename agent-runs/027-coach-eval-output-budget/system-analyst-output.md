@@ -1,0 +1,7 @@
+# Final controlled budget comparison
+
+User approved one DeepSeek low-effort test with5000 cap to decide rather than iterate prompts further. Current v5low baselines:GLM16/18,2semantic contract failures,no length/provider failures,134.77s;DeepSeek14/18,1semantic contradiction plus3emptycontent/length3000 entirelyreasoning,175.961s. Budget is an actual maximum, not fixed billing per call. Prior cost discussion estimated18fullcap5000calls with5000input atreference$0.30/$1.20perM =~$0.135 excludingfees/cache; actualrouteprice notcaptured and notguaranteed.
+
+Backend specialist owns eval-only output budget CLI/HTTPadapter/report + focusedtests. Root docs/Dockerrunner/testscript/report summary. Preserve promptv5, model,reasoninglow,schema/validator,syntheticcases,repeats,timeouts,responsebounds andproductionconfiguration. Only requested max_tokens changes3k->5k. Default path remains3k. No production deployment, push or main merge.
+
+Root process has no LEARNWORD_COACH_EVAL_API_KEY; cannot execute a real paid call without the user's terminal key entry. No permission request is needed: trial authorized, key simply unavailable here. Deliver tested explicit command using existing hiddenkey flow. Preserve all priorreports, write deepseek-v5-low-5000.json. Judge pass/contract/length/latency/token usage together; small18case sample not global modelranking and a passed benchmark not proof of teaching semantics. If budget cap stops being the problem, do not keep raising it for semantic errors.

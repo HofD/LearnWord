@@ -71,3 +71,17 @@ The user GLM-v4-low run passed16/18; both remaining failures were text_empty at 
 ```
 
 Startup should show Prompt=coach-v5 MaxOutputTokens=3000 ReasoningEffort=low. The key prompt and immediate progress work as before. Keep glm-v4-low.json to compare against16/18. This code change does not establish an improved live result until that run completes; minLength rules do not by themselves reject whitespace-only strings, which remain semantically checked. Legal empty None summaries and optional exercise explanations remain permitted.
+
+## Final DeepSeek output-budget comparison
+
+After the v5low baseline (GLM16/18, DeepSeek14/18), three DeepSeek failures consumed all3000 output tokens on reasoning and returned no visible answer. Keep every other test setting fixed and request5000:
+
+```sh
+./LearnWord/tests/run-coach-eval.sh --live --model deepseek/deepseek-v4.1-flash-1017 --reasoning-effort low --max-output-tokens 5000 --repeat 3 --output deepseek-v5-low-5000.json
+```
+
+Startup must show Prompt=coach-v5 MaxOutputTokens=5000 ReasoningEffort=low. The hidden-key prompt/progress are unchanged.18sequential calls; preserve earlier deepseek-v5-low.json and glm-v5-low.json. Read new report in the same reports/ directory.
+
+--max-output-tokens is live-only and accepts3000 or5000. Omitted flag defaults3000. It changes only max_tokens in the eval-only HTTP adapter; production Coach/card generator/configuration remain unchanged. Request size, response-size bounds,60s timeout, validation, fixtures and call limits remain.5000 without an effort flag does not silently enable/request a reasoning effort. Default3000/noeffort requests stay exactly as before. Report records the selected cap rather than a stale constant; invalid/missing/duplicate budget rejected before network.
+
+Higher cap is an allowance, not mandatory usage or an isolated reasoning limit. It may allow more reasoning before a visible answer and increase latency/cost, but cannot fix unsupported observations or contradictory decisions. Compare successful cases, contract failures, empty/length failures, total response time and token usage. Reference price arithmetic from the prior discussion is a planning estimate, not an actual OpenRouter billing record or universal provider-price ceiling. This is the final budget experiment in this comparison series; choose the best tested configuration from evidence rather than retuning the prompt after each response. A small synthetic test does not establish full pedagogical quality or production reliability.

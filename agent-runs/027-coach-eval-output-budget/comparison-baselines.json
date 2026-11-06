@@ -1,0 +1,30 @@
+[
+  {
+    "source": "glm-v5-low.json",
+    "model": "z-ai/glm-5.3-flash",
+    "promptVersion": "coach-v5",
+    "reasoningEffort": "low",
+    "maxOutputTokens": 3000,
+    "plannedRuns": 18,
+    "completedRuns": 18,
+    "passed": 16,
+    "contractFailures": 2,
+    "providerFailures": 0,
+    "lengthTerminations": 0,
+    "responseSeconds": 134.77
+  },
+  {
+    "source": "deepseek-v5-low.json",
+    "model": "deepseek/deepseek-v4.1-flash-1017",
+    "promptVersion": "coach-v5",
+    "reasoningEffort": "low",
+    "maxOutputTokens": 3000,
+    "plannedRuns": 18,
+    "completedRuns": 18,
+    "passed": 14,
+    "contractFailures": 1,
+    "providerFailures": 3,
+    "lengthTerminations": 3,
+    "responseSeconds": 175.961
+  }
+]
