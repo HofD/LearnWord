@@ -1,0 +1,52 @@
+{
+  "source": "actual local app provider HTTP requests",
+  "counts": {
+    "cards": 6,
+    "coach": 2
+  },
+  "note": "Six card requests include initial Disabled fixture check repeated after correcting timestamp assertion; Coach made exactly two calls for valid/invalid modes. Missing-key/Disabled/Fake made none.",
+  "requests": [
+    {
+      "kind": "cards",
+      "model": "google/gemma-4-26b-a4b-it",
+      "coachParametersAbsent": true
+    },
+    {
+      "kind": "coach",
+      "model": "z-ai/glm-5.3-flash",
+      "reasoningEffort": "low",
+      "maxOutputTokens": 3000
+    },
+    {
+      "kind": "cards",
+      "model": "google/gemma-4-26b-a4b-it",
+      "coachParametersAbsent": true
+    },
+    {
+      "kind": "coach",
+      "model": "z-ai/glm-5.3-flash",
+      "reasoningEffort": "low",
+      "maxOutputTokens": 3000
+    },
+    {
+      "kind": "cards",
+      "model": "google/gemma-4-26b-a4b-it",
+      "coachParametersAbsent": true
+    },
+    {
+      "kind": "cards",
+      "model": "google/gemma-4-26b-a4b-it",
+      "coachParametersAbsent": true
+    },
+    {
+      "kind": "cards",
+      "model": "google/gemma-4-26b-a4b-it",
+      "coachParametersAbsent": true
+    },
+    {
+      "kind": "cards",
+      "model": "google/gemma-4-26b-a4b-it",
+      "coachParametersAbsent": true
+    }
+  ]
+}

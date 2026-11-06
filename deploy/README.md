@@ -196,4 +196,17 @@ ss -ltnp 'sport = :8080'
 
 ## AI Coach
 
-Epic 3A uses the existing `LW_AI_PROVIDER` and `LW_AI_OPENROUTER_*` settings for a separate private advisory provider. Set `LW_AI_COACH_ENABLED=false` to suppress analysis and automatic Coach UI without affecting normal learning or AI card drafts. The flag is wired in local and production Compose; no production rollout was performed for this feature. Local default Fake requires no key. Missing OpenRouter key produces a noncritical Coach configuration failure. See [AI Coach spec](../specs/ai-coach.md) for bounded context, privacy, caching and retry semantics.
+Coach now uses independent `LW_AI_COACH_*` / `AiCoach` settings. Production Compose defaults to OpenRouter with `z-ai/glm-5.3-flash`, reasoning `low`, max output3000 and timeout60s; local Compose/host defaults remain Fake. Card generation keeps the existing `LW_AI_PROVIDER` / `LW_AI_OPENROUTER_*` settings and its existing Gemma model unchanged. No production deployment is performed by this change.
+
+```dotenv
+LW_AI_COACH_ENABLED=true
+LW_AI_COACH_PROVIDER=OpenRouter
+LW_AI_COACH_OPENROUTER_MODEL=z-ai/glm-5.3-flash
+LW_AI_COACH_REASONING_EFFORT=low
+LW_AI_COACH_MAX_OUTPUT_TOKENS=3000
+LW_AI_COACH_OPENROUTER_TIMEOUT_SECONDS=60
+```
+
+`LW_AI_COACH_OPENROUTER_BASE_URL` defaults to the normal OpenRouter endpoint. Optional `LW_AI_COACH_OPENROUTER_API_KEY` overrides the Coach key; when empty, Compose explicitly reuses existing `LW_AI_OPENROUTER_API_KEY`. The application itself never reads card settings as a fallback for Coach. Keep existing card model/provider variables as they are. Missing Coach credentials cause a noncritical Failed analysis and do not disable card drafts.
+
+Set `LW_AI_COACH_ENABLED=false` to disable Coach only, or `LW_AI_COACH_PROVIDER=Fake` for deterministic offline behavior. Request/cache version coach-v6 separates the new release from historical v5 analyses; the prompt text and schema1 are unchanged. Existing completed analyses within a version remain cached; GET never regenerates them. After deployment, explicitly analyze a completed session and verify modelGLM/promptv6 in its diagnostics. No new database migration for configuration separation. See [release instructions](../docs/coach-glm-release.md) and [AI Coach spec](../specs/ai-coach.md).

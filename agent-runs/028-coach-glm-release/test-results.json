@@ -1,0 +1,17 @@
+{
+  "passed": 537,
+  "failed": 0,
+  "skipped": 0,
+  "projects": 9,
+  "webApiTests": 324,
+  "newIsolationCases": 18,
+  "composeChecks": 4,
+  "runtimeModes": 5,
+  "fakeEvalRuns": 18,
+  "requestCacheVersion": "coach-v6",
+  "promptTextVersion": "unchanged-v5",
+  "coachModel": "z-ai/glm-5.3-flash",
+  "coachReasoningEffort": "low",
+  "coachMaxOutputTokens": 3000,
+  "paidCalls": 0
+}

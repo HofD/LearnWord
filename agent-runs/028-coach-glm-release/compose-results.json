@@ -1,0 +1,29 @@
+{
+  "passed": 4,
+  "checks": [
+    {
+      "mode": "local",
+      "coachProvider": "Fake",
+      "coachModel": "z-ai/glm-5.3-flash",
+      "keyFallback": "passed",
+      "cardDefaultsPreserved": true
+    },
+    {
+      "mode": "prod",
+      "coachProvider": "OpenRouter",
+      "coachModel": "z-ai/glm-5.3-flash",
+      "keyFallback": "passed",
+      "cardDefaultsPreserved": true
+    },
+    {
+      "mode": "prod-separate-key",
+      "independentKeys": true,
+      "cardGemmaPreserved": true,
+      "coachGlm": true
+    },
+    {
+      "mode": "prod-overrides",
+      "independentProviderAndModels": true
+    }
+  ]
+}

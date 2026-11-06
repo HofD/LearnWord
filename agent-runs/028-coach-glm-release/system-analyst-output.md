@@ -1,0 +1,7 @@
+# Prepared independent GLM Coach release
+
+User approves app configuration split after model/budget comparison selectedGLM5.3Flash/low/3000 forCoach, keeping existing Gemma card generator. Previousshared AiCardGeneration choice/model/key/base/timeout causedcoupling. ReplaceonlyCoach dependency withAiCoachoptions; typedsharedOpenRouterOptions class has independentinstances. No C# fallback. Explicitsecret reuse inCompose retains deploycompat without model inheritance.
+
+Backend specialist owns C#/appsettings/tests/evalfactory migration; root owns local/prodCompose/envexamples/docs/fullDocker/actualgatewaywire checks. Localhost/defaultFake safety, prodComposeOpenRouterGLMlow3k. No newsecret copied, actualenvfiles untouched. Request/cachev6 isolates oldv5Gemma analyses without changing testedv5prompt/schema1 or automatic replay. Existingwithinversioncache stillreuses completed results after later config edits; documentthis practicallimit.
+
+Acceptance personally verified: healthyCoachGLMlow3k+Gemmadrafts; invalidCoachreply failsatomically; missingCoachkey no cardfallback andcardswork; disabled/FakeCoach no CoachHTTP whilecardswork; privateACLs/diagnostics/no normalSRS/history mutation. DryCompose4checks demonstrate independentmodels/provider/keys and intentionallegacykeyfallback. RootfullDocker and existingCoach/Social/diagnosticsregressions, no paidcalls or productiondeployment. Updatedactiveproviderdocumentation ratherthanleavingoldsharedsettingsclaim.

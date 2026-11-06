@@ -120,7 +120,7 @@ public class CoachEvaluationReasoningTests
         Assert.Equal(0, calls);
     }
 
-    private static OpenRouterAiCoachProvider Provider(HttpClient client) => new(client, OptionsFactory.Create(new AiCardGenerationOptions {
+    private static OpenRouterAiCoachProvider Provider(HttpClient client) => new(client, OptionsFactory.Create(new AiCoachOptions { ReasoningEffort = null, MaxOutputTokens = 3000,
         Provider = "OpenRouter", OpenRouter = new() { Model = "z-ai/glm-5.3-flash", ApiKey = "PRIVATE_KEY", BaseUrl = "https://example.test/chat", TimeoutSeconds = 60 } }));
     private sealed class Capture : HttpMessageHandler
     {

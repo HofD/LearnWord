@@ -35,7 +35,7 @@ using var cancelled = new CancellationTokenSource();
 Console.CancelKeyPress += (_, e) => { e.Cancel = true; cancelled.Cancel(); };
 using var http = EvaluationHttp.CreateClient(options.ReasoningEffort, maxOutputTokens: options.MaxOutputTokens);
 IAiCoachProvider Factory(string model) => options.Live
-    ? new OpenRouterAiCoachProvider(http, Microsoft.Extensions.Options.Options.Create(new AiCardGenerationOptions {
+    ? new OpenRouterAiCoachProvider(http, Microsoft.Extensions.Options.Options.Create(new AiCoachOptions { ReasoningEffort = null, MaxOutputTokens = 3000,
         Provider = "OpenRouter", OpenRouter = new OpenRouterOptions { Model = model, ApiKey = key!, BaseUrl = "https://openrouter.ai/api/v1/chat/completions", TimeoutSeconds = 60 } }))
     : new FakeAiCoachProvider();
 var report = await Evaluation.Run(options.Models, options.Repeats, options.Live, Factory, cancelled.Token, progress: update => {

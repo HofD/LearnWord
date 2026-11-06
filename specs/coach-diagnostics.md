@@ -1,6 +1,6 @@
 # Private Coach diagnostics
 
-Adds read-only observability to Epic3A with current prompt coach-v5, unchanged provider result schema1, candidate selection, normal SRS and learner evidence. A model decision None remains valid. Diagnostics distinguish selection/pipeline facts, not internal model reasoning.
+Adds read-only observability to Epic3A with current request/cache version coach-v6 (v5 prompt text), unchanged provider result schema1, candidate selection, normal SRS and learner evidence. A model decision None remains valid. Diagnostics distinguish selection/pipeline facts, not internal model reasoning.
 
 ## Use
 
@@ -56,3 +56,6 @@ coach-v4 now sends mutually exclusive intervention schema alternatives, matching
 
 
 coach-v5 explicitly adds nonempty minima for mandatory text while retaining intended empty fields and semantic whitespace checks. Rejections still export text_empty plus the same known JSON field path; stored historical v4 snapshots are unchanged. No new diagnostic fields or migration.
+
+
+GLM release reads independent AiCoach configuration. New analyses identify OpenRouter/z-ai/glm-5.3-flash with request/cache provenance coach-v6; existing v5 records are preserved and never silently regenerated. Text/schema are unchanged fromv5. Failed Coach configuration remains a private noncritical Failed analysis with sanitized Configuration stage. Actual low-effort request/tokens remain verifiable through provider metadata. This version bump alone is not a new real-model quality result.

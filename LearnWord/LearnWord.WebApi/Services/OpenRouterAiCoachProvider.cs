@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using LearnWord.BL.Models.Errors;
 using LearnWord.BL.Models.Dto;
 using LearnWord.WebApi.Abstractions;
@@ -14,7 +15,8 @@ public class OpenRouterAiCoachProvider : IAiCoachProvider
 {
     private readonly HttpClient http;
     private readonly OpenRouterOptions options;
-    public OpenRouterAiCoachProvider(HttpClient http, IOptions<AiCardGenerationOptions> options) { this.http = http; this.options = options.Value.OpenRouter; }
+    private readonly AiCoachOptions coach;
+    public OpenRouterAiCoachProvider(HttpClient http, IOptions<AiCoachOptions> options) { this.http = http; coach = options.Value; this.options = coach.OpenRouter; }
     public string Provider => "OpenRouter";
     public string Model => options.Model;
     public const string SystemPrompt = """
@@ -24,11 +26,14 @@ public class OpenRouterAiCoachProvider : IAiCoachProvider
         => (await AnalyzeWithDiagnostics(context, cancellationToken)).Content;
     public async Task<CoachProviderResponse> AnalyzeWithDiagnostics(CoachSessionContext context, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(options.ApiKey) || string.IsNullOrWhiteSpace(options.Model)) throw Failure("ai_provider_configuration_error", "Configuration");
+        if (string.IsNullOrWhiteSpace(options.ApiKey) || options.ApiKey.Any(char.IsControl) || string.IsNullOrWhiteSpace(options.Model)
+            || coach.MaxOutputTokens is not (3000 or 5000) || coach.ReasoningEffort is not (null or "" or "low" or "high" or "max")
+            || !Uri.TryCreate(options.BaseUrl, UriKind.Absolute, out var endpoint) || endpoint.Scheme is not ("http" or "https"))
+            throw Failure("ai_provider_configuration_error", "Configuration");
         var data = JsonSerializer.Serialize(context, CoachOutputValidator.Json);
         var body = new { model = options.Model, messages = new[] { new { role = "system", content = SystemPrompt }, new { role = "user", content = "Analyze this JSON DATA:\n" + data } },
-            max_tokens = 3000, provider = new { require_parameters = true }, response_format = new { type = "json_schema", json_schema = new { name = "coach_analysis_v1", strict = true, schema = ResponseSchema() } } };
-        var serialized = JsonSerializer.Serialize(body, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+            max_tokens = coach.MaxOutputTokens, reasoning = string.IsNullOrEmpty(coach.ReasoningEffort) ? null : new { effort = coach.ReasoningEffort }, provider = new { require_parameters = true }, response_format = new { type = "json_schema", json_schema = new { name = "coach_analysis_v1", strict = true, schema = ResponseSchema() } } };
+        var serialized = JsonSerializer.Serialize(body, new JsonSerializerOptions(JsonSerializerDefaults.Web) { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
         if (serialized.Length > CoachLimits.PromptCharacters) throw Failure("coach_context_too_large", "RequestSize");
         using var request = new HttpRequestMessage(HttpMethod.Post, options.BaseUrl);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", options.ApiKey);

@@ -104,7 +104,7 @@ public class CoachResponseMetadataTests
         var wrapped = await legacy.AnalyzeWithDiagnostics(CoachOutputValidatorTests.Context(), default);
         Assert.Equal(Valid, wrapped.Content);
         Assert.Null(wrapped.ProviderResponse);
-        var options = OptionsFactory.Create(new AiCardGenerationOptions { Provider = "OpenRouter", OpenRouter = new() { ApiKey = "PRIVATE_KEY", Model = "same-model", BaseUrl = "https://example.test/chat" } });
+        var options = OptionsFactory.Create(new AiCoachOptions { Provider = "OpenRouter", OpenRouter = new() { ApiKey = "PRIVATE_KEY", Model = "same-model", BaseUrl = "https://example.test/chat" } });
         var configured = new ConfiguredAiCoachProvider(new FakeAiCoachProvider(), new OpenRouterAiCoachProvider(new HttpClient(new Handler(Envelope(Valid, "length", 123))), options), options);
         var response = await configured.AnalyzeWithDiagnostics(CoachOutputValidatorTests.Context(), default);
         Assert.Equal("length", response.ProviderResponse!.FinishReason);
@@ -116,7 +116,7 @@ public class CoachResponseMetadataTests
     public async Task SharedProviderHasNoLastResponseMetadataThatCanLeakAcrossCalls()
     {
         var handler = new AlternatingHandler();
-        var options = OptionsFactory.Create(new AiCardGenerationOptions { OpenRouter = new() { ApiKey = "PRIVATE_KEY", Model = "same-model", BaseUrl = "https://example.test/chat" } });
+        var options = OptionsFactory.Create(new AiCoachOptions { OpenRouter = new() { ApiKey = "PRIVATE_KEY", Model = "same-model", BaseUrl = "https://example.test/chat" } });
         var provider = new OpenRouterAiCoachProvider(new HttpClient(handler), options);
         var calls = await Task.WhenAll(Enumerable.Range(0, 12).Select(_ => provider.AnalyzeWithDiagnostics(CoachOutputValidatorTests.Context(), default)));
         foreach (var response in calls)
@@ -248,7 +248,7 @@ public class CoachResponseMetadataTests
     }
 
     private static OpenRouterAiCoachProvider Provider(string body) => new(new HttpClient(new Handler(body)),
-        OptionsFactory.Create(new AiCardGenerationOptions { OpenRouter = new() { ApiKey = "PRIVATE_KEY", Model = "same-model", BaseUrl = "https://example.test/chat" } }));
+        OptionsFactory.Create(new AiCoachOptions { OpenRouter = new() { ApiKey = "PRIVATE_KEY", Model = "same-model", BaseUrl = "https://example.test/chat" } }));
     private static string Envelope(string content, string finish, int tokens) => JsonSerializer.Serialize(new { choices = new[] { new { finish_reason = finish, message = new { content } } }, usage = new { completion_tokens = tokens } });
     private sealed class Handler(string body) : HttpMessageHandler
     {

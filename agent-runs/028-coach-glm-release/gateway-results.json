@@ -1,0 +1,52 @@
+[
+  {
+    "mode": "success",
+    "cardGeneration": "Gemma wire path passed",
+    "coachStatus": "Completed",
+    "coachModel": "z-ai/glm-5.3-flash",
+    "promptVersion": "coach-v6",
+    "failureCode": null,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "mode": "invalid",
+    "cardGeneration": "Gemma wire path passed",
+    "coachStatus": "Failed",
+    "coachModel": "z-ai/glm-5.3-flash",
+    "promptVersion": "coach-v6",
+    "failureCode": "ai_provider_invalid_response",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "mode": "missing-key",
+    "cardGeneration": "Gemma wire path passed",
+    "coachStatus": "Failed",
+    "coachModel": "z-ai/glm-5.3-flash",
+    "promptVersion": "coach-v6",
+    "failureCode": "ai_provider_configuration_error",
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "mode": "fake",
+    "cardGeneration": "Gemma wire path passed",
+    "coachStatus": "Completed",
+    "coachModel": "deterministic-coach-v1",
+    "promptVersion": "coach-v6",
+    "failureCode": null,
+    "private": true,
+    "normalStateUnchanged": true
+  },
+  {
+    "mode": "disabled",
+    "cardGeneration": "Gemma wire path passed",
+    "coachStatus": "Disabled",
+    "coachModel": "",
+    "promptVersion": "coach-v6",
+    "failureCode": null,
+    "private": true,
+    "normalStateUnchanged": true
+  }
+]

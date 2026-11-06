@@ -52,6 +52,13 @@ services:
       PUBLIC_PORT: ${LW_WEBAPI_PORT:-5003}
       ConnectionStrings__LwConnection: Host=postgres;Port=5432;Database=${LW_DB_NAME:-lwdb};Username=${LW_DB_USER:-lwuser};Password=${LW_DB_PASSWORD:-lwpassword}
       AiCoach__Enabled: ${LW_AI_COACH_ENABLED:-true}
+      AiCoach__Provider: ${LW_AI_COACH_PROVIDER:-Fake}
+      AiCoach__ReasoningEffort: ${LW_AI_COACH_REASONING_EFFORT:-low}
+      AiCoach__MaxOutputTokens: ${LW_AI_COACH_MAX_OUTPUT_TOKENS:-3000}
+      AiCoach__OpenRouter__BaseUrl: ${LW_AI_COACH_OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1/chat/completions}
+      AiCoach__OpenRouter__Model: ${LW_AI_COACH_OPENROUTER_MODEL:-z-ai/glm-5.3-flash}
+      AiCoach__OpenRouter__ApiKey: ${LW_AI_COACH_OPENROUTER_API_KEY:-${LW_AI_OPENROUTER_API_KEY:-}}
+      AiCoach__OpenRouter__TimeoutSeconds: ${LW_AI_COACH_OPENROUTER_TIMEOUT_SECONDS:-60}
       AiCardGeneration__Provider: ${LW_AI_PROVIDER:-Fake}
       AiCardGeneration__MaxSourceTextLength: ${LW_AI_MAX_SOURCE_TEXT_LENGTH:-4000}
       AiCardGeneration__MaxCards: ${LW_AI_MAX_CARDS:-10}

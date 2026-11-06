@@ -104,7 +104,7 @@ public class CoachEvaluationOutputBudgetTests
         Assert.Equal(0, capture.Calls);
     }
 
-    private static OpenRouterAiCoachProvider Provider(HttpClient client) => new(client, OptionsFactory.Create(new AiCardGenerationOptions {
+    private static OpenRouterAiCoachProvider Provider(HttpClient client) => new(client, OptionsFactory.Create(new AiCoachOptions { ReasoningEffort = null, MaxOutputTokens = 3000,
         Provider = "OpenRouter", OpenRouter = new() { Model = "deepseek/deepseek-v4.1-flash-1017", ApiKey = "PRIVATE_KEY", BaseUrl = "https://example.test/chat", TimeoutSeconds = 60 } }));
     private sealed class Capture : HttpMessageHandler
     {

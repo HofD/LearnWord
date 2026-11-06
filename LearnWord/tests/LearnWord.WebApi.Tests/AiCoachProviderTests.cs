@@ -109,7 +109,7 @@ public class AiCoachProviderTests
         Assert.True(doc.RootElement.GetProperty("provider").GetProperty("require_parameters").GetBoolean());
         Assert.Equal("test-model", doc.RootElement.GetProperty("model").GetString());
         Assert.Equal(3000, doc.RootElement.GetProperty("max_tokens").GetInt32());
-        Assert.False(doc.RootElement.TryGetProperty("reasoning", out _));
+        Assert.Equal("low", doc.RootElement.GetProperty("reasoning").GetProperty("effort").GetString());
         var messages = doc.RootElement.GetProperty("messages");
         Assert.Equal(2, messages.GetArrayLength());
         Assert.Equal("system", messages[0].GetProperty("role").GetString());
@@ -177,13 +177,13 @@ public class AiCoachProviderTests
     [InlineData("unknown")]
     public async Task ConfiguredProvider_UnsupportedSelectionCannotCallOpenRouter(string selection)
     {
-        var options = OptionsFactory.Create(new AiCardGenerationOptions { Provider = selection });
+        var options = OptionsFactory.Create(new AiCoachOptions { Provider = selection });
         var provider = new ConfiguredAiCoachProvider(new FakeAiCoachProvider(), new OpenRouterAiCoachProvider(new HttpClient(new Handler(_ => throw new InvalidOperationException())), options), options);
         Assert.Equal("ai_provider_configuration_error", (await Assert.ThrowsAsync<UpstreamServiceException>(() => provider.Analyze(CoachOutputValidatorTests.Context(), default))).ErrorCode);
     }
 
     private static OpenRouterAiCoachProvider Provider(Handler handler, string key = "test-only-key")
-        => new(new HttpClient(handler), OptionsFactory.Create(new AiCardGenerationOptions { Provider = "OpenRouter", OpenRouter = new OpenRouterOptions { ApiKey = key, Model = "test-model", BaseUrl = "https://example.test/chat", TimeoutSeconds = 1 } }));
+        => new(new HttpClient(handler), OptionsFactory.Create(new AiCoachOptions { Provider = "OpenRouter", OpenRouter = new OpenRouterOptions { ApiKey = key, Model = "test-model", BaseUrl = "https://example.test/chat", TimeoutSeconds = 1 } }));
     private static string Envelope(string content) => JsonSerializer.Serialize(new { choices = new[] { new { message = new { content } } } });
     private sealed class Handler(Func<HttpRequestMessage, HttpResponseMessage> response) : HttpMessageHandler
     {
